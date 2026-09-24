@@ -16,10 +16,10 @@ interface HeadingProps extends Omit<
 }
 
 const sizeClasses: Record<HeadingSize, string> = {
-  display: "text-display",
-  h1: "text-h1",
-  h2: "text-h2",
-  h3: "text-h3",
+  display: "text-[length:clamp(3rem,7vw,6.5rem)] leading-[0.98]",
+  h1: "text-[length:clamp(2.5rem,5vw,4.5rem)] leading-[1.05]",
+  h2: "text-[length:clamp(2rem,3.5vw,3.25rem)] leading-[1.12]",
+  h3: "text-[length:clamp(1.4rem,2vw,1.9rem)] leading-[1.2]",
 };
 
 export function Heading({

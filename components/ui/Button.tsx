@@ -1,9 +1,10 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import type { HTMLMotionProps } from "framer-motion";
 import type { ReactNode } from "react";
 
+import { useReducedMotion } from "@/lib/animations/useReducedMotion";
 import { cn } from "@/lib/utils";
 
 export type ButtonVariant = "outline-gold" | "solid-forest" | "text-link";

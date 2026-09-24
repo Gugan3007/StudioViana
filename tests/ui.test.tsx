@@ -21,7 +21,7 @@ describe("Heading", () => {
 
     expect(
       screen.getByRole("heading", { level: 2, name: "Flowers live forever" }),
-    ).toBeVisible();
+    ).toHaveClass("text-[length:clamp(2.5rem,5vw,4.5rem)]");
     expect(screen.getByText("forever")).toHaveClass("italic");
   });
 });

@@ -6,16 +6,8 @@ import { useIsomorphicLayoutEffect } from "@/lib/animations/useIsomorphicLayoutE
 
 const reducedMotionQuery = "(prefers-reduced-motion: reduce)";
 
-function getInitialPreference() {
-  return (
-    typeof window !== "undefined" &&
-    window.matchMedia(reducedMotionQuery).matches
-  );
-}
-
 export function useReducedMotion() {
-  const [shouldReduceMotion, setShouldReduceMotion] =
-    useState(getInitialPreference);
+  const [shouldReduceMotion, setShouldReduceMotion] = useState(() => false);
 
   useIsomorphicLayoutEffect(() => {
     const mediaQuery = window.matchMedia(reducedMotionQuery);
