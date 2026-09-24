@@ -86,7 +86,10 @@ describe("WhatWeDo", () => {
   beforeEach(() => {
     craftMocks.reduceMotion = false;
     vi.clearAllMocks();
-    vi.stubGlobal("matchMedia", vi.fn(() => mediaQuery(false)));
+    vi.stubGlobal(
+      "matchMedia",
+      vi.fn(() => mediaQuery(false)),
+    );
   });
 
   it("renders four numbered services from canonical data", () => {
@@ -118,8 +121,15 @@ describe("WhatWeDo", () => {
   });
 
   it("uses the exact band headline and renders its complete static state for reduced motion", () => {
+    craftMocks.reduceMotion = false;
+    const { container, rerender } = render(<WhatWeDo />);
+    for (const number of container.querySelectorAll<HTMLElement>(
+      "article > p:first-child",
+    )) {
+      number.textContent = "00";
+    }
     craftMocks.reduceMotion = true;
-    const { container } = render(<WhatWeDo />);
+    rerender(<WhatWeDo />);
 
     expect(
       screen.getByRole("heading", { name: "Made by hand. Made for moments." }),
@@ -130,10 +140,16 @@ describe("WhatWeDo", () => {
     expect(container.querySelector("[data-expanding-image]")).toHaveStyle({
       transform: "scale(1)",
     });
+    expect(screen.getByText("01")).toBeVisible();
+    expect(screen.getByText("04")).toBeVisible();
+    expect(screen.queryAllByText("00")).toHaveLength(0);
   });
 
   it("mounts and toggles the cursor preview only for a fine pointer", async () => {
-    vi.stubGlobal("matchMedia", vi.fn(() => mediaQuery(true)));
+    vi.stubGlobal(
+      "matchMedia",
+      vi.fn(() => mediaQuery(true)),
+    );
     const { container } = render(
       <ServiceColumn
         image="/images/products/just-for-you-hamper.jpg"
@@ -143,7 +159,9 @@ describe("WhatWeDo", () => {
 
     const article = screen.getByRole("article");
     await waitFor(() =>
-      expect(container.querySelector("[data-cursor-preview]")).toBeInTheDocument(),
+      expect(
+        container.querySelector("[data-cursor-preview]"),
+      ).toBeInTheDocument(),
     );
 
     fireEvent.pointerEnter(article);

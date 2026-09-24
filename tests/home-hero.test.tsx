@@ -166,9 +166,7 @@ describe("HomeHero", () => {
     const user = userEvent.setup();
     renderHero();
 
-    await user.click(
-      screen.getByRole("link", { name: "Explore Collection" }),
-    );
+    await user.click(screen.getByRole("link", { name: "Explore Collection" }));
 
     expect(heroMocks.scrollTo).toHaveBeenCalledWith(
       document.getElementById("collection"),

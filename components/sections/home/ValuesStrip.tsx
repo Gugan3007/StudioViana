@@ -18,8 +18,12 @@ export function ValuesStrip() {
   const shouldReduceMotion = useReducedMotion();
 
   useIsomorphicLayoutEffect(() => {
-    if (shouldReduceMotion || !root.current) return;
+    if (!root.current) return;
     const counter = root.current.querySelector<HTMLElement>("[data-count]");
+    if (shouldReduceMotion) {
+      if (counter) counter.textContent = "100%";
+      return;
+    }
     const valueCopy = root.current.querySelectorAll("[data-value-copy]");
     const context = gsap.context(() => {
       if (counter) {
@@ -63,7 +67,7 @@ export function ValuesStrip() {
   return (
     <div
       ref={root}
-      className="grid border-y border-gold/30 sm:grid-cols-2 lg:grid-cols-4"
+      className="border-gold/30 grid border-y sm:grid-cols-2 lg:grid-cols-4"
       data-values-strip
     >
       {values.map((item, index) => (
@@ -73,7 +77,7 @@ export function ValuesStrip() {
           data-value-copy={index > 0 || undefined}
         >
           {index > 0 ? (
-            <span className="absolute left-0 top-1/2 hidden h-14 w-px -translate-y-1/2 bg-gold/45 lg:block" />
+            <span className="bg-gold/45 absolute left-0 top-1/2 hidden h-14 w-px -translate-y-1/2 lg:block" />
           ) : null}
           <p
             className="font-display text-[clamp(2rem,3vw,3rem)] leading-none text-gold"

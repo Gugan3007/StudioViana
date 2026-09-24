@@ -59,12 +59,15 @@ export function RotatingBadge({ className }: { className?: string }) {
       ref={root}
       aria-hidden="true"
       className={cn(
-        "relative grid aspect-square w-28 place-items-center rounded-full border border-gold/35 bg-cream/95 text-charcoal shadow-soft sm:w-32",
+        "border-gold/35 bg-cream/95 relative grid aspect-square w-28 place-items-center rounded-full border text-charcoal shadow-soft sm:w-32",
         className,
       )}
       data-hero-badge
     >
-      <svg className="absolute inset-1 h-[calc(100%-0.5rem)] w-[calc(100%-0.5rem)]" viewBox="0 0 120 120">
+      <svg
+        className="absolute inset-1 h-[calc(100%-0.5rem)] w-[calc(100%-0.5rem)]"
+        viewBox="0 0 120 120"
+      >
         <defs>
           <path
             id={pathId}

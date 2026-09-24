@@ -99,9 +99,10 @@ describe("Navbar", () => {
       screen.getByRole("navigation", { name: "Primary navigation" }),
     ).toBeVisible();
     expect(screen.getByText("Studio Viana")).toBeVisible();
-    expect(
-      await screen.findByRole("link", { name: "About" }),
-    ).toHaveAttribute("aria-current", "page");
+    expect(await screen.findByRole("link", { name: "About" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
     expect(
       screen.getByRole("link", { name: "Order on WhatsApp" }),
     ).toHaveAttribute(

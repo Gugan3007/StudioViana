@@ -123,9 +123,7 @@ export function HomeHero() {
         )
         .call(
           () =>
-            window.dispatchEvent(
-              new CustomEvent("studio-viana:hero-entered"),
-            ),
+            window.dispatchEvent(new CustomEvent("studio-viana:hero-entered")),
           [],
           "navigation",
         );
@@ -177,7 +175,7 @@ export function HomeHero() {
           </SectionLabel>
 
           <div
-            className="mt-7 font-display text-[clamp(3rem,12.5vw,5.1rem)] font-medium leading-[0.98] tracking-[-0.045em] sm:text-[clamp(4rem,9vw,6rem)] lg:mt-8 lg:text-[clamp(3.5rem,6.2vw,6.5rem)]"
+            className="mt-7 font-display text-[clamp(3rem,12.5vw,5.1rem)] font-medium leading-[0.98] tracking-[-0.045em] sm:text-[clamp(4rem,9vw,6rem)] lg:mt-8 lg:text-[clamp(3.5rem,5.2vw,5.7rem)]"
             data-controlled-split="true"
           >
             <h1
@@ -203,8 +201,7 @@ export function HomeHero() {
                     data-hero-entrance
                     data-split-token
                   >
-                    become{" "}
-                    <em className="font-normal text-gold">forever</em>
+                    become <em className="font-normal text-gold">forever</em>
                   </span>
                 </span>
                 <span className="block overflow-hidden">
@@ -220,11 +217,7 @@ export function HomeHero() {
             </h1>
           </div>
 
-          <GoldDivider
-            className="mt-8"
-            data-hero-divider
-            data-hero-entrance
-          />
+          <GoldDivider className="mt-8" data-hero-divider data-hero-entrance />
           <p
             className="mt-7 max-w-[31rem] text-[0.92rem] font-light leading-7 text-muted sm:text-base sm:leading-8"
             data-hero-copy
@@ -282,7 +275,7 @@ export function HomeHero() {
             data-hero-copy
             data-hero-entrance
           >
-            <span className="relative h-12 w-px overflow-hidden bg-gold/30">
+            <span className="bg-gold/30 relative h-12 w-px overflow-hidden">
               <span className="intro-scroll-drop absolute inset-x-0 top-0 h-5 bg-gold" />
             </span>
             Scroll

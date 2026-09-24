@@ -73,10 +73,7 @@ export function Navbar() {
   const closeMenu = useCallback(() => setMenuOpen(false), []);
 
   const navigate = useCallback(
-    (
-      event: React.MouseEvent<HTMLAnchorElement>,
-      href: `#${string}`,
-    ) => {
+    (event: React.MouseEvent<HTMLAnchorElement>, href: `#${string}`) => {
       const target = document.querySelector<HTMLElement>(href);
       if (!target) return;
       event.preventDefault();
@@ -102,7 +99,7 @@ export function Navbar() {
     <>
       <header
         className={cn(
-          "fixed inset-x-0 top-0 z-[80] h-[72px] border-b transition-[transform,opacity,background-color,border-color,color] duration-500 ease-luxury lg:h-[84px]",
+          "ease-luxury fixed inset-x-0 top-0 z-[80] h-[72px] border-b transition-[transform,opacity,background-color,border-color,color] duration-500 lg:h-[84px]",
           dark ? "text-cream" : "text-charcoal",
           scrolled &&
             (dark
@@ -145,7 +142,9 @@ export function Navbar() {
                     aria-hidden="true"
                     className={cn(
                       "absolute inset-x-0 bottom-1 h-px origin-left bg-gold transition-transform duration-500",
-                      active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100",
+                      active
+                        ? "scale-x-100"
+                        : "scale-x-0 group-hover:scale-x-100",
                     )}
                   />
                 </a>

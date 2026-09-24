@@ -12,10 +12,7 @@ interface WordScrubTextProps {
   className?: string;
 }
 
-export function WordScrubText({
-  children,
-  className,
-}: WordScrubTextProps) {
+export function WordScrubText({ children, className }: WordScrubTextProps) {
   const root = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
   const words = children.trim().split(/\s+/);

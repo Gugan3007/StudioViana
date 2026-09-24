@@ -33,7 +33,7 @@ export function AboutStudio() {
             sizes="(min-width: 1024px) 45vw, 100vw"
             src={lilacPearlDome}
           />
-          <span className="absolute bottom-5 left-5 z-10 bg-forest/80 px-4 py-2 text-[0.58rem] uppercase tracking-[0.24em] text-cream backdrop-blur-md sm:bottom-8 sm:left-8">
+          <span className="bg-forest/80 absolute bottom-5 left-5 z-10 px-4 py-2 text-[0.58rem] uppercase tracking-[0.24em] text-cream backdrop-blur-md sm:bottom-8 sm:left-8">
             The Grand Bouquet
           </span>
         </div>
@@ -50,7 +50,7 @@ export function AboutStudio() {
             <div className="mt-7">
               <SplitTextReveal
                 as="h2"
-                className="font-display text-[clamp(2.8rem,5.2vw,5.4rem)] font-medium leading-[1.02] tracking-[-0.04em] text-charcoal"
+                className="font-display text-[clamp(2.55rem,4.4vw,4.6rem)] font-medium leading-[1.02] tracking-[-0.04em] text-charcoal"
                 id="about-heading"
                 type="lines"
               >

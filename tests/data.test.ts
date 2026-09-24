@@ -47,6 +47,9 @@ describe("Studio Viana catalogue data", () => {
       "Corporate Events",
       "Return Gifts",
     ]);
+    expect(services[0].description).toBe(
+      "Curated gift hampers built around a floral centrepiece, dressed for birthdays, anniversaries and thank-you gestures.",
+    );
   });
 });
 

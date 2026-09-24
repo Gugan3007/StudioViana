@@ -34,6 +34,7 @@
 ### Task 1: Intro completion context
 
 **Files:**
+
 - Create: `lib/context/IntroContext.tsx`
 - Modify: `components/intro/IntroSection.tsx`
 - Modify: `app/layout.tsx`
@@ -41,6 +42,7 @@
 - Modify: `tests/intro-timeline.test.tsx`
 
 **Interfaces:**
+
 - Produces: `useIntro(): { introComplete: boolean; markIntroComplete(): void; markIntroActive(): void }`
 - Consumes: existing `data-intro-complete`, ScrollTrigger callbacks, reload position, and reduced-motion state.
 
@@ -50,16 +52,27 @@
 it("publishes completion through state, html data, and a custom event", async () => {
   const listener = vi.fn();
   window.addEventListener("studio-viana:intro-complete", listener);
-  render(<IntroProvider><Probe /></IntroProvider>);
+  render(
+    <IntroProvider>
+      <Probe />
+    </IntroProvider>,
+  );
   await userEvent.click(screen.getByRole("button", { name: "complete" }));
   expect(screen.getByTestId("state")).toHaveTextContent("complete");
-  expect(document.documentElement).toHaveAttribute("data-intro-complete", "true");
+  expect(document.documentElement).toHaveAttribute(
+    "data-intro-complete",
+    "true",
+  );
   expect(listener).toHaveBeenCalledOnce();
 });
 
 it("initializes complete when the restored scroll is below the intro", () => {
   Object.defineProperty(window, "scrollY", { configurable: true, value: 1200 });
-  render(<IntroProvider><Probe /></IntroProvider>);
+  render(
+    <IntroProvider>
+      <Probe />
+    </IntroProvider>,
+  );
   expect(screen.getByTestId("state")).toHaveTextContent("complete");
 });
 ```
@@ -100,6 +113,7 @@ git commit -m "feat: bridge intro completion into phase two"
 ### Task 2: Navigation behavior and mobile focus management
 
 **Files:**
+
 - Create: `components/layout/Navbar.tsx`
 - Create: `components/layout/MobileMenu.tsx`
 - Create: `components/layout/useNavTheme.ts`
@@ -109,6 +123,7 @@ git commit -m "feat: bridge intro completion into phase two"
 - Create: `tests/navigation.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `useLenis`, `useIntro`, section IDs, `data-theme`, `site`, and `whatsappLink`.
 - Produces: fixed semantic header, active section state, smooth navigation, responsive overlay, and focus trap.
 
@@ -166,6 +181,7 @@ git commit -m "feat: add responsive editorial navigation"
 ### Task 3: Home hero and controlled entrance
 
 **Files:**
+
 - Create: `components/decor/PaperGrain.tsx`
 - Create: `components/sections/home/HomeHero.tsx`
 - Create: `components/sections/home/HeroCollage.tsx`
@@ -176,6 +192,7 @@ git commit -m "feat: add responsive editorial navigation"
 - Modify: `tests/animations.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `useIntro`, `useLenis`, local static image imports, existing UI/animation primitives.
 - Produces: `HomeHero`, a one-shot `data-hero-entered` state, a responsive collage, and off-screen-paused floating/badge loops.
 
@@ -184,14 +201,24 @@ git commit -m "feat: add responsive editorial navigation"
 ```tsx
 it("renders the locked hero copy and four descriptive product images", () => {
   render(<HomeHero />);
-  expect(screen.getByRole("heading", { level: 1, name: /where flowers become forever memories/i })).toBeVisible();
+  expect(
+    screen.getByRole("heading", {
+      level: 1,
+      name: /where flowers become forever memories/i,
+    }),
+  ).toBeVisible();
   expect(screen.getAllByRole("img")).toHaveLength(4);
-  expect(screen.getByRole("link", { name: /explore collection/i })).toHaveAttribute("href", "#collection");
+  expect(
+    screen.getByRole("link", { name: /explore collection/i }),
+  ).toHaveAttribute("href", "#collection");
 });
 
 it("starts the controlled entrance once after intro completion", () => {
   renderWithIntro(<HomeHero />, { introComplete: true });
-  expect(screen.getByTestId("home-hero")).toHaveAttribute("data-hero-entered", "true");
+  expect(screen.getByTestId("home-hero")).toHaveAttribute(
+    "data-hero-entered",
+    "true",
+  );
 });
 ```
 
@@ -229,6 +256,7 @@ git commit -m "feat: build the phase two home hero"
 ### Task 4: About story, scrubbed copy, and values
 
 **Files:**
+
 - Create: `components/decor/MagnoliaLineArt.tsx`
 - Create: `components/sections/home/AboutStudio.tsx`
 - Create: `components/sections/home/WordScrubText.tsx`
@@ -237,6 +265,7 @@ git commit -m "feat: build the phase two home hero"
 - Create: `tests/about-studio.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `ImageReveal`, `ParallaxImage`, `Reveal`, `SplitTextReveal`, and `lilac-pearl-dome.jpg`.
 - Produces: labelled `#about`, accessible scrub text, SVG draw animation, and values count/fade behavior.
 
@@ -247,7 +276,10 @@ it("keeps paragraph semantics while decorative words remain hidden", () => {
   render(<WordScrubText>Every gift should tell a story.</WordScrubText>);
   expect(screen.getByText("Every gift should tell a story.")).toBeVisible();
   expect(document.querySelectorAll("[data-scrub-word]")).toHaveLength(6);
-  expect(document.querySelector("[data-scrub-copy]")).toHaveAttribute("aria-hidden", "true");
+  expect(document.querySelector("[data-scrub-copy]")).toHaveAttribute(
+    "aria-hidden",
+    "true",
+  );
 });
 
 it("renders the founder signature and all four values", () => {
@@ -286,6 +318,7 @@ git commit -m "feat: add the Studio Viana about story"
 ### Task 5: Craft image band, services, cursor previews, and marquee
 
 **Files:**
+
 - Create: `components/sections/home/WhatWeDo.tsx`
 - Create: `components/sections/home/ExpandingImageBand.tsx`
 - Create: `components/sections/home/ServiceColumn.tsx`
@@ -296,6 +329,7 @@ git commit -m "feat: add the Studio Viana about story"
 - Modify: `tests/animations.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `services`, five local image imports, existing labels/headings/dividers, and reduced-motion state.
 - Produces: `#craft`, an expanding full-bleed band, responsive service grid, fine-pointer previews, and a dark-theme marquee.
 
@@ -305,13 +339,21 @@ git commit -m "feat: add the Studio Viana about story"
 it("renders four numbered services from canonical data", () => {
   render(<WhatWeDo />);
   expect(screen.getAllByRole("article")).toHaveLength(4);
-  expect(screen.getByRole("heading", { name: "Corporate Events" })).toBeVisible();
-  expect(screen.getAllByRole("link", { name: /discover/i })).toSatisfy((links) => links.every((link) => link.getAttribute("href") === "#collection"));
+  expect(
+    screen.getByRole("heading", { name: "Corporate Events" }),
+  ).toBeVisible();
+  expect(screen.getAllByRole("link", { name: /discover/i })).toSatisfy(
+    (links) =>
+      links.every((link) => link.getAttribute("href") === "#collection"),
+  );
 });
 
 it("marks only the marquee band as a dark navigation theme", () => {
   render(<WhatWeDo />);
-  expect(screen.getByTestId("craft-marquee")).toHaveAttribute("data-theme", "dark");
+  expect(screen.getByTestId("craft-marquee")).toHaveAttribute(
+    "data-theme",
+    "dark",
+  );
 });
 ```
 
@@ -347,6 +389,7 @@ git commit -m "feat: build the what we do story"
 ### Task 6: Compose the full Phase 2 page
 
 **Files:**
+
 - Modify: `app/page.tsx`
 - Modify: `app/layout.tsx`
 - Modify: `app/globals.css`
@@ -355,6 +398,7 @@ git commit -m "feat: build the what we do story"
 - Modify: `tests/data.test.ts`
 
 **Interfaces:**
+
 - Consumes: `Navbar`, `HomeHero`, `AboutStudio`, `WhatWeDo`, and existing section primitives.
 - Produces: final semantic page order and working `collection`, `pricing`, and `contact` anchor shells.
 
@@ -363,8 +407,17 @@ git commit -m "feat: build the what we do story"
 ```tsx
 it("composes intro, home, about, craft, collection, pricing, and contact in order", () => {
   render(<Home />);
-  const ids = [...document.querySelectorAll("main > section[id]")].map((node) => node.id);
-  expect(ids).toEqual(["home", "about", "craft", "collection", "pricing", "contact"]);
+  const ids = [...document.querySelectorAll("main > section[id]")].map(
+    (node) => node.id,
+  );
+  expect(ids).toEqual([
+    "home",
+    "about",
+    "craft",
+    "collection",
+    "pricing",
+    "contact",
+  ]);
   expect(screen.queryByText("Phase 2 begins here")).not.toBeInTheDocument();
 });
 ```
@@ -405,23 +458,35 @@ git commit -m "feat: compose the complete phase two homepage"
 ### Task 7: Browser interaction, responsive, and performance verification
 
 **Files:**
+
 - Create: `tests/browser/phase-two.spec.ts`
 - Modify: `playwright.config.ts` only if a device project is required
 
 **Interfaces:**
+
 - Consumes: the built application.
 - Produces: automated proof for navigation, accessibility-critical interactions, all breakpoints, intro hand-off, reduced motion, and runtime health.
 
 - [ ] **Step 1: Write failing Playwright coverage**
 
 ```ts
-test("intro hand-off reveals hero and navigation without a cream seam", async ({ page }) => {
+test("intro hand-off reveals hero and navigation without a cream seam", async ({
+  page,
+}) => {
   await markIntroSeen(page);
   await page.goto("/");
   await page.locator("#home").scrollIntoViewIfNeeded();
-  await expect(page.locator("html")).toHaveAttribute("data-intro-complete", "true");
-  await expect(page.getByRole("navigation", { name: /primary/i })).toBeVisible();
-  await expect(page.locator("#home")).toHaveCSS("background-color", "rgb(247, 240, 230)");
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-intro-complete",
+    "true",
+  );
+  await expect(
+    page.getByRole("navigation", { name: /primary/i }),
+  ).toBeVisible();
+  await expect(page.locator("#home")).toHaveCSS(
+    "background-color",
+    "rgb(247, 240, 230)",
+  );
 });
 ```
 
@@ -455,11 +520,13 @@ git commit -m "test: verify phase two interactions and layouts"
 ### Task 8: Fidelity ledger and final evidence
 
 **Files:**
+
 - Create: `docs/superpowers/phase-2-fidelity-ledger.md`
 - Create: `docs/phase-2-home-story.md`
 - Modify: `README.md` only for the Phase 2 verification command and asset note
 
 **Interfaces:**
+
 - Consumes: four approved concepts, final browser screenshots, test/build output, and asset inventory.
 - Produces: auditable fidelity evidence, tweakable motion values, image list, and operating checklist.
 
@@ -491,4 +558,3 @@ Check every section of the design spec against implementation and evidence. Conf
 git add README.md docs/superpowers/phase-2-fidelity-ledger.md docs/phase-2-home-story.md
 git commit -m "docs: complete phase two delivery guide"
 ```
-

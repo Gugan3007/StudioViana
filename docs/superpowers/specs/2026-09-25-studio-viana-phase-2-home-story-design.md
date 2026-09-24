@@ -126,14 +126,14 @@ The ending `Marquee` is a forest dark-theme band. Its loop pauses outside the vi
 
 ## Product asset inventory
 
-| File | Product/use | Native aspect | Recommended source size |
-| --- | --- | --- | --- |
-| `grand-bouquet.jpg` | Main Home collage / Bouquets preview | 4:5 | 1600×2000 |
-| `blush-lily.jpg` | Home side image | 1:1 | 1600×1600 |
-| `just-for-you-hamper.jpg` | Home collage / Hampers preview | 4:3 | 1600×1200 |
-| `flower-card.jpg` | Home collage / Return Gifts preview | 4:5 | 1200×1500 |
-| `lilac-pearl-dome.jpg` | About panel / Corporate preview | 3:4 | 1800×2400 |
-| `i-love-you-lily-band.jpg` | Expanding image band | 3:2 | 2400×1600 |
+| File                       | Product/use                          | Native aspect | Recommended source size |
+| -------------------------- | ------------------------------------ | ------------- | ----------------------- |
+| `grand-bouquet.jpg`        | Main Home collage / Bouquets preview | 4:5           | 1600×2000               |
+| `blush-lily.jpg`           | Home side image                      | 1:1           | 1600×1600               |
+| `just-for-you-hamper.jpg`  | Home collage / Hampers preview       | 4:3           | 1600×1200               |
+| `flower-card.jpg`          | Home collage / Return Gifts preview  | 4:5           | 1200×1500               |
+| `lilac-pearl-dome.jpg`     | About panel / Corporate preview      | 3:4           | 1800×2400               |
+| `i-love-you-lily-band.jpg` | Expanding image band                 | 3:2           | 2400×1600               |
 
 All six files are included in `public/images/products/`. Their generated dimensions retain the required aspect ratios, and Next Image produces responsive derivatives.
 
@@ -179,4 +179,3 @@ All six files are included in `public/images/products/`. Their generated dimensi
 - Reduced motion, keyboard-only use, no horizontal overflow, no missing images, and no console/hydration errors.
 - Layout screenshots at 360, 390, 768, 1024, 1440, and 1920px.
 - Format, lint, TypeScript, unit tests, production build, Playwright functional tests, Lighthouse-style accessibility/performance checks, and a Chrome trace with no scroll long task at or above 50ms.
-

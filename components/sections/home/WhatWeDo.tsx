@@ -22,7 +22,7 @@ export function WhatWeDo() {
     >
       <ExpandingImageBand />
 
-      <Container className="py-section">
+      <Container className="py-[clamp(5rem,8vw,8rem)]">
         <header className="mx-auto max-w-3xl text-center">
           <SectionLabel>Our Craft</SectionLabel>
           <div className="mt-5">
@@ -38,7 +38,7 @@ export function WhatWeDo() {
         </header>
 
         <Reveal
-          className="mt-[clamp(4rem,8vw,7rem)] grid gap-x-8 sm:grid-cols-2 lg:grid-cols-4"
+          className="mt-[clamp(4rem,7vw,6rem)] grid gap-x-8 sm:grid-cols-2 lg:grid-cols-4"
           stagger={0.12}
         >
           {services.map((service, index) => (

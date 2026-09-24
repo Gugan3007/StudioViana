@@ -44,12 +44,7 @@ export function ExpandingImageBand() {
           { clipPath: "inset(0% 0% round 0px)", ease: "none" },
           0,
         )
-        .fromTo(
-          image.current,
-          { scale: 1.2 },
-          { ease: "none", scale: 1 },
-          0,
-        )
+        .fromTo(image.current, { scale: 1.2 }, { ease: "none", scale: 1 }, 0)
         .fromTo(
           headline.current,
           { autoAlpha: 0, y: 28 },
@@ -62,7 +57,10 @@ export function ExpandingImageBand() {
   }, [shouldReduceMotion]);
 
   return (
-    <div ref={root} className="relative h-[70svh] min-h-[34rem] overflow-hidden">
+    <div
+      ref={root}
+      className="relative h-[70svh] min-h-[34rem] overflow-hidden"
+    >
       <div
         ref={frame}
         className="absolute inset-0 overflow-hidden"
@@ -85,10 +83,10 @@ export function ExpandingImageBand() {
           src={lilyBand}
           style={{ transform: shouldReduceMotion ? "scale(1)" : "scale(1.2)" }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-forest/75 via-forest/5 to-transparent" />
+        <div className="from-forest/75 via-forest/5 absolute inset-0 bg-gradient-to-t to-transparent" />
         <h2
           ref={headline}
-          className="absolute bottom-[clamp(3rem,8vw,7rem)] left-1/2 w-[min(88%,68rem)] -translate-x-1/2 text-center font-display text-[clamp(2.5rem,6vw,5.7rem)] leading-[1.04] tracking-[-0.035em] text-cream"
+          className="absolute bottom-[clamp(3rem,8vw,7rem)] left-1/2 w-[min(90%,78rem)] -translate-x-1/2 text-center font-display text-[clamp(2.5rem,4.5vw,4.5rem)] leading-[1.04] tracking-[-0.035em] text-cream"
           style={shouldReduceMotion ? { opacity: 1 } : undefined}
         >
           Made by hand. Made for moments.

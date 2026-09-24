@@ -33,6 +33,20 @@ body {
   min-height: 100%;
 }
 
+main > section[id]:not(#home) {
+  scroll-margin-top: 84px;
+}
+
+[data-cursor-preview] {
+  will-change: transform, opacity;
+}
+
+@supports (height: 100dvh) {
+  [aria-label="Mobile navigation"] {
+    min-height: 100dvh;
+  }
+}
+
 body {
   overflow-x: hidden;
   background: var(--cream);
@@ -237,6 +251,14 @@ html.lenis body {
   [data-controlled-split="true"] [data-split-token] {
     opacity: 1 !important;
     transform: none !important;
+  }
+
+  [data-expanding-frame] {
+    clip-path: inset(0% 0% round 0) !important;
+  }
+
+  [data-expanding-image] {
+    transform: scale(1) !important;
   }
 }
 

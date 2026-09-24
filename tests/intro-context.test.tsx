@@ -2,10 +2,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import {
-  IntroProvider,
-  useIntro,
-} from "@/lib/context/IntroContext";
+import { IntroProvider, useIntro } from "@/lib/context/IntroContext";
 
 function Probe() {
   const { introComplete, markIntroActive, markIntroComplete } = useIntro();

@@ -134,4 +134,15 @@ describe("AboutStudio", () => {
       expect.objectContaining({ clipPath: "inset(0% 0 0 0)" }),
     );
   });
+
+  it("keeps the completed 100% value when reduced motion settles after mount", () => {
+    aboutMocks.reduceMotion = false;
+    const { container, rerender } = render(<AboutStudio />);
+    container.querySelector<HTMLElement>("[data-count]")!.textContent = "0%";
+    aboutMocks.reduceMotion = true;
+    rerender(<AboutStudio />);
+
+    expect(screen.getByText("100%")).toBeVisible();
+    expect(screen.queryByText("0%")).not.toBeInTheDocument();
+  });
 });

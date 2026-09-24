@@ -17,9 +17,7 @@ export function MagnoliaLineArt({ className }: { className?: string }) {
     const context = gsap.context(() => {
       paths.forEach((path) => {
         const length =
-          typeof path.getTotalLength === "function"
-            ? path.getTotalLength()
-            : 1;
+          typeof path.getTotalLength === "function" ? path.getTotalLength() : 1;
         gsap.set(path, {
           strokeDasharray: length,
           strokeDashoffset: length,

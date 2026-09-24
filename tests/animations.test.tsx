@@ -212,8 +212,7 @@ describe("ambient motion primitives", () => {
   it("pauses and resumes Float motion as it leaves and enters the viewport", () => {
     mocks.reduceMotion = false;
     let visibilityCallback:
-      | ((entries: IntersectionObserverEntry[]) => void)
-      | undefined;
+      ((entries: IntersectionObserverEntry[]) => void) | undefined;
     const observe = vi.fn();
     const disconnect = vi.fn();
     class MockIntersectionObserver {
@@ -230,7 +229,9 @@ describe("ambient motion primitives", () => {
     render(<Float>Observed flower</Float>);
     expect(observe).toHaveBeenCalledOnce();
 
-    visibilityCallback?.([{ isIntersecting: true } as IntersectionObserverEntry]);
+    visibilityCallback?.([
+      { isIntersecting: true } as IntersectionObserverEntry,
+    ]);
     expect(mocks.timelinePlay).toHaveBeenCalledOnce();
     visibilityCallback?.([
       { isIntersecting: false } as IntersectionObserverEntry,
@@ -281,8 +282,7 @@ describe("ambient motion primitives", () => {
   it("pauses and resumes Marquee motion outside and inside the viewport", () => {
     mocks.reduceMotion = false;
     let visibilityCallback:
-      | ((entries: IntersectionObserverEntry[]) => void)
-      | undefined;
+      ((entries: IntersectionObserverEntry[]) => void) | undefined;
     const observe = vi.fn();
     const disconnect = vi.fn();
     class MockIntersectionObserver {
@@ -303,7 +303,9 @@ describe("ambient motion primitives", () => {
       { isIntersecting: false } as IntersectionObserverEntry,
     ]);
     expect(mocks.timelinePause).toHaveBeenCalledOnce();
-    visibilityCallback?.([{ isIntersecting: true } as IntersectionObserverEntry]);
+    visibilityCallback?.([
+      { isIntersecting: true } as IntersectionObserverEntry,
+    ]);
     expect(mocks.timelinePlay).toHaveBeenCalledOnce();
 
     unmount();

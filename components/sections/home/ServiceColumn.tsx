@@ -20,7 +20,11 @@ export function ServiceColumn({ image, service }: ServiceColumnProps) {
   const shouldReduceMotion = useReducedMotion();
 
   useIsomorphicLayoutEffect(() => {
-    if (shouldReduceMotion || !article.current || !number.current) return;
+    if (!article.current || !number.current) return;
+    if (shouldReduceMotion) {
+      number.current.textContent = service.number;
+      return;
+    }
     const progress = { value: 0 };
     const target = Number.parseInt(service.number, 10);
     const context = gsap.context(() => {
@@ -50,7 +54,7 @@ export function ServiceColumn({ image, service }: ServiceColumnProps) {
   return (
     <article
       ref={article}
-      className="group relative flex min-h-[27rem] flex-col border-t border-gold/30 py-9 transition-transform duration-500 ease-out lg:hover:-translate-y-1.5"
+      className="border-gold/30 group relative flex min-h-[24rem] flex-col border-t py-9 transition-transform duration-500 ease-out lg:hover:-translate-y-1.5"
       data-reveal-item
     >
       <p
@@ -67,10 +71,13 @@ export function ServiceColumn({ image, service }: ServiceColumnProps) {
         {service.description}
       </p>
       <a
-        className="mt-auto w-fit border-b border-gold/50 pb-1 text-[0.68rem] font-medium uppercase tracking-[0.22em] text-charcoal transition-colors hover:border-gold hover:text-gold"
+        className="border-gold/50 mt-auto w-fit border-b pb-1 text-[0.68rem] font-medium uppercase tracking-[0.22em] text-charcoal transition-colors hover:border-gold hover:text-gold"
         href="#collection"
       >
-        Discover <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
+        Discover{" "}
+        <span className="inline-block transition-transform group-hover:translate-x-1">
+          →
+        </span>
       </a>
       <CursorImageFollow image={image} targetRef={article} />
     </article>

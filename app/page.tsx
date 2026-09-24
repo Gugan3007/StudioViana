@@ -1,59 +1,64 @@
 import { IntroSection } from "@/components/intro/IntroSection";
-import { HomeHeroPlaceholder } from "@/components/sections/HomeHeroPlaceholder";
+import { AboutStudio } from "@/components/sections/home/AboutStudio";
+import { HomeHero } from "@/components/sections/home/HomeHero";
+import { WhatWeDo } from "@/components/sections/home/WhatWeDo";
 import { Container } from "@/components/ui/Container";
-import { Heading } from "@/components/ui/Heading";
 import { Section } from "@/components/ui/Section";
 import { SectionLabel } from "@/components/ui/SectionLabel";
+
+const shells = [
+  {
+    id: "collection",
+    label: "Phase 3",
+    heading: "The Collection",
+    tone: "light" as const,
+  },
+  {
+    id: "pricing",
+    label: "Phase 4",
+    heading: "Made for your moment",
+    tone: "soft" as const,
+  },
+  {
+    id: "contact",
+    label: "Phase 5",
+    heading: "Begin a conversation",
+    tone: "light" as const,
+  },
+] as const;
 
 export default function Home() {
   return (
     <main className="overflow-clip">
       <IntroSection />
-      <HomeHeroPlaceholder />
+      <HomeHero />
+      <AboutStudio />
+      <WhatWeDo />
 
-      <Section
-        className="flex min-h-[72svh] items-center"
-        aria-labelledby="transition-check-heading"
-        tone="soft"
-      >
-        <Container grid>
-          <div className="col-span-12 md:col-span-8 md:col-start-3">
-            <SectionLabel>Transition test surface / 01</SectionLabel>
-            <Heading
-              as="h2"
-              className="mt-6"
-              id="transition-check-heading"
-              italic="flow"
-              size="h1"
-            >
-              A quiet place to test the flow
-            </Heading>
-            <p className="mt-7 max-w-xl text-sm leading-7 text-muted">
-              This neutral section provides scroll distance for validating the
-              intro release. It will be replaced by the full Phase 2 story.
-            </p>
-          </div>
-        </Container>
-      </Section>
-
-      <Section
-        className="flex min-h-[72svh] items-center"
-        aria-labelledby="continuity-check-heading"
-      >
-        <Container grid>
-          <div className="border-gold/35 col-span-12 border-t pt-8 md:col-span-9 md:col-start-2">
-            <SectionLabel>Transition test surface / 02</SectionLabel>
-            <Heading
-              as="h2"
-              className="mt-6"
-              id="continuity-check-heading"
-              size="h2"
-            >
-              Natural scrolling resumes here
-            </Heading>
-          </div>
-        </Container>
-      </Section>
+      {shells.map((shell) => {
+        const headingId = `${shell.id}-heading`;
+        return (
+          <Section
+            key={shell.id}
+            id={shell.id}
+            aria-labelledby={headingId}
+            className="flex min-h-[62svh] items-center"
+            tone={shell.tone}
+          >
+            <Container>
+              <div className="border-gold/30 border-t pt-8">
+                <SectionLabel>{shell.label}</SectionLabel>
+                <h2
+                  className="mt-5 max-w-4xl font-display text-[clamp(2.7rem,6vw,5.8rem)] leading-[1.02] tracking-[-0.04em] text-charcoal"
+                  id={headingId}
+                >
+                  {shell.heading}
+                </h2>
+              </div>
+            </Container>
+          </Section>
+        );
+      })}
     </main>
   );
 }

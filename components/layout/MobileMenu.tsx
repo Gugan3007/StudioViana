@@ -123,13 +123,13 @@ export function MobileMenu({
           : undefined
       }
     >
-      <div className="pointer-events-none absolute inset-6 border border-gold/55" />
+      <div className="border-gold/55 pointer-events-none absolute inset-6 border" />
       <div className="mx-auto flex min-h-[100svh] max-w-content flex-col px-gutter pb-10 pt-28">
         <div className="flex-1">
           {items.map((item) => (
             <div
               key={item.href}
-              className="overflow-hidden border-b border-gold/25"
+              className="border-gold/25 overflow-hidden border-b"
             >
               <a
                 className="group grid min-h-20 grid-cols-[2.5rem_1fr_auto] items-center gap-3 py-4"
@@ -157,13 +157,13 @@ export function MobileMenu({
           ))}
         </div>
 
-        <div className="mt-12 grid gap-6 border-t border-gold/30 pt-7 text-xs tracking-[0.1em] sm:grid-cols-2">
+        <div className="border-gold/30 mt-12 grid gap-6 border-t pt-7 text-xs tracking-[0.1em] sm:grid-cols-2">
           <div>
             <p className="text-gold">CONTACT</p>
             <a className="mt-2 block" href={`mailto:${site.email}`}>
               {site.email}
             </a>
-            <p className="mt-1 text-cream/65">{site.location}</p>
+            <p className="text-cream/65 mt-1">{site.location}</p>
           </div>
           <div className="sm:text-right">
             <p className="text-gold">FOLLOW</p>

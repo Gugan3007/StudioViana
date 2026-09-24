@@ -108,7 +108,9 @@ export function ImageReveal({
           refreshScrollTrigger();
         }}
         priority={priority}
-        placeholder={placeholder ?? (typeof src === "string" ? undefined : "blur")}
+        placeholder={
+          placeholder ?? (typeof src === "string" ? undefined : "blur")
+        }
         sizes={sizes}
         src={src}
         style={
