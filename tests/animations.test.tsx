@@ -18,6 +18,7 @@ const mocks = vi.hoisted(() => ({
   timelineKill: vi.fn(),
   timelinePause: vi.fn(),
   timelinePlay: vi.fn(),
+  timelineTimeScale: vi.fn(),
   triggerKill: vi.fn(),
 }));
 
@@ -60,7 +61,9 @@ vi.mock("@/lib/animations/gsap", () => ({
     })),
     timeline: vi.fn(() => ({
       kill: mocks.timelineKill,
-      timeScale: vi.fn(),
+      pause: mocks.timelinePause,
+      play: mocks.timelinePlay,
+      timeScale: mocks.timelineTimeScale,
       to: vi.fn().mockReturnThis(),
     })),
   },
@@ -200,6 +203,12 @@ describe("image animation primitives", () => {
 });
 
 describe("ambient motion primitives", () => {
+  beforeEach(() => {
+    mocks.reduceMotion = false;
+    vi.clearAllMocks();
+    vi.unstubAllGlobals();
+  });
+
   it("pauses and resumes Float motion as it leaves and enters the viewport", () => {
     mocks.reduceMotion = false;
     let visibilityCallback:
@@ -267,5 +276,37 @@ describe("ambient motion primitives", () => {
       "Flowers that never fade",
     );
     expect(container.querySelectorAll('[aria-hidden="true"]')).toHaveLength(2);
+  });
+
+  it("pauses and resumes Marquee motion outside and inside the viewport", () => {
+    mocks.reduceMotion = false;
+    let visibilityCallback:
+      | ((entries: IntersectionObserverEntry[]) => void)
+      | undefined;
+    const observe = vi.fn();
+    const disconnect = vi.fn();
+    class MockIntersectionObserver {
+      constructor(callback: (entries: IntersectionObserverEntry[]) => void) {
+        visibilityCallback = callback;
+      }
+
+      disconnect = disconnect;
+      observe = observe;
+      unobserve = vi.fn();
+    }
+    vi.stubGlobal("IntersectionObserver", MockIntersectionObserver);
+
+    const { unmount } = render(<Marquee text="Flowers that never fade" />);
+    expect(observe).toHaveBeenCalledOnce();
+
+    visibilityCallback?.([
+      { isIntersecting: false } as IntersectionObserverEntry,
+    ]);
+    expect(mocks.timelinePause).toHaveBeenCalledOnce();
+    visibilityCallback?.([{ isIntersecting: true } as IntersectionObserverEntry]);
+    expect(mocks.timelinePlay).toHaveBeenCalledOnce();
+
+    unmount();
+    expect(disconnect).toHaveBeenCalledOnce();
   });
 });

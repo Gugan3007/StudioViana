@@ -129,7 +129,7 @@ export const services: readonly Service[] = [
     number: "01",
     name: "Hampers",
     description:
-      "Curated gift hampers built around a floral centrepiece for birthdays, anniversaries and thank-you gestures.",
+      "Curated gift hampers built around a floral centrepiece, dressed for birthdays, anniversaries and thank-you gestures.",
   },
   {
     number: "02",
