@@ -22,21 +22,30 @@ const IntroContext = createContext<IntroContextValue | null>(null);
 export function IntroProvider({ children }: { children: ReactNode }) {
   const [introComplete, setIntroComplete] = useState(false);
   const completionRef = useRef(false);
+  const restorationFrameRef = useRef<number | undefined>(undefined);
+
+  const cancelRestoration = useCallback(() => {
+    if (restorationFrameRef.current === undefined) return;
+    window.cancelAnimationFrame(restorationFrameRef.current);
+    restorationFrameRef.current = undefined;
+  }, []);
 
   const markIntroComplete = useCallback(() => {
+    cancelRestoration();
     document.documentElement.dataset.introComplete = "true";
     if (completionRef.current) return;
 
     completionRef.current = true;
     setIntroComplete(true);
     window.dispatchEvent(new CustomEvent("studio-viana:intro-complete"));
-  }, []);
+  }, [cancelRestoration]);
 
   const markIntroActive = useCallback(() => {
+    cancelRestoration();
     completionRef.current = false;
     setIntroComplete(false);
     delete document.documentElement.dataset.introComplete;
-  }, []);
+  }, [cancelRestoration]);
 
   useEffect(() => {
     const restoredPastIntro =
@@ -44,13 +53,14 @@ export function IntroProvider({ children }: { children: ReactNode }) {
       window.scrollY > 0;
     if (!restoredPastIntro) return;
 
-    const restorationFrame = window.requestAnimationFrame(() => {
+    restorationFrameRef.current = window.requestAnimationFrame(() => {
+      restorationFrameRef.current = undefined;
       completionRef.current = true;
       setIntroComplete(true);
       document.documentElement.dataset.introComplete = "true";
     });
-    return () => window.cancelAnimationFrame(restorationFrame);
-  }, []);
+    return cancelRestoration;
+  }, [cancelRestoration]);
 
   const value = useMemo(
     () => ({ introComplete, markIntroActive, markIntroComplete }),
