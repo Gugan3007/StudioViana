@@ -223,9 +223,6 @@ export function IntroSection() {
         const exitLayers = [flowerMask, sequenceLayer, vignette].filter(
           (target): target is Element => target !== null,
         );
-        const homeTokens = document.querySelectorAll(
-          "#home [data-controlled-split] [data-split-token]",
-        );
         const rotation =
           activeBreakpoint === "desktop"
             ? 8
@@ -310,10 +307,6 @@ export function IntroSection() {
         if (middle.length > 0) {
           timeline.set(middle, { autoAlpha: 0, scale: 1.3 }, 0);
         }
-        if (homeTokens.length > 0) {
-          timeline.set(homeTokens, { autoAlpha: 0, yPercent: 110 }, 0);
-        }
-
         if (sequenceLayer) {
           timeline.set(
             sequenceLayer,
@@ -469,20 +462,6 @@ export function IntroSection() {
             { autoAlpha: 0, duration: 11 },
             introConfig.timeline.light + 8,
           );
-
-        if (homeTokens.length > 0) {
-          timeline.fromTo(
-            homeTokens,
-            { autoAlpha: 0, yPercent: 110 },
-            {
-              autoAlpha: 1,
-              duration: 7.3,
-              stagger: 0.7,
-              yPercent: 0,
-            },
-            92,
-          );
-        }
 
         return () => {
           clearActiveState();

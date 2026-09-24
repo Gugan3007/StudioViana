@@ -10,6 +10,9 @@ import { cn } from "@/lib/utils";
 interface FloatProps {
   children: ReactNode;
   className?: string;
+  delay?: number;
+  duration?: number;
+  enabled?: boolean;
   mouseParallax?: number;
   strength?: number;
 }
@@ -17,6 +20,9 @@ interface FloatProps {
 export function Float({
   children,
   className,
+  delay = 0,
+  duration,
+  enabled = true,
   mouseParallax = 12,
   strength = 14,
 }: FloatProps) {
@@ -29,23 +35,49 @@ export function Float({
     10;
 
   useIsomorphicLayoutEffect(() => {
-    if (shouldReduceMotion || !floatLayer.current || !pointerLayer.current)
+    if (
+      !enabled ||
+      shouldReduceMotion ||
+      !floatLayer.current ||
+      !pointerLayer.current
+    )
       return;
 
     const floatingTween = gsap.to(floatLayer.current, {
       y: strength,
-      duration: 2.8 + offset / 10,
+      delay,
+      duration: duration ?? 4.8 + offset / 4,
       ease: "sine.inOut",
+      paused: true,
       repeat: -1,
       yoyo: true,
     });
+    const visibilityObserver =
+      typeof IntersectionObserver === "undefined"
+        ? null
+        : new IntersectionObserver(([entry]) => {
+            if (entry?.isIntersecting) floatingTween.play();
+            else floatingTween.pause();
+          });
+    if (visibilityObserver) visibilityObserver.observe(floatLayer.current);
+    else floatingTween.play();
+
     const pointerMedia = window.matchMedia(
       "(hover: hover) and (pointer: fine)",
     );
+    const moveX = gsap.quickTo(pointerLayer.current, "x", {
+      duration: 0.8,
+      ease: "power3.out",
+    });
+    const moveY = gsap.quickTo(pointerLayer.current, "y", {
+      duration: 0.8,
+      ease: "power3.out",
+    });
     const handlePointer = (event: PointerEvent) => {
       const x = (event.clientX / window.innerWidth - 0.5) * mouseParallax;
       const y = (event.clientY / window.innerHeight - 0.5) * mouseParallax;
-      gsap.to(pointerLayer.current, { x, y, duration: 0.8, overwrite: "auto" });
+      moveX(x);
+      moveY(y);
     };
     const syncPointer = () => {
       window.removeEventListener("pointermove", handlePointer);
@@ -59,9 +91,18 @@ export function Float({
     return () => {
       pointerMedia.removeEventListener("change", syncPointer);
       window.removeEventListener("pointermove", handlePointer);
+      visibilityObserver?.disconnect();
       floatingTween.kill();
     };
-  }, [mouseParallax, offset, shouldReduceMotion, strength]);
+  }, [
+    delay,
+    duration,
+    enabled,
+    mouseParallax,
+    offset,
+    shouldReduceMotion,
+    strength,
+  ]);
 
   return (
     <div ref={floatLayer} className={cn("will-change-transform", className)}>

@@ -16,6 +16,8 @@ const mocks = vi.hoisted(() => ({
   revert: vi.fn(),
   refresh: vi.fn(),
   timelineKill: vi.fn(),
+  timelinePause: vi.fn(),
+  timelinePlay: vi.fn(),
   triggerKill: vi.fn(),
 }));
 
@@ -50,7 +52,12 @@ vi.mock("@/lib/animations/gsap", () => ({
       return { revert: mocks.revert };
     }),
     fromTo: mocks.fromTo,
-    to: vi.fn(() => ({ kill: mocks.timelineKill })),
+    quickTo: vi.fn(() => vi.fn()),
+    to: vi.fn(() => ({
+      kill: mocks.timelineKill,
+      pause: mocks.timelinePause,
+      play: mocks.timelinePlay,
+    })),
     timeline: vi.fn(() => ({
       kill: mocks.timelineKill,
       timeScale: vi.fn(),
@@ -70,7 +77,10 @@ describe("Reveal", () => {
     mocks.revert.mockClear();
   });
 
-  afterEach(() => vi.clearAllMocks());
+  afterEach(() => {
+    vi.clearAllMocks();
+    vi.unstubAllGlobals();
+  });
 
   it("keeps content immediately visible when reduced motion is enabled", () => {
     mocks.reduceMotion = true;
@@ -190,6 +200,35 @@ describe("image animation primitives", () => {
 });
 
 describe("ambient motion primitives", () => {
+  it("pauses and resumes Float motion as it leaves and enters the viewport", () => {
+    mocks.reduceMotion = false;
+    let visibilityCallback:
+      | ((entries: IntersectionObserverEntry[]) => void)
+      | undefined;
+    const observe = vi.fn();
+    const disconnect = vi.fn();
+    class MockIntersectionObserver {
+      constructor(callback: (entries: IntersectionObserverEntry[]) => void) {
+        visibilityCallback = callback;
+      }
+
+      disconnect = disconnect;
+      observe = observe;
+      unobserve = vi.fn();
+    }
+    vi.stubGlobal("IntersectionObserver", MockIntersectionObserver);
+
+    render(<Float>Observed flower</Float>);
+    expect(observe).toHaveBeenCalledOnce();
+
+    visibilityCallback?.([{ isIntersecting: true } as IntersectionObserverEntry]);
+    expect(mocks.timelinePlay).toHaveBeenCalledOnce();
+    visibilityCallback?.([
+      { isIntersecting: false } as IntersectionObserverEntry,
+    ]);
+    expect(mocks.timelinePause).toHaveBeenCalledOnce();
+  });
+
   it("removes Float pointer listeners when unmounted", () => {
     mocks.reduceMotion = false;
     const add = vi.spyOn(window, "addEventListener");

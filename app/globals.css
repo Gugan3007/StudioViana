@@ -152,14 +152,6 @@ html.lenis body {
   transform: translate3d(0, 110%, 0);
 }
 
-html[data-intro-complete="true"]
-  #home
-  [data-controlled-split="true"]
-  [data-split-token] {
-  opacity: 1 !important;
-  transform: none !important;
-}
-
 [data-intro-active="true"] [data-intro-logo],
 [data-intro-active="true"] [data-intro-flower],
 [data-intro-active="true"] [data-intro-middle],
@@ -292,4 +284,12 @@ html[data-intro-complete="true"]
     opacity: 0;
     transform: translate3d(0, 250%, 0) scaleY(0.7);
   }
+}
+
+/* Phase 2 tactile paper texture. It is decorative and intentionally faint. */
+.paper-grain {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paper'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='4' stitchTiles='stitchTiles'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paper)' opacity='.82'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 180px 180px;
+  mix-blend-mode: multiply;
 }
