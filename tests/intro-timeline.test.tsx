@@ -1,5 +1,10 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { createElement, forwardRef, useEffect, useImperativeHandle } from "react";
+import {
+  createElement,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+} from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { IntroSection } from "@/components/intro/IntroSection";
@@ -98,7 +103,11 @@ vi.mock("@/components/intro/Preloader", () => ({
   Preloader: ({
     onComplete,
   }: {
-    onComplete(result: { loaded: string[]; failed: string[]; timedOut: boolean }): void;
+    onComplete(result: {
+      loaded: string[];
+      failed: string[];
+      timedOut: boolean;
+    }): void;
   }) => {
     useEffect(() => {
       onComplete({ loaded: [], failed: [], timedOut: false });

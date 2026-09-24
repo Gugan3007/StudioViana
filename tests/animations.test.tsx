@@ -102,7 +102,9 @@ describe("SplitTextReveal", () => {
 
     expect(mocks.fromTo).not.toHaveBeenCalled();
     expect(container.querySelectorAll("[data-split-token]")).toHaveLength(2);
-    expect(container.querySelector("[data-controlled-split]")).toBeInTheDocument();
+    expect(
+      container.querySelector("[data-controlled-split]"),
+    ).toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
         level: 1,

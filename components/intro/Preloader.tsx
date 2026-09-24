@@ -169,10 +169,13 @@ export function Preloader({
       data-preloader-phase={phase}
       role="status"
     >
-      <div aria-hidden="true" className="intro-grain absolute inset-0 opacity-[0.07]" />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-8 border border-gold/70 max-sm:inset-4"
+        className="intro-grain absolute inset-0 opacity-[0.07]"
+      />
+      <div
+        aria-hidden="true"
+        className="border-gold/70 pointer-events-none absolute inset-8 border max-sm:inset-4"
         data-preloader-progress-track
       />
       <div
@@ -191,7 +194,7 @@ export function Preloader({
             </span>
           ))}
         </p>
-        <div className="mt-9 h-px w-full overflow-hidden bg-gold/25">
+        <div className="bg-gold/25 mt-9 h-px w-full overflow-hidden">
           <span
             className="block h-full origin-left bg-gold-light transition-transform duration-150"
             data-preloader-progress

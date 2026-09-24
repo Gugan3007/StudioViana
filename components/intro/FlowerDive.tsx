@@ -21,7 +21,10 @@ export function FlowerDive({
     : introConfig.assets.desktopFlower;
 
   return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden" data-intro-dive>
+    <div
+      className="pointer-events-none absolute inset-0 overflow-hidden"
+      data-intro-dive
+    >
       <div
         className="absolute inset-0 overflow-hidden [clip-path:circle(0%_at_50%_50%)]"
         data-intro-flower-mask
@@ -59,20 +62,22 @@ export function FlowerDive({
           />
         ) : null}
 
-        {introConfig.assets.petals.slice(0, petalLayers).map((source, index) => (
-          <Image
-            key={source}
-            alt=""
-            aria-hidden="true"
-            className="object-cover"
-            data-intro-petal
-            data-petal-depth={index + 1}
-            data-testid="petal-layer"
-            fill
-            sizes="100vw"
-            src={source}
-          />
-        ))}
+        {introConfig.assets.petals
+          .slice(0, petalLayers)
+          .map((source, index) => (
+            <Image
+              key={source}
+              alt=""
+              aria-hidden="true"
+              className="object-cover"
+              data-intro-petal
+              data-petal-depth={index + 1}
+              data-testid="petal-layer"
+              fill
+              sizes="100vw"
+              src={source}
+            />
+          ))}
       </div>
 
       <svg

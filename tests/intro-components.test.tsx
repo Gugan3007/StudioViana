@@ -38,13 +38,15 @@ vi.mock("@/lib/animations/useReducedMotion", () => ({
 
 /* eslint-disable @next/next/no-img-element, jsx-a11y/alt-text */
 vi.mock("next/image", () => ({
-  default: function MockImage(props: Omit<ImgHTMLAttributes<HTMLImageElement>, "src"> & {
-    blurDataURL?: string;
-    fill?: boolean;
-    placeholder?: string;
-    priority?: boolean;
-    src: string;
-  }) {
+  default: function MockImage(
+    props: Omit<ImgHTMLAttributes<HTMLImageElement>, "src"> & {
+      blurDataURL?: string;
+      fill?: boolean;
+      placeholder?: string;
+      priority?: boolean;
+      src: string;
+    },
+  ) {
     const { blurDataURL, fill, placeholder, priority, ...imageProps } = props;
     void blurDataURL;
     void placeholder;
@@ -115,10 +117,9 @@ describe("cinematic intro scenes", () => {
       "aria-hidden",
       "true",
     );
-    expect(screen.getByRole("img", { name: /macro handcrafted/i })).toHaveAttribute(
-      "data-priority",
-      "true",
-    );
+    expect(
+      screen.getByRole("img", { name: /macro handcrafted/i }),
+    ).toHaveAttribute("data-priority", "true");
   });
 
   it("uses the portrait flower and reduced layer set on mobile", () => {
@@ -126,10 +127,9 @@ describe("cinematic intro scenes", () => {
 
     expect(screen.getAllByTestId("petal-layer")).toHaveLength(1);
     expect(screen.queryByTestId("flower-middle-layer")).not.toBeInTheDocument();
-    expect(screen.getByRole("img", { name: /macro handcrafted/i })).toHaveAttribute(
-      "src",
-      expect.stringContaining("mobile"),
-    );
+    expect(
+      screen.getByRole("img", { name: /macro handcrafted/i }),
+    ).toHaveAttribute("src", expect.stringContaining("mobile"));
   });
 
   it("keeps the light bloom and particles decorative and non-interactive", () => {
@@ -332,9 +332,7 @@ describe("cinematic intro scenes", () => {
     destination.scrollIntoView = vi.fn();
     document.body.append(destination);
 
-    const { rerender } = render(
-      <SkipIntro destinationId="home" visible />,
-    );
+    const { rerender } = render(<SkipIntro destinationId="home" visible />);
     fireEvent.click(screen.getByRole("button", { name: "Skip intro" }));
     expect(scrollTo).toHaveBeenCalledWith(destination, { duration: 1.6 });
 

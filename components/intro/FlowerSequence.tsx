@@ -63,13 +63,7 @@ export const FlowerSequence = forwardRef<
     });
 
     context.clearRect(0, 0, width, height);
-    context.drawImage(
-      frame,
-      rect.x,
-      rect.y,
-      rect.drawWidth,
-      rect.drawHeight,
-    );
+    context.drawImage(frame, rect.x, rect.y, rect.drawWidth, rect.drawHeight);
   }, [focalPoint.x, focalPoint.y]);
 
   const scheduleDraw = useCallback(() => {
@@ -170,11 +164,7 @@ export const FlowerSequence = forwardRef<
       }
     }
 
-    for (
-      let index = 0;
-      index < Math.min(6, availableUrls.length);
-      index += 1
-    ) {
+    for (let index = 0; index < Math.min(6, availableUrls.length); index += 1) {
       void worker();
     }
 

@@ -20,7 +20,10 @@ function makeImageFactory({
   let active = 0;
 
   return () => {
-    const listeners = new Map<string, Set<EventListenerOrEventListenerObject>>();
+    const listeners = new Map<
+      string,
+      Set<EventListenerOrEventListenerObject>
+    >();
     let source = "";
 
     const image = {

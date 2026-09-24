@@ -36,7 +36,9 @@ function useIntroBreakpoint(): IntroBreakpoint {
       "(min-width: 768px) and (max-width: 1023px)",
     );
     const update = () =>
-      setBreakpoint(mobile.matches ? "mobile" : tablet.matches ? "tablet" : "desktop");
+      setBreakpoint(
+        mobile.matches ? "mobile" : tablet.matches ? "tablet" : "desktop",
+      );
 
     update();
     mobile.addEventListener("change", update);
@@ -180,12 +182,16 @@ export function IntroSection() {
           .set(logo, { autoAlpha: 1, scale: 1 }, 0)
           .set([frame, scrollCue], { autoAlpha: 1 }, 0)
           .set(flowerMask, { clipPath: "circle(0% at 50% 50%)" }, 0)
-          .set(flower, {
-            autoAlpha: 1,
-            rotation: 0,
-            scale: 1.3,
-            transformOrigin: `${introConfig.focalPoint.x}% ${introConfig.focalPoint.y}%`,
-          }, 0)
+          .set(
+            flower,
+            {
+              autoAlpha: 1,
+              rotation: 0,
+              scale: 1.3,
+              transformOrigin: `${introConfig.focalPoint.x}% ${introConfig.focalPoint.y}%`,
+            },
+            0,
+          )
           .set(middle, { autoAlpha: 0, scale: 1.3 }, 0)
           .set(petals, { autoAlpha: 0, filter: "blur(0px)", scale: 1 }, 0)
           .set(ring, { autoAlpha: 1, scale: 0.01 }, 0)
@@ -209,7 +215,11 @@ export function IntroSection() {
         // Scene 1 · Brand moment · 0%–15%
         timeline
           .to(brandCopy, { autoAlpha: 0, duration: 11, yPercent: -34 }, 0)
-          .to(logo, { autoAlpha: 0, duration: 13, scale: 0.85, yPercent: -5 }, 1)
+          .to(
+            logo,
+            { autoAlpha: 0, duration: 13, scale: 0.85, yPercent: -5 },
+            1,
+          )
           .to([frame, scrollCue], { autoAlpha: 0, duration: 7 }, 3);
 
         // Scene 2 · Flower appears · 15%–35%
@@ -220,16 +230,8 @@ export function IntroSection() {
             { clipPath: "circle(18% at 50% 50%)", duration: 20 },
             introConfig.timeline.flower,
           )
-          .to(
-            flower,
-            { duration: 20, scale: 1.1 },
-            introConfig.timeline.flower,
-          )
-          .to(
-            ring,
-            { duration: 20, scale: 1 },
-            introConfig.timeline.flower,
-          )
+          .to(flower, { duration: 20, scale: 1.1 }, introConfig.timeline.flower)
+          .to(ring, { duration: 20, scale: 1 }, introConfig.timeline.flower)
           .to(
             ringStroke,
             { duration: 16, strokeDashoffset: 0 },
@@ -297,7 +299,8 @@ export function IntroSection() {
               duration: 65,
               ease: "none",
               frame: sequenceFrames.length - 1,
-              onUpdate: () => sequence.current?.setFrame(Math.round(frameProxy.frame)),
+              onUpdate: () =>
+                sequence.current?.setFrame(Math.round(frameProxy.frame)),
               snap: { frame: 1 },
             },
             introConfig.timeline.flower,
@@ -322,7 +325,11 @@ export function IntroSection() {
               },
               start,
             )
-            .to(line, { autoAlpha: 0, duration: 2.8, yPercent: -12 }, start + 8);
+            .to(
+              line,
+              { autoAlpha: 0, duration: 2.8, yPercent: -12 },
+              start + 8,
+            );
         });
 
         // Scene 4 · Light transition · 80%–100%
@@ -359,9 +366,8 @@ export function IntroSection() {
       media.add("(min-width: 1024px)", () =>
         buildTimeline(introConfig.breakpoints.desktop, "desktop"),
       );
-      media.add(
-        "(min-width: 768px) and (max-width: 1023px)",
-        () => buildTimeline(introConfig.breakpoints.tablet, "tablet"),
+      media.add("(min-width: 768px) and (max-width: 1023px)", () =>
+        buildTimeline(introConfig.breakpoints.tablet, "tablet"),
       );
       media.add("(max-width: 767px)", () =>
         buildTimeline(introConfig.breakpoints.mobile, "mobile"),

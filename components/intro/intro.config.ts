@@ -54,11 +54,7 @@ export const introConfig: IntroConfig = {
     maximumMs: 6000,
   },
   timeline: { brand: 0, flower: 15, dive: 35, light: 80, complete: 100 },
-  poem: [
-    "Shaped stem by stem…",
-    "petal by petal…",
-    "made to last forever.",
-  ],
+  poem: ["Shaped stem by stem…", "petal by petal…", "made to last forever."],
   assets: {
     desktopFlower: "/images/hero/flower-macro-placeholder.svg",
     mobileFlower: "/images/hero/flower-macro-mobile-placeholder.svg",
@@ -106,9 +102,8 @@ export function getSequenceFrameUrl(index: number): string {
 }
 
 export function getSequenceFrameUrls(): string[] {
-  return Array.from(
-    { length: introConfig.sequence.frameCount },
-    (_, index) => getSequenceFrameUrl(index + 1),
+  return Array.from({ length: introConfig.sequence.frameCount }, (_, index) =>
+    getSequenceFrameUrl(index + 1),
   );
 }
 

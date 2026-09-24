@@ -16,7 +16,7 @@ export function BrandMoment({ particleCount }: BrandMomentProps) {
     >
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-8 border border-gold/55 max-sm:inset-4"
+        className="border-gold/55 pointer-events-none absolute inset-8 border max-sm:inset-4"
         data-intro-frame
       />
 
@@ -56,7 +56,7 @@ export function BrandMoment({ particleCount }: BrandMomentProps) {
           />
         </div>
         <p
-          className="mt-7 max-w-xl font-display text-[clamp(1rem,1.8vw,1.4rem)] italic leading-relaxed text-cream/88"
+          className="text-cream/88 mt-7 max-w-xl font-display text-[clamp(1rem,1.8vw,1.4rem)] italic leading-relaxed"
           data-intro-brand-copy
         >
           Flowers that never fade, feelings that never end

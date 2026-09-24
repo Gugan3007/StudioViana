@@ -41,7 +41,7 @@ export default function Home() {
         aria-labelledby="continuity-check-heading"
       >
         <Container grid>
-          <div className="col-span-12 border-t border-gold/35 pt-8 md:col-span-9 md:col-start-2">
+          <div className="border-gold/35 col-span-12 border-t pt-8 md:col-span-9 md:col-start-2">
             <SectionLabel>Transition test surface / 02</SectionLabel>
             <Heading
               as="h2"

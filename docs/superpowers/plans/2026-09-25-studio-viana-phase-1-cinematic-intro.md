@@ -79,10 +79,12 @@
 ### Task 1: Lock Configuration and Sequence Ordering
 
 **Files:**
+
 - Create: `components/intro/intro.config.ts`
 - Create: `tests/intro-config.test.ts`
 
 **Interfaces:**
+
 - Consumes: no new runtime modules.
 - Produces: `IntroMode`, `IntroBreakpoint`, `introConfig`, `getSequenceFrameUrl(index: number): string`, `getSequenceFrameUrls(): string[]`, and `getSequenceLoadOrder(urls?: readonly string[]): string[]`.
 
@@ -107,8 +109,14 @@ describe("introConfig", () => {
       light: 80,
       complete: 100,
     });
-    expect(introConfig.breakpoints.desktop).toMatchObject({ pinVh: 400, diveScale: 6 });
-    expect(introConfig.breakpoints.tablet).toMatchObject({ pinVh: 300, diveScale: 4 });
+    expect(introConfig.breakpoints.desktop).toMatchObject({
+      pinVh: 400,
+      diveScale: 6,
+    });
+    expect(introConfig.breakpoints.tablet).toMatchObject({
+      pinVh: 300,
+      diveScale: 4,
+    });
     expect(introConfig.breakpoints.mobile).toMatchObject({
       pinVh: 220,
       diveScale: 3,
@@ -156,11 +164,7 @@ export const introConfig = {
   scrub: 1.2,
   preload: { firstVisitMs: 1800, repeatVisitMs: 800, maximumMs: 6000 },
   timeline: { brand: 0, flower: 15, dive: 35, light: 80, complete: 100 },
-  poem: [
-    "Shaped stem by stem…",
-    "petal by petal…",
-    "made to last forever.",
-  ],
+  poem: ["Shaped stem by stem…", "petal by petal…", "made to last forever."],
   assets: {
     desktopFlower: "/images/hero/flower-macro-placeholder.svg",
     mobileFlower: "/images/hero/flower-macro-mobile-placeholder.svg",
@@ -178,9 +182,27 @@ export const introConfig = {
     frameCount: 150,
   },
   breakpoints: {
-    desktop: { pinVh: 400, diveScale: 6, particles: 9, petalLayers: 2, showMiddleLayer: true },
-    tablet: { pinVh: 300, diveScale: 4, particles: 6, petalLayers: 2, showMiddleLayer: true },
-    mobile: { pinVh: 220, diveScale: 3, particles: 4, petalLayers: 1, showMiddleLayer: false },
+    desktop: {
+      pinVh: 400,
+      diveScale: 6,
+      particles: 9,
+      petalLayers: 2,
+      showMiddleLayer: true,
+    },
+    tablet: {
+      pinVh: 300,
+      diveScale: 4,
+      particles: 6,
+      petalLayers: 2,
+      showMiddleLayer: true,
+    },
+    mobile: {
+      pinVh: 220,
+      diveScale: 3,
+      particles: 4,
+      petalLayers: 1,
+      showMiddleLayer: false,
+    },
   },
 } as const;
 ```
@@ -203,10 +225,12 @@ git commit -m "feat: configure cinematic intro"
 ### Task 2: Build the Asset Decode Pipeline
 
 **Files:**
+
 - Create: `lib/animations/preloadImages.ts`
 - Create: `tests/preload-images.test.ts`
 
 **Interfaces:**
+
 - Consumes: ordered image URL arrays from Task 1.
 - Produces: `PreloadProgress`, `PreloadResult`, `PreloadOptions`, and `preloadImages(urls, onProgress?, options?): Promise<PreloadResult>`.
 
@@ -216,12 +240,17 @@ Test these contracts:
 
 ```ts
 const progress: number[] = [];
-const result = await preloadImages(["/one.webp", "/two.webp"],
+const result = await preloadImages(
+  ["/one.webp", "/two.webp"],
   (value) => progress.push(value.percent),
   { createImage: makeSuccessfulImages(), concurrency: 1 },
 );
 expect(progress).toEqual([0, 50, 100]);
-expect(result).toEqual({ loaded: ["/one.webp", "/two.webp"], failed: [], timedOut: false });
+expect(result).toEqual({
+  loaded: ["/one.webp", "/two.webp"],
+  failed: [],
+  timedOut: false,
+});
 ```
 
 Add cases where `decode()` rejects and where a controlled timeout resolves pending URLs into `failed` exactly once. Track the injected factory's active request count and assert it never exceeds the configured concurrency.
@@ -275,6 +304,7 @@ git commit -m "feat: preload cinematic intro assets"
 ### Task 3: Add Testable Local Artwork and Presentational Scenes
 
 **Files:**
+
 - Create: `public/brand/logo-placeholder.svg`
 - Create: `public/images/hero/flower-macro-placeholder.svg`
 - Create: `public/images/hero/flower-macro-mobile-placeholder.svg`
@@ -288,6 +318,7 @@ git commit -m "feat: preload cinematic intro assets"
 - Create: `tests/intro-components.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `introConfig`, `cn`, `useReducedMotion`, and Phase 0 typography/tokens.
 - Produces: presentational scene markup with stable `data-intro-*` selectors; `AmbientParticlesProps { count: number }`; `FlowerDiveProps { mobile?: boolean; petalLayers: 1 | 2; showMiddleLayer: boolean }`.
 
@@ -307,7 +338,10 @@ Example:
 render(<FlowerDive mobile={false} petalLayers={2} showMiddleLayer />);
 expect(screen.getByText("Shaped stem by stem…")).toBeInTheDocument();
 expect(screen.getAllByTestId("petal-layer")).toHaveLength(2);
-expect(screen.getByTestId("flower-middle-layer")).toHaveAttribute("aria-hidden", "true");
+expect(screen.getByTestId("flower-middle-layer")).toHaveAttribute(
+  "aria-hidden",
+  "true",
+);
 ```
 
 - [ ] **Step 2: Run the component test and confirm RED**
@@ -325,9 +359,9 @@ Build the landscape and portrait flower fixtures from layered SVG paths, gradien
 Use `next/image` for the logo, flower, and petal layers. The base flower is `priority`, `fill`, and uses:
 
 ```tsx
-sizes="100vw"
-placeholder="blur"
-blurDataURL="data:image/svg+xml;base64,..."
+sizes = "100vw";
+placeholder = "blur";
+blurDataURL = "data:image/svg+xml;base64,...";
 ```
 
 Assign stable hooks including `data-intro-brand`, `data-intro-brand-copy`, `data-intro-logo`, `data-intro-frame`, `data-intro-flower-mask`, `data-intro-flower`, `data-intro-middle`, `data-intro-petal`, `data-intro-ring`, `data-intro-vignette`, `data-intro-poem-line`, and `data-intro-light`.
@@ -350,22 +384,35 @@ git commit -m "feat: add cinematic intro scenes"
 ### Task 4: Implement the Sequence Canvas Renderer
 
 **Files:**
+
 - Create: `components/intro/sequenceCanvas.ts`
 - Create: `components/intro/FlowerSequence.tsx`
 - Create: `tests/sequence-canvas.test.ts`
 - Modify: `tests/intro-components.test.tsx`
 
 **Interfaces:**
+
 - Consumes: the sequence paths/load order from Task 1.
 - Produces: `CoverRect`, `getCoverRect()`, `findNearestLoadedFrame()`, `FlowerSequenceHandle { setFrame(index: number): void; resize(): void }`, and `FlowerSequenceProps { frameUrls: readonly string[]; preloadResult?: PreloadResult; focalPoint: { x: number; y: number } }`.
 
 - [ ] **Step 1: Write failing pure renderer tests**
 
 ```ts
-expect(getCoverRect({ sourceWidth: 1920, sourceHeight: 1080, targetWidth: 375, targetHeight: 812, focalX: 0.5, focalY: 0.48 }))
-  .toMatchObject({ drawHeight: 812 });
+expect(
+  getCoverRect({
+    sourceWidth: 1920,
+    sourceHeight: 1080,
+    targetWidth: 375,
+    targetHeight: 812,
+    focalX: 0.5,
+    focalY: 0.48,
+  }),
+).toMatchObject({ drawHeight: 812 });
 
-const frames = new Map([[0, image0], [10, image10]]);
+const frames = new Map([
+  [0, image0],
+  [10, image10],
+]);
 expect(findNearestLoadedFrame(frames, 8)).toBe(image10);
 expect(findNearestLoadedFrame(new Map(), 8)).toBeNull();
 ```
@@ -408,11 +455,13 @@ git commit -m "feat: add flower sequence renderer"
 ### Task 5: Build Preloader and Skip Lifecycles
 
 **Files:**
+
 - Create: `components/intro/Preloader.tsx`
 - Create: `components/intro/SkipIntro.tsx`
 - Modify: `tests/intro-components.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `preloadImages`, `introConfig.preload`, optional Lenis instance from `useLenis`, and a destination element.
 - Produces: `PreloaderProps { urls: readonly string[]; lenis: Lenis | null; reducedMotion: boolean; onComplete(result: PreloadResult): void }` and `SkipIntroProps { destinationId: string; visible: boolean }`.
 
@@ -460,19 +509,25 @@ git commit -m "feat: add intro loading and skip controls"
 ### Task 6: Compose the Master Timeline
 
 **Files:**
+
 - Create: `components/intro/IntroSection.tsx`
 - Create: `tests/intro-timeline.test.tsx`
 - Modify: `components/animations/SplitTextReveal.tsx`
 - Modify: `tests/animations.test.tsx`
 
 **Interfaces:**
+
 - Consumes: all intro scene components, `introConfig`, Phase 0 GSAP utilities, `useLenis`, `useReducedMotion`, and controlled split tokens in `#home`.
 - Produces: `IntroSection` and `SplitTextRevealProps.controlled?: boolean`.
 
 - [ ] **Step 1: Extend split text with a failing controlled-mode test**
 
 ```tsx
-render(<SplitTextReveal controlled as="h1" type="lines">{"Where flowers become\nforever memories."}</SplitTextReveal>);
+render(
+  <SplitTextReveal controlled as="h1" type="lines">
+    {"Where flowers become\nforever memories."}
+  </SplitTextReveal>,
+);
 expect(mocks.fromTo).not.toHaveBeenCalled();
 expect(container.querySelectorAll("[data-split-token]")).toHaveLength(2);
 expect(container.querySelector("[data-controlled-split]")).toBeInTheDocument();
@@ -535,12 +590,14 @@ git commit -m "feat: orchestrate cinematic intro timeline"
 ### Task 7: Replace the Showcase with the Intro-to-Home Flow
 
 **Files:**
+
 - Create: `components/sections/HomeHeroPlaceholder.tsx`
 - Modify: `app/page.tsx`
 - Modify: `app/globals.css`
 - Create: `tests/home-page.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `IntroSection`, controlled `SplitTextReveal`, `Container`, `Section`, `SectionLabel`, and `Heading`.
 - Produces: the Phase 1 root-page flow and stable `#home` destination.
 
@@ -552,7 +609,12 @@ Mock heavy intro internals and assert the server page order:
 render(<Home />);
 const main = screen.getByRole("main");
 expect(within(main).getByTestId("intro-section")).toBeInTheDocument();
-expect(within(main).getByRole("heading", { level: 1, name: "Where flowers become forever memories." })).toBeVisible();
+expect(
+  within(main).getByRole("heading", {
+    level: 1,
+    name: "Where flowers become forever memories.",
+  }),
+).toBeVisible();
 expect(document.querySelector("#home")).toBeInTheDocument();
 expect(screen.queryByText("Design System")).not.toBeInTheDocument();
 ```
@@ -598,9 +660,11 @@ git commit -m "feat: transition intro into home placeholder"
 ### Task 8: Document Assets, Modes, Generation Prompts, and Operations
 
 **Files:**
+
 - Modify: `README.md`
 
 **Interfaces:**
+
 - Consumes: final config names and asset paths.
 - Produces: complete Phase 1 operator documentation.
 
@@ -650,11 +714,13 @@ git commit -m "docs: add cinematic intro operations guide"
 ### Task 9: Browser QA and Final Phase Gate
 
 **Files:**
+
 - Create: `tests/browser/intro.spec.ts`
 - Modify: `tests/browser/showcase.spec.ts` (remove Phase 0 route assertions or replace the file entirely)
 - Modify: `playwright.config.ts` only if production-like serving is needed for stable restoration tests.
 
 **Interfaces:**
+
 - Consumes: the completed Phase 1 root route.
 - Produces: repeatable cross-viewport evidence and final completion status.
 
