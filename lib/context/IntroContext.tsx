@@ -44,9 +44,12 @@ export function IntroProvider({ children }: { children: ReactNode }) {
       window.scrollY > 0;
     if (!restoredPastIntro) return;
 
-    completionRef.current = true;
-    setIntroComplete(true);
-    document.documentElement.dataset.introComplete = "true";
+    const restorationFrame = window.requestAnimationFrame(() => {
+      completionRef.current = true;
+      setIntroComplete(true);
+      document.documentElement.dataset.introComplete = "true";
+    });
+    return () => window.cancelAnimationFrame(restorationFrame);
   }, []);
 
   const value = useMemo(

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Lora, Poppins } from "next/font/google";
 import type { ReactNode } from "react";
 
+import { Navbar } from "@/components/layout/Navbar";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
 import { IntroProvider } from "@/lib/context/IntroContext";
 
@@ -37,7 +38,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${lora.variable} ${poppins.variable}`}>
         <SmoothScrollProvider>
-          <IntroProvider>{children}</IntroProvider>
+          <IntroProvider>
+            <Navbar />
+            {children}
+          </IntroProvider>
         </SmoothScrollProvider>
       </body>
     </html>

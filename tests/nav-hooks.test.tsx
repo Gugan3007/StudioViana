@@ -1,0 +1,97 @@
+import { act, renderHook } from "@testing-library/react";
+import type Lenis from "lenis";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+import { useNavTheme } from "@/components/layout/useNavTheme";
+import { useScrollDirection } from "@/components/layout/useScrollDirection";
+
+type LenisListener = (instance: Lenis) => void;
+
+function createLenisSource() {
+  let listener: LenisListener | undefined;
+  const unsubscribe = vi.fn();
+  const lenis = {
+    on: vi.fn((_event: "scroll", nextListener: LenisListener) => {
+      listener = nextListener;
+      return unsubscribe;
+    }),
+  } as unknown as Lenis;
+
+  return {
+    emit(animatedScroll: number, direction: -1 | 0 | 1) {
+      listener?.({ animatedScroll, direction } as Lenis);
+    },
+    lenis,
+    unsubscribe,
+  };
+}
+
+describe("navigation hooks", () => {
+  const originalElementsFromPoint = document.elementsFromPoint;
+
+  beforeEach(() => {
+    Object.defineProperty(window, "scrollY", {
+      configurable: true,
+      value: 0,
+    });
+  });
+
+  afterEach(() => {
+    Object.defineProperty(document, "elementsFromPoint", {
+      configurable: true,
+      value: originalElementsFromPoint,
+    });
+  });
+
+  it("changes direction only after meaningful Lenis movement", () => {
+    const source = createLenisSource();
+    const { result, unmount } = renderHook(() =>
+      useScrollDirection(source.lenis),
+    );
+
+    act(() => source.emit(1, 1));
+    expect(result.current).toBe("up");
+    act(() => source.emit(300, 1));
+    expect(result.current).toBe("down");
+    act(() => source.emit(299, -1));
+    expect(result.current).toBe("down");
+    act(() => source.emit(220, -1));
+    expect(result.current).toBe("up");
+
+    unmount();
+    expect(source.unsubscribe).toHaveBeenCalledOnce();
+  });
+
+  it("uses the nearest declared section theme beneath the navbar", () => {
+    const darkSection = document.createElement("section");
+    darkSection.dataset.theme = "dark";
+    const lightSection = document.createElement("section");
+    Object.defineProperty(document, "elementsFromPoint", {
+      configurable: true,
+      value: vi.fn(() => [lightSection, darkSection]),
+    });
+    const source = createLenisSource();
+    const { result } = renderHook(() => useNavTheme(source.lenis));
+
+    act(() => source.emit(420, 1));
+
+    expect(result.current).toBe("dark");
+    expect(document.elementsFromPoint).toHaveBeenCalledWith(
+      window.innerWidth / 2,
+      42,
+    );
+  });
+
+  it("returns to light when no dark section is under the header", () => {
+    const lightSection = document.createElement("section");
+    Object.defineProperty(document, "elementsFromPoint", {
+      configurable: true,
+      value: vi.fn(() => [lightSection]),
+    });
+    const { result } = renderHook(() => useNavTheme(null));
+
+    act(() => window.dispatchEvent(new Event("scroll")));
+
+    expect(result.current).toBe("light");
+  });
+});

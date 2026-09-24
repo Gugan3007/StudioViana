@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -71,7 +71,7 @@ describe("IntroProvider", () => {
     expect(document.documentElement.dataset.introComplete).toBeUndefined();
   });
 
-  it("initializes complete when a restored page is already below the intro", () => {
+  it("initializes complete when a restored page is already below the intro", async () => {
     Object.defineProperty(window, "scrollY", {
       configurable: true,
       value: 1200,
@@ -83,7 +83,9 @@ describe("IntroProvider", () => {
       </IntroProvider>,
     );
 
-    expect(screen.getByTestId("intro-state")).toHaveTextContent("complete");
+    await waitFor(() =>
+      expect(screen.getByTestId("intro-state")).toHaveTextContent("complete"),
+    );
     expect(document.documentElement).toHaveAttribute(
       "data-intro-complete",
       "true",
