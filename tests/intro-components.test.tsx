@@ -16,6 +16,7 @@ import type { PreloadResult } from "@/lib/animations/preloadImages";
 
 const lifecycleMocks = vi.hoisted(() => ({
   contextLenis: null as null | {
+    resize: ReturnType<typeof vi.fn>;
     scrollTo: ReturnType<typeof vi.fn>;
   },
   preload: vi.fn(),
@@ -148,6 +149,7 @@ describe("cinematic intro scenes", () => {
 
   it("caps sequence canvas DPR, clamps frame requests, and cleans up", () => {
     const disconnect = vi.fn();
+    const imageConstructor = vi.spyOn(window, "Image");
     const cancelAnimationFrame = vi.spyOn(window, "cancelAnimationFrame");
     const requestAnimationFrame = vi
       .spyOn(window, "requestAnimationFrame")
@@ -186,6 +188,7 @@ describe("cinematic intro scenes", () => {
     );
     const canvas = container.querySelector("canvas")!;
 
+    expect(imageConstructor).not.toHaveBeenCalled();
     expect(canvas.width).toBe(1000);
     expect(canvas.height).toBe(1200);
     act(() => ref.current?.setFrame(-2));
@@ -200,6 +203,7 @@ describe("cinematic intro scenes", () => {
     expect(disconnect).toHaveBeenCalledOnce();
     requestAnimationFrame.mockRestore();
     cancelAnimationFrame.mockRestore();
+    imageConstructor.mockRestore();
   });
 
   it("locks scrolling, waits for first-visit minimum, and stops late Lenis", async () => {
@@ -249,7 +253,7 @@ describe("cinematic intro scenes", () => {
     expect(sessionStorage.getItem("studio-viana:intro-seen")).toBe("true");
   });
 
-  it("uses the repeat-visit minimum and a single maximum-time fallback", async () => {
+  it("uses the repeat-visit minimum and preserves partial timeout results", async () => {
     vi.useFakeTimers();
     sessionStorage.setItem("studio-viana:intro-seen", "true");
     let resolvePreload!: (value: PreloadResult) => void;
@@ -279,20 +283,37 @@ describe("cinematic intro scenes", () => {
     unmount();
 
     sessionStorage.clear();
-    lifecycleMocks.preload.mockReturnValue(new Promise(() => undefined));
+    lifecycleMocks.preload.mockImplementation(
+      (
+        _urls: readonly string[],
+        _onProgress: unknown,
+        options: { timeoutMs: number },
+      ) =>
+        new Promise<PreloadResult>((resolve) => {
+          setTimeout(
+            () =>
+              resolve({
+                loaded: ["/ready.svg"],
+                failed: ["/stalled.svg"],
+                timedOut: true,
+              }),
+            options.timeoutMs,
+          );
+        }),
+    );
     const onTimeout = vi.fn();
     render(
       <Preloader
         lenis={null}
         onComplete={onTimeout}
         reducedMotion
-        urls={["/stalled.svg"]}
+        urls={["/ready.svg", "/stalled.svg"]}
       />,
     );
     await act(() => vi.advanceTimersByTimeAsync(6000));
     expect(onTimeout).toHaveBeenCalledOnce();
     expect(onTimeout).toHaveBeenCalledWith({
-      loaded: [],
+      loaded: ["/ready.svg"],
       failed: ["/stalled.svg"],
       timedOut: true,
     });
@@ -325,8 +346,9 @@ describe("cinematic intro scenes", () => {
 
   it("skips with Lenis and falls back to native scrolling", () => {
     vi.useFakeTimers();
+    const resize = vi.fn();
     const scrollTo = vi.fn();
-    lifecycleMocks.contextLenis = { scrollTo };
+    lifecycleMocks.contextLenis = { resize, scrollTo };
     const destination = document.createElement("section");
     destination.id = "home";
     destination.scrollIntoView = vi.fn();
@@ -334,6 +356,7 @@ describe("cinematic intro scenes", () => {
 
     const { rerender } = render(<SkipIntro destinationId="home" visible />);
     fireEvent.click(screen.getByRole("button", { name: "Skip intro" }));
+    expect(resize).toHaveBeenCalledOnce();
     expect(scrollTo).toHaveBeenCalledWith(destination, { duration: 1.6 });
 
     lifecycleMocks.contextLenis = null;

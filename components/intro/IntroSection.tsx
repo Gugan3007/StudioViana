@@ -18,8 +18,15 @@ import {
 import { LightTransition } from "@/components/intro/LightTransition";
 import { Preloader } from "@/components/intro/Preloader";
 import { SkipIntro } from "@/components/intro/SkipIntro";
-import { gsap, refreshScrollTrigger } from "@/lib/animations/gsap";
-import type { PreloadResult } from "@/lib/animations/preloadImages";
+import {
+  gsap,
+  refreshScrollTrigger,
+  ScrollTrigger,
+} from "@/lib/animations/gsap";
+import {
+  releasePreloadedImages,
+  type PreloadResult,
+} from "@/lib/animations/preloadImages";
 import { useIsomorphicLayoutEffect } from "@/lib/animations/useIsomorphicLayoutEffect";
 import { useLenis } from "@/lib/animations/useLenis";
 import { useReducedMotion } from "@/lib/animations/useReducedMotion";
@@ -56,6 +63,7 @@ function useIntroBreakpoint(): IntroBreakpoint {
 export function IntroSection() {
   const root = useRef<HTMLElement>(null);
   const sequence = useRef<FlowerSequenceHandle>(null);
+  const reloadScrollY = useRef<number | null>(null);
   const { lenis } = useLenis();
   const reducedMotion = useReducedMotion();
   const breakpoint = useIntroBreakpoint();
@@ -84,16 +92,83 @@ export function IntroSection() {
     [mode, sequenceFrames],
   );
 
-  const handlePreloadComplete = useCallback((result: PreloadResult) => {
-    setPreloadResult(result);
-    setPreloadComplete(true);
+  const handlePreloadComplete = useCallback(
+    (result: PreloadResult) => {
+      const sequenceUrlSet = new Set(sequenceFrames);
+      releasePreloadedImages(
+        mode === "sequence"
+          ? result.loaded.filter((url) => !sequenceUrlSet.has(url))
+          : result.loaded,
+      );
+      setPreloadResult(result);
+      setPreloadComplete(true);
+    },
+    [mode, sequenceFrames],
+  );
+
+  useEffect(() => {
+    const storageKey = `studio-viana:scroll-y:${window.location.pathname}`;
+    const navigation = performance.getEntriesByType("navigation")[0] as
+      PerformanceNavigationTiming | undefined;
+
+    if (navigation?.type === "reload") {
+      try {
+        const storedPosition = Number(sessionStorage.getItem(storageKey));
+        if (Number.isFinite(storedPosition) && storedPosition > 0) {
+          reloadScrollY.current = storedPosition;
+        }
+      } catch {
+        reloadScrollY.current = null;
+      }
+    }
+
+    const persistScrollPosition = () => {
+      try {
+        sessionStorage.setItem(storageKey, String(window.scrollY));
+      } catch {
+        // Privacy modes may disable session storage; native restoration remains.
+      }
+    };
+
+    window.addEventListener("pagehide", persistScrollPosition);
+    return () => window.removeEventListener("pagehide", persistScrollPosition);
   }, []);
 
   useEffect(() => {
     if (!preloadComplete) return;
+    let restorationFrame: number | undefined;
+    let cancelled = false;
     const fontsReady = document.fonts?.ready ?? Promise.resolve();
-    void fontsReady.then(() => refreshScrollTrigger());
-  }, [preloadComplete]);
+    void fontsReady.then(() => {
+      if (cancelled) return;
+      ScrollTrigger.refresh();
+      lenis?.resize();
+
+      const restoredPosition = reloadScrollY.current;
+      if (restoredPosition === null) return;
+      restorationFrame = window.requestAnimationFrame(() => {
+        const maximumScroll = Math.max(
+          0,
+          document.documentElement.scrollHeight - window.innerHeight,
+        );
+        const top = Math.min(restoredPosition, maximumScroll);
+        if (lenis && !reducedMotion) {
+          lenis.scrollTo(top, { immediate: true });
+        } else {
+          window.scrollTo(0, top);
+        }
+        reloadScrollY.current = null;
+        ScrollTrigger.refresh();
+      });
+    });
+
+    return () => {
+      cancelled = true;
+      if (restorationFrame !== undefined) {
+        window.cancelAnimationFrame(restorationFrame);
+      }
+    };
+  }, [lenis, preloadComplete, reducedMotion]);
 
   useIsomorphicLayoutEffect(() => {
     const section = root.current;
@@ -117,7 +192,7 @@ export function IntroSection() {
         const scrollCue = section.querySelector("[data-intro-scroll-cue]");
         const flowerMask = section.querySelector("[data-intro-flower-mask]");
         const flower = section.querySelector("[data-intro-flower]");
-        const middle = section.querySelector("[data-intro-middle]");
+        const middle = section.querySelectorAll("[data-intro-middle]");
         const petals = section.querySelectorAll("[data-intro-petal]");
         const ring = section.querySelector("[data-intro-ring]");
         const ringStroke = ring?.querySelector("circle") ?? [];
@@ -127,6 +202,9 @@ export function IntroSection() {
         );
         const light = section.querySelector("[data-intro-light]");
         const sequenceLayer = section.querySelector("[data-intro-sequence]");
+        const exitLayers = [flowerMask, sequenceLayer, vignette].filter(
+          (target): target is Element => target !== null,
+        );
         const homeTokens = document.querySelectorAll(
           "#home [data-controlled-split] [data-split-token]",
         );
@@ -192,14 +270,29 @@ export function IntroSection() {
             },
             0,
           )
-          .set(middle, { autoAlpha: 0, scale: 1.3 }, 0)
-          .set(petals, { autoAlpha: 0, filter: "blur(0px)", scale: 1 }, 0)
+          .set(
+            petals,
+            {
+              autoAlpha: 0,
+              filter: "blur(0px)",
+              scale: 1,
+              xPercent: (index: number) => (index % 2 === 0 ? -18 : 18),
+              yPercent: (index: number) => (index % 2 === 0 ? 7 : -9),
+            },
+            0,
+          )
           .set(ring, { autoAlpha: 1, scale: 0.01 }, 0)
           .set(ringStroke, { strokeDashoffset: 302 }, 0)
           .set(vignette, { autoAlpha: 0 }, 0)
           .set(poemLines, { autoAlpha: 0 }, 0)
-          .set(light, { autoAlpha: 0, scale: 0.5 }, 0)
-          .set(homeTokens, { autoAlpha: 0, yPercent: 110 }, 0);
+          .set(light, { autoAlpha: 0, scale: 0.5 }, 0);
+
+        if (middle.length > 0) {
+          timeline.set(middle, { autoAlpha: 0, scale: 1.3 }, 0);
+        }
+        if (homeTokens.length > 0) {
+          timeline.set(homeTokens, { autoAlpha: 0, yPercent: 110 }, 0);
+        }
 
         if (sequenceLayer) {
           timeline.set(
@@ -239,7 +332,14 @@ export function IntroSection() {
           )
           .to(
             petals,
-            { autoAlpha: 0.78, duration: 12, scale: 1.12 },
+            {
+              autoAlpha: 0.78,
+              duration: 12,
+              scale: 1.12,
+              stagger: 1.2,
+              xPercent: 0,
+              yPercent: 0,
+            },
             introConfig.timeline.flower + 7,
           );
 
@@ -265,16 +365,6 @@ export function IntroSection() {
             introConfig.timeline.dive,
           )
           .to(
-            middle,
-            {
-              autoAlpha: activeSettings.showMiddleLayer ? 0.4 : 0,
-              duration: 30,
-              filter: "blur(10px)",
-              scale: activeSettings.diveScale * 1.18,
-            },
-            introConfig.timeline.dive + 4,
-          )
-          .to(
             petals,
             {
               autoAlpha: 0,
@@ -282,6 +372,8 @@ export function IntroSection() {
               filter: "blur(20px)",
               scale: activeSettings.diveScale * 2,
               stagger: 1.4,
+              xPercent: (index: number) => (index % 2 === 0 ? -26 : 28),
+              yPercent: (index: number) => (index % 2 === 0 ? -16 : 19),
             },
             introConfig.timeline.dive + 3,
           )
@@ -290,6 +382,19 @@ export function IntroSection() {
             { autoAlpha: 0.82, duration: 34 },
             introConfig.timeline.dive + 7,
           );
+
+        if (middle.length > 0) {
+          timeline.to(
+            middle,
+            {
+              autoAlpha: activeSettings.showMiddleLayer ? 0.4 : 0,
+              duration: 30,
+              filter: "blur(10px)",
+              scale: activeSettings.diveScale * 1.18,
+            },
+            introConfig.timeline.dive + 4,
+          );
+        }
 
         if (mode === "sequence") {
           const frameProxy = { frame: 0 };
@@ -340,21 +445,24 @@ export function IntroSection() {
             introConfig.timeline.light,
           )
           .to(
-            [flowerMask, sequenceLayer, vignette],
+            exitLayers,
             { autoAlpha: 0, duration: 11 },
             introConfig.timeline.light + 8,
-          )
-          .fromTo(
+          );
+
+        if (homeTokens.length > 0) {
+          timeline.fromTo(
             homeTokens,
             { autoAlpha: 0, yPercent: 110 },
             {
               autoAlpha: 1,
-              duration: 8,
+              duration: 7.3,
               stagger: 0.7,
               yPercent: 0,
             },
             92,
           );
+        }
 
         return () => {
           clearActiveState();

@@ -17,7 +17,10 @@ import {
   findNearestLoadedFrame,
   getCoverRect,
 } from "@/components/intro/sequenceCanvas";
-import type { PreloadResult } from "@/lib/animations/preloadImages";
+import {
+  takePreloadedImage,
+  type PreloadResult,
+} from "@/lib/animations/preloadImages";
 
 export interface FlowerSequenceHandle {
   resize(): void;
@@ -123,16 +126,27 @@ export const FlowerSequence = forwardRef<
   }, [resize]);
 
   useEffect(() => {
+    if (!preloadResult) return;
+
     let cancelled = false;
     let cursor = 0;
     const frames = framesRef.current;
-    const failed = new Set(preloadResult?.failed ?? []);
-    const availableUrls = getSequenceLoadOrder(
-      frameUrls.filter((url) => !failed.has(url)),
-    );
     const indices = new Map(frameUrls.map((url, index) => [url, index]));
+    const availableUrls = getSequenceLoadOrder(
+      preloadResult.loaded.filter((url) => indices.has(url)),
+    );
 
     async function load(url: string) {
+      const index = indices.get(url);
+      if (index === undefined) return;
+
+      const preloadedImage = takePreloadedImage(url);
+      if (preloadedImage) {
+        frames.set(index, preloadedImage);
+        scheduleDraw();
+        return;
+      }
+
       const image = new window.Image();
       image.decoding = "async";
 
@@ -151,8 +165,6 @@ export const FlowerSequence = forwardRef<
       }
 
       if (cancelled) return;
-      const index = indices.get(url);
-      if (index === undefined) return;
       frames.set(index, image);
       scheduleDraw();
     }

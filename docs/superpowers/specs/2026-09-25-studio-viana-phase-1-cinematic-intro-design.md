@@ -91,7 +91,7 @@ Cleanup always clears timers, unlocks native scrolling, and restarts Lenis if th
 
 ### 4.3 Reload and restoration
 
-The intro never writes scroll position or forces the viewport to zero. ScrollTrigger initializes against the browser's restored position. The preloader is rendered fixed over the restored page, then the master timeline resolves to the current scroll progress after refresh. A repeat session shortens only the preloader; it does not silently skip the visual story.
+The intro never forces the viewport to zero. A per-path session value is written on `pagehide` and read only when the Navigation Timing entry identifies a reload. This supplements native restoration because the browser can clamp a post-intro scroll position before ScrollTrigger recreates its pin spacer. After preload and font completion, ScrollTrigger refreshes, Lenis recalculates its limit, and the reload position is restored immediately; fresh navigations are never repositioned. A repeat session shortens only the preloader; it does not silently skip the visual story.
 
 ## 5. Render Modes
 
@@ -109,7 +109,7 @@ The canvas renderer preloads frames in the configured priority order and retains
 
 The master timeline tweens a plain `{ frame }` object with snapping. `onUpdate` requests the nearest loaded frame from `FlowerSequence`; if a requested frame is still unavailable, the nearest previously loaded frame remains visible. Drawing uses cover geometry centered on the configured focal point.
 
-The overlay choreography, poem, vignette, skip button, preload exit, and light bloom are identical in both modes. Missing or failed sequence frames do not crash the page; the canvas retains the poster/fallback and records a development warning.
+The overlay choreography, poem, vignette, skip button, preload exit, and light bloom are identical in both modes. Missing or failed sequence frames do not crash the page; the canvas retains the poster/fallback while the loader exposes failed URLs through its result.
 
 ## 6. Navigation and Intro Controls
 
@@ -135,7 +135,7 @@ The intro uses `100svh` as its stable base and `100dvh` only as a progressive en
 - ScrollTrigger refresh occurs after preload/font completion and responsive image load.
 - Sequence loading is concurrency-limited and frame drawing is coalesced through `requestAnimationFrame`.
 
-The browser suite will assert the absence of runtime errors and overflow. A manual Chrome Performance recording remains required for the final device-specific 60fps judgment because CI timing is not a substitute for target hardware.
+The browser suite asserts the absence of runtime errors and overflow. A production-server Chromium probe also records Long Tasks while scrubbing the entire intro and fails if any are observed. A manual Chrome Performance recording remains required for the final device-specific 60fps judgment because CI timing is not a substitute for target hardware.
 
 ## 9. Placeholder and Final Asset Contract
 
@@ -181,7 +181,7 @@ Browser verification covers:
 - real preloader progress and release;
 - reversible forward/back scroll states;
 - skip-to-Home behavior;
-- reload at a restored mid-page position;
+- reload at restored mid-intro and post-intro positions;
 - reduced-motion static flow without pinning or persistent animation;
 - both `layers` and a small fixture-backed `sequence` mode where practical;
 - visual screenshots at the brand, flower, dive, light, and Home states.

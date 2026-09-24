@@ -1,6 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { preloadImages } from "@/lib/animations/preloadImages";
+import {
+  preloadImages,
+  releasePreloadedImages,
+  takePreloadedImage,
+} from "@/lib/animations/preloadImages";
 
 interface FakeImageOptions {
   delayMs?: number;
@@ -76,6 +80,7 @@ function makeImageFactory({
 describe("preloadImages", () => {
   afterEach(() => {
     vi.useRealTimers();
+    releasePreloadedImages();
   });
 
   it("decodes unique images and reports real completion progress", async () => {
@@ -96,6 +101,9 @@ describe("preloadImages", () => {
       failed: [],
       timedOut: false,
     });
+    expect(takePreloadedImage("/one.webp")).toBeDefined();
+    expect(takePreloadedImage("/one.webp")).toBeUndefined();
+    expect(takePreloadedImage("/two.webp")).toBeDefined();
   });
 
   it("counts network and decode failures without rejecting the batch", async () => {

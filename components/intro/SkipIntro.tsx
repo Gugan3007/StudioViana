@@ -32,6 +32,7 @@ export function SkipIntro({ destinationId, visible }: SkipIntroProps) {
 
     setSkipping(true);
     if (lenis && !reducedMotion) {
+      lenis.resize();
       lenis.scrollTo(destination, { duration: 1.6 });
     } else {
       destination.scrollIntoView({

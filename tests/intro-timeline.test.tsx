@@ -22,10 +22,12 @@ const timelineMocks = vi.hoisted(() => {
   }> = [];
 
   return {
+    activeMedia: "desktop" as "desktop" | "mobile" | "tablet",
     contextRevert,
     mediaAdd,
     mediaRevert,
     mode: "layers" as "layers" | "sequence",
+    nullTargets: [] as unknown[],
     reduceMotion: false,
     refresh: vi.fn(),
     sequenceSetFrame: vi.fn(),
@@ -61,7 +63,14 @@ vi.mock("@/lib/animations/gsap", () => ({
     matchMedia: vi.fn(() => ({
       add: timelineMocks.mediaAdd.mockImplementation(
         (query: string, setup: () => void) => {
-          if (query.includes("min-width: 1024px")) setup();
+          const matches =
+            (timelineMocks.activeMedia === "desktop" &&
+              query.includes("min-width: 1024px")) ||
+            (timelineMocks.activeMedia === "tablet" &&
+              query.includes("min-width: 768px")) ||
+            (timelineMocks.activeMedia === "mobile" &&
+              query.includes("max-width: 767px"));
+          if (matches) setup();
         },
       ),
       revert: timelineMocks.mediaRevert,
@@ -74,11 +83,27 @@ vi.mock("@/lib/animations/gsap", () => ({
         set: vi.fn(),
         to: vi.fn(),
       };
+      const recordNullTargets = (target: unknown) => {
+        if (
+          target == null ||
+          (Array.isArray(target) && target.some((item) => item == null)) ||
+          (target instanceof NodeList && target.length === 0)
+        ) {
+          timelineMocks.nullTargets.push(target);
+        }
+      };
       timeline.addLabel.mockImplementation(() => timeline);
-      timeline.fromTo.mockImplementation(() => timeline);
-      timeline.set.mockImplementation(() => timeline);
+      timeline.fromTo.mockImplementation((target: unknown) => {
+        recordNullTargets(target);
+        return timeline;
+      });
+      timeline.set.mockImplementation((target: unknown) => {
+        recordNullTargets(target);
+        return timeline;
+      });
       timeline.to.mockImplementation(
         (target: unknown, vars: Record<string, unknown>) => {
+          recordNullTargets(target);
           if (
             target &&
             typeof target === "object" &&
@@ -129,7 +154,7 @@ vi.mock("@/components/intro/BrandMoment", () => ({
 }));
 
 vi.mock("@/components/intro/FlowerDive", () => ({
-  FlowerDive: () =>
+  FlowerDive: ({ showMiddleLayer }: { showMiddleLayer: boolean }) =>
     createElement(
       "div",
       { "data-intro-dive": true },
@@ -137,7 +162,9 @@ vi.mock("@/components/intro/FlowerDive", () => ({
         "div",
         { "data-intro-flower-mask": true },
         createElement("span", { "data-intro-flower": true }),
-        createElement("span", { "data-intro-middle": true }),
+        showMiddleLayer
+          ? createElement("span", { "data-intro-middle": true })
+          : null,
         createElement("span", { "data-intro-petal": true }),
       ),
       createElement("svg", { "data-intro-ring": true }),
@@ -171,9 +198,11 @@ vi.mock("@/components/intro/SkipIntro", () => ({
 describe("IntroSection master timeline", () => {
   beforeEach(() => {
     timelineMocks.contextRevert.mockClear();
+    timelineMocks.activeMedia = "desktop";
     timelineMocks.mediaAdd.mockClear();
     timelineMocks.mediaRevert.mockClear();
     timelineMocks.mode = "layers";
+    timelineMocks.nullTargets.length = 0;
     timelineMocks.reduceMotion = false;
     timelineMocks.refresh.mockClear();
     timelineMocks.sequenceSetFrame.mockClear();
@@ -239,6 +268,19 @@ describe("IntroSection master timeline", () => {
       expect(timelineMocks.sequenceSetFrame).toHaveBeenCalledWith(149),
     );
     expect(timelineMocks.timelines).toHaveLength(1);
+  });
+
+  it("never schedules missing optional mobile layers as GSAP targets", async () => {
+    timelineMocks.activeMedia = "mobile";
+    render(<IntroSection />);
+
+    await waitFor(() =>
+      expect(screen.getByTestId("intro-section")).toHaveAttribute(
+        "data-intro-breakpoint",
+        "mobile",
+      ),
+    );
+    expect(timelineMocks.nullTargets).toEqual([]);
   });
 
   it("reverts media and scoped animation state on unmount", async () => {

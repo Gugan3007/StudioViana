@@ -19,6 +19,23 @@ export interface PreloadOptions {
 
 type AssetStatus = "failed" | "loaded" | "pending";
 
+const decodedImageCache = new Map<string, HTMLImageElement>();
+
+export function takePreloadedImage(url: string): HTMLImageElement | undefined {
+  const image = decodedImageCache.get(url);
+  decodedImageCache.delete(url);
+  return image;
+}
+
+export function releasePreloadedImages(urls?: readonly string[]): void {
+  if (!urls) {
+    decodedImageCache.clear();
+    return;
+  }
+
+  for (const url of urls) decodedImageCache.delete(url);
+}
+
 export function preloadImages(
   urls: readonly string[],
   onProgress?: (progress: PreloadProgress) => void,
@@ -95,6 +112,8 @@ export function preloadImages(
         const handleLoad = async () => {
           try {
             await image.decode?.();
+            if (settled) return;
+            decodedImageCache.set(url, image);
             settle(true);
           } catch {
             settle(false);

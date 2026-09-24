@@ -152,6 +152,14 @@ html.lenis body {
   transform: translate3d(0, 110%, 0);
 }
 
+html[data-intro-complete="true"]
+  #home
+  [data-controlled-split="true"]
+  [data-split-token] {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
 [data-intro-active="true"] [data-intro-logo],
 [data-intro-active="true"] [data-intro-flower],
 [data-intro-active="true"] [data-intro-middle],

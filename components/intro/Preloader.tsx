@@ -75,7 +75,7 @@ export function Preloader({
           .to("[data-preloader-progress-track]", {
             duration: 0.45,
             ease: "power2.inOut",
-            inset: "0px",
+            clipPath: "inset(0% 0% 0% 0%)",
           })
           .to(
             "[data-preloader-content]",
@@ -127,15 +127,6 @@ export function Preloader({
       ? introConfig.preload.repeatVisitMs
       : introConfig.preload.firstVisitMs;
     const assetUrls = urlSignature ? urlSignature.split("\u001f") : [];
-    const timeoutResult: PreloadResult = {
-      loaded: [],
-      failed: assetUrls,
-      timedOut: true,
-    };
-    const maximumTimer = setTimeout(
-      () => finish(timeoutResult),
-      introConfig.preload.maximumMs,
-    );
 
     void preloadImages(
       assetUrls,
@@ -146,15 +137,16 @@ export function Preloader({
     ).then((result) => {
       if (cancelled) return;
       const elapsed = Date.now() - startedAt;
-      minimumTimer = setTimeout(
-        () => finish(result),
-        Math.max(0, minimumMs - elapsed),
-      );
+      const remainingMinimum = Math.max(0, minimumMs - elapsed);
+      if (remainingMinimum === 0) {
+        finish(result);
+        return;
+      }
+      minimumTimer = setTimeout(() => finish(result), remainingMinimum);
     });
 
     return () => {
       cancelled = true;
-      clearTimeout(maximumTimer);
       if (minimumTimer !== undefined) clearTimeout(minimumTimer);
     };
   }, [finish, urlSignature]);

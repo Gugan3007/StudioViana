@@ -80,23 +80,24 @@ export function FlowerDive({
           ))}
       </div>
 
-      <svg
+      <div
         aria-hidden="true"
         className="absolute left-1/2 top-1/2 h-[36vmin] w-[36vmin] -translate-x-1/2 -translate-y-1/2 overflow-visible"
         data-intro-ring
-        viewBox="0 0 100 100"
       >
-        <circle
-          cx="50"
-          cy="50"
-          fill="none"
-          r="48"
-          stroke="var(--gold-light)"
-          strokeDasharray="302"
-          strokeDashoffset="302"
-          strokeWidth="0.45"
-        />
-      </svg>
+        <svg className="h-full w-full overflow-visible" viewBox="0 0 100 100">
+          <circle
+            cx="50"
+            cy="50"
+            fill="none"
+            r="48"
+            stroke="var(--gold-light)"
+            strokeDasharray="302"
+            strokeDashoffset="302"
+            strokeWidth="0.45"
+          />
+        </svg>
+      </div>
 
       <blockquote
         aria-label="The making of forever"

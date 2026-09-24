@@ -18,6 +18,7 @@ Quality commands:
 ```bash
 npm run test
 npm run test:browser
+npm run test:performance
 npm run check
 ```
 
@@ -131,7 +132,7 @@ Create a second transparent depth layer for a luxury chenille-flower fly-through
 - [ ] Test `INTRO_MODE = "layers"` with all final layered assets and both responsive flower crops.
 - [ ] Test `INTRO_MODE = "sequence"` with the configured frame count; remove selected frames temporarily and confirm the last/nearest decoded frame remains visible without a crash.
 - [ ] Confirm all images decode, the page has zero layout shift in the intro, and the console has no errors, hydration warnings, or failed same-origin asset requests.
-- [ ] Record Chrome DevTools Performance while scrubbing 0%→100%→0%: verify no React commits during scrub, no repeated layout reads in `onUpdate`, no post-preload image decode, no intro-attributable long tasks, and smooth target-device frame delivery.
+- [ ] Run `npm run test:performance` against the production server, then record Chrome DevTools Performance while scrubbing 0%→100%→0%: verify no React commits during scrub, no repeated layout reads in `onUpdate`, no post-preload image decode, no intro-attributable long tasks, and smooth target-device frame delivery.
 
 ## Phase 0 foundation retained
 
