@@ -1,10 +1,14 @@
-import { render, screen, within } from "@testing-library/react";
-import type { ImgHTMLAttributes } from "react";
+import { act, render, screen, within } from "@testing-library/react";
+import { createRef, type ImgHTMLAttributes } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AmbientParticles } from "@/components/intro/AmbientParticles";
 import { BrandMoment } from "@/components/intro/BrandMoment";
 import { FlowerDive } from "@/components/intro/FlowerDive";
+import {
+  FlowerSequence,
+  type FlowerSequenceHandle,
+} from "@/components/intro/FlowerSequence";
 import { LightTransition } from "@/components/intro/LightTransition";
 
 /* eslint-disable @next/next/no-img-element, jsx-a11y/alt-text */
@@ -104,5 +108,61 @@ describe("cinematic intro scenes", () => {
       "aria-hidden",
       "true",
     );
+  });
+
+  it("caps sequence canvas DPR, clamps frame requests, and cleans up", () => {
+    const disconnect = vi.fn();
+    const cancelAnimationFrame = vi.spyOn(window, "cancelAnimationFrame");
+    const requestAnimationFrame = vi
+      .spyOn(window, "requestAnimationFrame")
+      .mockImplementation(() => 42);
+    vi.stubGlobal(
+      "ResizeObserver",
+      vi.fn(function ResizeObserverMock() {
+        return { disconnect, observe: vi.fn(), unobserve: vi.fn() };
+      }),
+    );
+    Object.defineProperty(window, "devicePixelRatio", {
+      configurable: true,
+      value: 3,
+    });
+    Object.defineProperty(window, "innerWidth", {
+      configurable: true,
+      value: 500,
+    });
+    Object.defineProperty(window, "innerHeight", {
+      configurable: true,
+      value: 600,
+    });
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue({
+      clearRect: vi.fn(),
+      drawImage: vi.fn(),
+      setTransform: vi.fn(),
+    } as unknown as CanvasRenderingContext2D);
+
+    const ref = createRef<FlowerSequenceHandle>();
+    const { container, unmount } = render(
+      <FlowerSequence
+        ref={ref}
+        focalPoint={{ x: 50, y: 48 }}
+        frameUrls={["/frame-1.webp", "/frame-2.webp", "/frame-3.webp"]}
+      />,
+    );
+    const canvas = container.querySelector("canvas")!;
+
+    expect(canvas.width).toBe(1000);
+    expect(canvas.height).toBe(1200);
+    act(() => ref.current?.setFrame(-2));
+    expect(canvas).toHaveAttribute("data-frame", "0");
+    act(() => ref.current?.setFrame(1.6));
+    expect(canvas).toHaveAttribute("data-frame", "2");
+    act(() => ref.current?.setFrame(99));
+    expect(canvas).toHaveAttribute("data-frame", "2");
+
+    unmount();
+    expect(cancelAnimationFrame).toHaveBeenCalledWith(42);
+    expect(disconnect).toHaveBeenCalledOnce();
+    requestAnimationFrame.mockRestore();
+    cancelAnimationFrame.mockRestore();
   });
 });
