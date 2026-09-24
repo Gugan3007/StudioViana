@@ -30,6 +30,7 @@ import {
 import { useIsomorphicLayoutEffect } from "@/lib/animations/useIsomorphicLayoutEffect";
 import { useLenis } from "@/lib/animations/useLenis";
 import { useReducedMotion } from "@/lib/animations/useReducedMotion";
+import { useIntro } from "@/lib/context/IntroContext";
 
 type BreakpointSettings =
   (typeof introConfig.breakpoints)[keyof typeof introConfig.breakpoints];
@@ -65,6 +66,7 @@ export function IntroSection() {
   const sequence = useRef<FlowerSequenceHandle>(null);
   const reloadScrollY = useRef<number | null>(null);
   const { lenis } = useLenis();
+  const { markIntroActive, markIntroComplete } = useIntro();
   const reducedMotion = useReducedMotion();
   const breakpoint = useIntroBreakpoint();
   const mode: IntroMode = introConfig.mode;
@@ -158,6 +160,11 @@ export function IntroSection() {
           window.scrollTo(0, top);
         }
         reloadScrollY.current = null;
+        const home = document.getElementById("home");
+        const introEnd = home
+          ? Math.max(0, home.offsetTop - window.innerHeight)
+          : window.innerHeight;
+        if (top >= introEnd) markIntroComplete();
         ScrollTrigger.refresh();
       });
     });
@@ -168,7 +175,18 @@ export function IntroSection() {
         window.cancelAnimationFrame(restorationFrame);
       }
     };
-  }, [lenis, preloadComplete, reducedMotion]);
+  }, [lenis, markIntroComplete, preloadComplete, reducedMotion]);
+
+  useEffect(() => {
+    if (preloadComplete && reducedMotion) markIntroComplete();
+  }, [markIntroComplete, preloadComplete, reducedMotion]);
+
+  useEffect(
+    () => () => {
+      markIntroActive();
+    },
+    [markIntroActive],
+  );
 
   useIsomorphicLayoutEffect(() => {
     const section = root.current;
@@ -231,21 +249,23 @@ export function IntroSection() {
             invalidateOnRefresh: true,
             onEnter: () => {
               section.dataset.introActive = "true";
+              markIntroActive();
               setAtHome(false);
             },
             onEnterBack: () => {
               section.dataset.introActive = "true";
-              delete document.documentElement.dataset.introComplete;
+              markIntroActive();
               setAtHome(false);
             },
             onLeave: () => {
               clearActiveState();
-              document.documentElement.dataset.introComplete = "true";
+              markIntroComplete();
               setAtHome(true);
+              refreshScrollTrigger();
             },
             onLeaveBack: () => {
               clearActiveState();
-              delete document.documentElement.dataset.introComplete;
+              markIntroActive();
               setAtHome(false);
             },
           },
@@ -490,9 +510,16 @@ export function IntroSection() {
       delete section.dataset.introActive;
       delete section.dataset.introBreakpoint;
       delete section.dataset.pinVh;
-      delete document.documentElement.dataset.introComplete;
     };
-  }, [breakpoint, mode, preloadComplete, reducedMotion, sequenceFrames]);
+  }, [
+    breakpoint,
+    markIntroActive,
+    markIntroComplete,
+    mode,
+    preloadComplete,
+    reducedMotion,
+    sequenceFrames,
+  ]);
 
   return (
     <section

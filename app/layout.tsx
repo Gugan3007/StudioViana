@@ -3,6 +3,7 @@ import { Lora, Poppins } from "next/font/google";
 import type { ReactNode } from "react";
 
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
+import { IntroProvider } from "@/lib/context/IntroContext";
 
 import "./globals.css";
 
@@ -35,7 +36,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${lora.variable} ${poppins.variable}`}>
-        <SmoothScrollProvider>{children}</SmoothScrollProvider>
+        <SmoothScrollProvider>
+          <IntroProvider>{children}</IntroProvider>
+        </SmoothScrollProvider>
       </body>
     </html>
   );

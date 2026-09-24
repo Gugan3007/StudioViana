@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import {
   createElement,
   forwardRef,
@@ -8,6 +8,7 @@ import {
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { IntroSection } from "@/components/intro/IntroSection";
+import { IntroProvider } from "@/lib/context/IntroContext";
 
 const timelineMocks = vi.hoisted(() => {
   const contextRevert = vi.fn();
@@ -195,6 +196,14 @@ vi.mock("@/components/intro/SkipIntro", () => ({
   SkipIntro: () => createElement("button", null, "Skip intro"),
 }));
 
+function renderIntro() {
+  return render(
+    <IntroProvider>
+      <IntroSection />
+    </IntroProvider>,
+  );
+}
+
 describe("IntroSection master timeline", () => {
   beforeEach(() => {
     timelineMocks.contextRevert.mockClear();
@@ -217,7 +226,7 @@ describe("IntroSection master timeline", () => {
 
   it("renders a static unpinned intro when motion is reduced", async () => {
     timelineMocks.reduceMotion = true;
-    render(<IntroSection />);
+    renderIntro();
 
     await screen.findByTestId("intro-section");
     expect(screen.getByTestId("intro-section")).toHaveAttribute(
@@ -230,7 +239,7 @@ describe("IntroSection master timeline", () => {
 
   it("creates one desktop master timeline with normalized scene labels", async () => {
     const scrollTo = vi.spyOn(window, "scrollTo");
-    render(<IntroSection />);
+    renderIntro();
 
     await waitFor(() => expect(timelineMocks.timelines).toHaveLength(1));
     const options = timelineMocks.timelineOptions[0];
@@ -262,7 +271,7 @@ describe("IntroSection master timeline", () => {
 
   it("drives sequence frames from the same master timeline", async () => {
     timelineMocks.mode = "sequence";
-    render(<IntroSection />);
+    renderIntro();
 
     await waitFor(() =>
       expect(timelineMocks.sequenceSetFrame).toHaveBeenCalledWith(149),
@@ -272,7 +281,7 @@ describe("IntroSection master timeline", () => {
 
   it("never schedules missing optional mobile layers as GSAP targets", async () => {
     timelineMocks.activeMedia = "mobile";
-    render(<IntroSection />);
+    renderIntro();
 
     await waitFor(() =>
       expect(screen.getByTestId("intro-section")).toHaveAttribute(
@@ -284,7 +293,7 @@ describe("IntroSection master timeline", () => {
   });
 
   it("reverts media and scoped animation state on unmount", async () => {
-    const { unmount } = render(<IntroSection />);
+    const { unmount } = renderIntro();
     await waitFor(() => expect(timelineMocks.timelines).toHaveLength(1));
     document.documentElement.dataset.introComplete = "true";
 
@@ -292,6 +301,29 @@ describe("IntroSection master timeline", () => {
 
     expect(timelineMocks.mediaRevert).toHaveBeenCalledOnce();
     expect(timelineMocks.contextRevert).toHaveBeenCalledOnce();
+    expect(document.documentElement.dataset.introComplete).toBeUndefined();
+  });
+
+  it("publishes completion and reactivation from ScrollTrigger callbacks", async () => {
+    const completionEvent = vi.fn();
+    window.addEventListener("studio-viana:intro-complete", completionEvent, {
+      once: true,
+    });
+    renderIntro();
+    await waitFor(() => expect(timelineMocks.timelineOptions).toHaveLength(1));
+    const scrollTrigger = timelineMocks.timelineOptions[0].scrollTrigger as {
+      onEnterBack: () => void;
+      onLeave: () => void;
+    };
+
+    act(() => scrollTrigger.onLeave());
+    expect(document.documentElement).toHaveAttribute(
+      "data-intro-complete",
+      "true",
+    );
+    expect(completionEvent).toHaveBeenCalledOnce();
+
+    act(() => scrollTrigger.onEnterBack());
     expect(document.documentElement.dataset.introComplete).toBeUndefined();
   });
 });
