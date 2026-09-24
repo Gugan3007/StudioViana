@@ -1,6 +1,6 @@
-import { act, render, screen, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import { createRef, type ImgHTMLAttributes } from "react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AmbientParticles } from "@/components/intro/AmbientParticles";
 import { BrandMoment } from "@/components/intro/BrandMoment";
@@ -10,6 +10,31 @@ import {
   type FlowerSequenceHandle,
 } from "@/components/intro/FlowerSequence";
 import { LightTransition } from "@/components/intro/LightTransition";
+import { Preloader } from "@/components/intro/Preloader";
+import { SkipIntro } from "@/components/intro/SkipIntro";
+import type { PreloadResult } from "@/lib/animations/preloadImages";
+
+const lifecycleMocks = vi.hoisted(() => ({
+  contextLenis: null as null | {
+    scrollTo: ReturnType<typeof vi.fn>;
+  },
+  preload: vi.fn(),
+  reduceMotion: false,
+}));
+
+vi.mock("@/lib/animations/preloadImages", async (importOriginal) => {
+  const original =
+    await importOriginal<typeof import("@/lib/animations/preloadImages")>();
+  return { ...original, preloadImages: lifecycleMocks.preload };
+});
+
+vi.mock("@/lib/animations/useLenis", () => ({
+  useLenis: () => ({ lenis: lifecycleMocks.contextLenis }),
+}));
+
+vi.mock("@/lib/animations/useReducedMotion", () => ({
+  useReducedMotion: () => lifecycleMocks.reduceMotion,
+}));
 
 /* eslint-disable @next/next/no-img-element, jsx-a11y/alt-text */
 vi.mock("next/image", () => ({
@@ -37,6 +62,12 @@ vi.mock("next/image", () => ({
 
 describe("cinematic intro scenes", () => {
   beforeEach(() => {
+    lifecycleMocks.contextLenis = null;
+    lifecycleMocks.preload.mockReset();
+    lifecycleMocks.reduceMotion = false;
+    sessionStorage.clear();
+    document.documentElement.style.overflow = "";
+    document.body.style.overflow = "";
     vi.stubGlobal(
       "IntersectionObserver",
       vi.fn(function IntersectionObserverMock() {
@@ -47,6 +78,11 @@ describe("cinematic intro scenes", () => {
         };
       }),
     );
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
   });
 
   it("renders the complete brand moment and accessible logo", () => {
@@ -164,5 +200,162 @@ describe("cinematic intro scenes", () => {
     expect(disconnect).toHaveBeenCalledOnce();
     requestAnimationFrame.mockRestore();
     cancelAnimationFrame.mockRestore();
+  });
+
+  it("locks scrolling, waits for first-visit minimum, and stops late Lenis", async () => {
+    vi.useFakeTimers();
+    let resolvePreload!: (value: PreloadResult) => void;
+    lifecycleMocks.preload.mockReturnValue(
+      new Promise<PreloadResult>((resolve) => {
+        resolvePreload = resolve;
+      }),
+    );
+    const onComplete = vi.fn();
+    const lenis = { start: vi.fn(), stop: vi.fn() };
+    const { rerender } = render(
+      <Preloader
+        lenis={null}
+        onComplete={onComplete}
+        reducedMotion
+        urls={["/flower.svg"]}
+      />,
+    );
+
+    expect(document.documentElement.style.overflow).toBe("hidden");
+    expect(document.body.style.overflow).toBe("hidden");
+
+    rerender(
+      <Preloader
+        lenis={lenis as never}
+        onComplete={onComplete}
+        reducedMotion
+        urls={["/flower.svg"]}
+      />,
+    );
+    expect(lenis.stop).toHaveBeenCalledOnce();
+
+    await act(async () => {
+      resolvePreload({ loaded: ["/flower.svg"], failed: [], timedOut: false });
+      await Promise.resolve();
+    });
+    await act(() => vi.advanceTimersByTimeAsync(1799));
+    expect(onComplete).not.toHaveBeenCalled();
+    await act(() => vi.advanceTimersByTimeAsync(1));
+
+    expect(onComplete).toHaveBeenCalledOnce();
+    expect(lenis.start).toHaveBeenCalledOnce();
+    expect(document.documentElement.style.overflow).toBe("");
+    expect(document.body.style.overflow).toBe("");
+    expect(sessionStorage.getItem("studio-viana:intro-seen")).toBe("true");
+  });
+
+  it("uses the repeat-visit minimum and a single maximum-time fallback", async () => {
+    vi.useFakeTimers();
+    sessionStorage.setItem("studio-viana:intro-seen", "true");
+    let resolvePreload!: (value: PreloadResult) => void;
+    lifecycleMocks.preload.mockReturnValueOnce(
+      new Promise<PreloadResult>((resolve) => {
+        resolvePreload = resolve;
+      }),
+    );
+    const onRepeatComplete = vi.fn();
+    const { unmount } = render(
+      <Preloader
+        lenis={null}
+        onComplete={onRepeatComplete}
+        reducedMotion
+        urls={["/repeat.svg"]}
+      />,
+    );
+
+    await act(async () => {
+      resolvePreload({ loaded: ["/repeat.svg"], failed: [], timedOut: false });
+      await Promise.resolve();
+    });
+    await act(() => vi.advanceTimersByTimeAsync(799));
+    expect(onRepeatComplete).not.toHaveBeenCalled();
+    await act(() => vi.advanceTimersByTimeAsync(1));
+    expect(onRepeatComplete).toHaveBeenCalledOnce();
+    unmount();
+
+    sessionStorage.clear();
+    lifecycleMocks.preload.mockReturnValue(new Promise(() => undefined));
+    const onTimeout = vi.fn();
+    render(
+      <Preloader
+        lenis={null}
+        onComplete={onTimeout}
+        reducedMotion
+        urls={["/stalled.svg"]}
+      />,
+    );
+    await act(() => vi.advanceTimersByTimeAsync(6000));
+    expect(onTimeout).toHaveBeenCalledOnce();
+    expect(onTimeout).toHaveBeenCalledWith({
+      loaded: [],
+      failed: ["/stalled.svg"],
+      timedOut: true,
+    });
+    await act(() => vi.runOnlyPendingTimersAsync());
+    expect(onTimeout).toHaveBeenCalledOnce();
+  });
+
+  it("restores scrolling and only restarts a Lenis instance it stopped", () => {
+    vi.useFakeTimers();
+    lifecycleMocks.preload.mockReturnValue(new Promise(() => undefined));
+    document.documentElement.style.overflow = "clip";
+    document.body.style.overflow = "scroll";
+    const lenis = { start: vi.fn(), stop: vi.fn() };
+    const { unmount } = render(
+      <Preloader
+        lenis={lenis as never}
+        onComplete={vi.fn()}
+        reducedMotion
+        urls={["/flower.svg"]}
+      />,
+    );
+
+    expect(lenis.stop).toHaveBeenCalledOnce();
+    unmount();
+
+    expect(lenis.start).toHaveBeenCalledOnce();
+    expect(document.documentElement.style.overflow).toBe("clip");
+    expect(document.body.style.overflow).toBe("scroll");
+  });
+
+  it("skips with Lenis and falls back to native scrolling", () => {
+    vi.useFakeTimers();
+    const scrollTo = vi.fn();
+    lifecycleMocks.contextLenis = { scrollTo };
+    const destination = document.createElement("section");
+    destination.id = "home";
+    destination.scrollIntoView = vi.fn();
+    document.body.append(destination);
+
+    const { rerender } = render(
+      <SkipIntro destinationId="home" visible />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Skip intro" }));
+    expect(scrollTo).toHaveBeenCalledWith(destination, { duration: 1.6 });
+
+    lifecycleMocks.contextLenis = null;
+    lifecycleMocks.reduceMotion = false;
+    rerender(<SkipIntro destinationId="home" visible />);
+    act(() => vi.runOnlyPendingTimers());
+    fireEvent.click(screen.getByRole("button", { name: "Skip intro" }));
+    expect(destination.scrollIntoView).toHaveBeenLastCalledWith({
+      behavior: "smooth",
+      block: "start",
+    });
+
+    lifecycleMocks.reduceMotion = true;
+    rerender(<SkipIntro destinationId="home" visible />);
+    act(() => vi.runOnlyPendingTimers());
+    fireEvent.click(screen.getByRole("button", { name: "Skip intro" }));
+    expect(destination.scrollIntoView).toHaveBeenLastCalledWith({
+      behavior: "auto",
+      block: "start",
+    });
+    destination.remove();
   });
 });
