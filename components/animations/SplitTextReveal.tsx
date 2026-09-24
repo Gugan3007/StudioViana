@@ -14,6 +14,7 @@ interface SplitTextRevealProps {
   className?: string;
   controlled?: boolean;
   delay?: number;
+  id?: string;
   type?: "words" | "lines";
 }
 
@@ -23,6 +24,7 @@ export function SplitTextReveal({
   className,
   controlled = false,
   delay = 0,
+  id,
   type = "words",
 }: SplitTextRevealProps) {
   const Component = as;
@@ -62,7 +64,11 @@ export function SplitTextReveal({
       className="contents"
       data-controlled-split={controlled || undefined}
     >
-      <Component className={cn(className)}>
+      <Component
+        aria-label={children.replace(/\s+/g, " ")}
+        className={cn(className)}
+        id={id}
+      >
         <span className="sr-only">{children}</span>
         <span aria-hidden="true">
           {tokens.map((token, index) => {
