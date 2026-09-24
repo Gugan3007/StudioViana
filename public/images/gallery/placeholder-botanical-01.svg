@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1200" viewBox="0 0 1600 1200" role="img" aria-labelledby="title description">
+  <title id="title">Abstract botanical study in forest, blush, and cream</title>
+  <desc id="description">A temporary decorative fixture of curved stems and soft petal forms.</desc>
+  <rect width="1600" height="1200" fill="#F7F0E6"/>
+  <circle cx="1190" cy="310" r="255" fill="#E9C9C9" opacity=".72"/>
+  <circle cx="410" cy="915" r="210" fill="#C9B6E4" opacity=".52"/>
+  <g fill="none" stroke="#1F3326" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M764 1120c-20-250 8-493 121-714 62-121 143-210 246-275" stroke-width="16"/>
+    <path d="M849 577c-155-17-263-91-334-223 147-17 257 64 334 223Z" stroke-width="11"/>
+    <path d="M813 737c135-31 244-105 328-224-145-5-254 69-328 224Z" stroke-width="11"/>
+    <path d="M745 918c-137-33-245-112-320-238 143 3 249 84 320 238Z" stroke-width="11"/>
+    <path d="M1121 140c-47 44-61 107-37 173 53-30 80-88 79-154 45 45 105 58 170 34-31-56-85-83-163-76 22-63 10-122-37-170-43 46-55 105-35 177-62-26-123-14-176 36 48 45 111 57 199 30Z" stroke-width="12"/>
+  </g>
+</svg>
