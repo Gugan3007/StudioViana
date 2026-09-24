@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="520" viewBox="0 0 720 520" fill="none">
+  <title>Temporary Studio Viana ornamental wordmark</title>
+  <defs>
+    <radialGradient id="g" cx="0" cy="0" r="1" gradientTransform="translate(360 142) rotate(90) scale(108)">
+      <stop stop-color="#D6B98A"/>
+      <stop offset="1" stop-color="#B8925A"/>
+    </radialGradient>
+  </defs>
+  <g stroke="url(#g)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M360 55c18 22 22 48 0 77-22-29-18-55 0-77Z"/>
+    <path d="M360 229c-18-22-22-48 0-77 22 29 18 55 0 77Z"/>
+    <path d="M273 142c22-18 48-22 77 0-29 22-55 18-77 0Z"/>
+    <path d="M447 142c-22 18-48 22-77 0 29-22 55-18 77 0Z"/>
+    <path d="M298.5 80.5c28 2 49 18 54 54-36-5-52-26-54-54Z"/>
+    <path d="M421.5 203.5c-28-2-49-18-54-54 36 5 52 26 54 54Z"/>
+    <path d="M421.5 80.5c-2 28-18 49-54 54 5-36 26-52 54-54Z"/>
+    <path d="M298.5 203.5c2-28 18-49 54-54-5 36-26 52-54 54Z"/>
+    <circle cx="360" cy="142" r="18"/>
+    <circle cx="360" cy="142" r="9"/>
+    <path d="M360 35v16M360 233v16M253 142h16M451 142h16" opacity=".7"/>
+  </g>
+  <text x="360" y="348" fill="#F7F0E6" font-family="Georgia, 'Times New Roman', serif" font-size="70" letter-spacing="12" text-anchor="middle">STUDIO</text>
+  <text x="360" y="423" fill="#F7F0E6" font-family="Georgia, 'Times New Roman', serif" font-size="70" font-style="italic" letter-spacing="9" text-anchor="middle">VIANA</text>
+  <path d="M210 466h300" stroke="#B8925A" stroke-width="1"/>
+  <circle cx="360" cy="466" r="4" fill="#B8925A"/>
+</svg>

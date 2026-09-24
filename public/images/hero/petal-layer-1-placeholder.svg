@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1600" viewBox="0 0 2400 1600">
+  <title>Transparent foreground chenille petals placeholder</title>
+  <defs>
+    <radialGradient id="a"><stop stop-color="#FBF7F1"/><stop offset=".42" stop-color="#E9C9C9"/><stop offset="1" stop-color="#9E6876"/></radialGradient>
+    <filter id="f" x="-50%" y="-50%" width="200%" height="200%"><feTurbulence baseFrequency=".025 .1" numOctaves="2" seed="29" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="18"/><feGaussianBlur stdDeviation="2.5"/></filter>
+  </defs>
+  <g fill="url(#a)" filter="url(#f)" opacity=".92">
+    <path d="M-150 120C170 50 420 174 522 476 188 514-46 392-150 120Z"/>
+    <path d="M2102-40c230 50 370 248 322 526-278-72-418-254-322-526Z"/>
+    <path d="M1940 1372c247-151 488-101 598 182-284 121-502 52-598-182Z"/>
+    <path d="M-80 1290c178-154 416-146 596 82-224 182-450 132-596-82Z"/>
+  </g>
+</svg>

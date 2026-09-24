@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1600" viewBox="0 0 2400 1600">
+  <title>Transparent middle-distance chenille petals placeholder</title>
+  <defs>
+    <radialGradient id="b"><stop stop-color="#FBF7F1"/><stop offset=".45" stop-color="#C9B6E4"/><stop offset="1" stop-color="#705F8B"/></radialGradient>
+    <filter id="s" x="-60%" y="-60%" width="220%" height="220%"><feTurbulence baseFrequency=".03 .12" numOctaves="2" seed="9" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="12"/><feGaussianBlur stdDeviation="1.2"/></filter>
+    <filter id="g"><feGaussianBlur stdDeviation="15"/></filter>
+  </defs>
+  <g fill="url(#b)" filter="url(#s)" opacity=".72">
+    <path d="M58 598c174-121 341-68 402 150-203 104-359 36-402-150Z"/>
+    <path d="M1998 224c160 16 270 138 263 332-190-25-287-142-263-332Z"/>
+    <path d="M2138 1190c152-76 302-22 356 164-179 59-316-5-356-164Z"/>
+  </g>
+  <g fill="#D6B98A" filter="url(#g)" opacity=".46"><circle cx="238" cy="252" r="34"/><circle cx="2180" cy="790" r="48"/><circle cx="356" cy="1382" r="42"/></g>
+</svg>
