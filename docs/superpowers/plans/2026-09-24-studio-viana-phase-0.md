@@ -92,10 +92,12 @@
 ### Task 1: Approve the Temporary Showcase Concept
 
 **Files:**
+
 - No repository files changed
 - Generate: three coordinated concept images in the image-generation result store
 
 **Interfaces:**
+
 - Consumes: approved design spec and the supplied catalogue's cream/forest/gold editorial language
 - Produces: an approved visual reference for the specimen intro, light component/animation area, and dark motion area
 
@@ -126,11 +128,13 @@ Expected: user explicitly approves the visual references before code is written.
 ### Task 2: Bootstrap the Repository and Toolchain
 
 **Files:**
+
 - Create: all files under “Project and toolchain” in the file map
 - Create: `app/layout.tsx`, `app/page.tsx`, `app/globals.css` with the smallest buildable shell
 - Modify: none
 
 **Interfaces:**
+
 - Consumes: empty remote URL and approved spec
 - Produces: buildable strict Next.js project with `@/*` imports and test/lint/format scripts
 
@@ -204,6 +208,7 @@ git commit -m "chore: bootstrap Studio Viana foundation"
 ### Task 3: Add Utilities and Typed Brand Data with TDD
 
 **Files:**
+
 - Create: `tests/utils.test.ts`
 - Create: `tests/data.test.ts`
 - Create: `lib/utils.ts`
@@ -212,6 +217,7 @@ git commit -m "chore: bootstrap Studio Viana foundation"
 - Modify: `vitest.config.ts`
 
 **Interfaces:**
+
 - Consumes: Vitest configuration from Task 2
 - Produces: `cn(...inputs: ClassValue[]): string`, `formatINR(value: number): string`, `whatsappLink(message?: string): string`, `site`, `products`, `services`, and exported `Product`, `ProductVariant`, and `Service` types
 
@@ -297,7 +303,9 @@ expect(products.map(({ number, priceLabel }) => [number, priceLabel])).toEqual([
   ["08", "₹1,250"],
   ["09", "On request"],
 ]);
-expect(new Set(products.map((product) => product.slug)).size).toBe(products.length);
+expect(new Set(products.map((product) => product.slug)).size).toBe(
+  products.length,
+);
 expect(services.map((service) => service.name)).toEqual([
   "Hampers",
   "Bouquets",
@@ -332,6 +340,7 @@ git commit -m "feat: add typed brand and catalogue data"
 ### Task 4: Implement Global Tokens and UI Primitives with TDD
 
 **Files:**
+
 - Create: `tests/ui.test.tsx`
 - Create: `components/ui/SectionLabel.tsx`
 - Create: `components/ui/Heading.tsx`
@@ -345,6 +354,7 @@ git commit -m "feat: add typed brand and catalogue data"
 - Modify: `tailwind.config.ts`
 
 **Interfaces:**
+
 - Consumes: `cn` from Task 3 and approved CSS tokens
 - Produces: the eight requested UI components, `HeadingSize`, `ButtonVariant`, and `SectionTone` types
 
@@ -353,18 +363,44 @@ git commit -m "feat: add typed brand and catalogue data"
 Cover:
 
 ```tsx
-render(<Heading as="h2" size="h1" italic="forever">Flowers live forever</Heading>);
-expect(screen.getByRole("heading", { level: 2, name: "Flowers live forever" })).toBeVisible();
+render(
+  <Heading as="h2" size="h1" italic="forever">
+    Flowers live forever
+  </Heading>,
+);
+expect(
+  screen.getByRole("heading", { level: 2, name: "Flowers live forever" }),
+).toBeVisible();
 expect(screen.getByText("forever")).toHaveClass("italic");
 
-render(<Button href="/catalogue" variant="outline-gold">Explore</Button>);
-expect(screen.getByRole("link", { name: "Explore" })).toHaveAttribute("href", "/catalogue");
+render(
+  <Button href="/catalogue" variant="outline-gold">
+    Explore
+  </Button>,
+);
+expect(screen.getByRole("link", { name: "Explore" })).toHaveAttribute(
+  "href",
+  "/catalogue",
+);
 
-render(<Button type="button" variant="solid-forest" onClick={() => undefined}>Order</Button>);
-expect(screen.getByRole("button", { name: "Order" })).toHaveAttribute("type", "button");
+render(
+  <Button type="button" variant="solid-forest" onClick={() => undefined}>
+    Order
+  </Button>,
+);
+expect(screen.getByRole("button", { name: "Order" })).toHaveAttribute(
+  "type",
+  "button",
+);
 
-render(<Section tone="dark" aria-label="Dark specimen">Content</Section>);
-expect(screen.getByRole("region", { name: "Dark specimen" })).toHaveClass("bg-forest");
+render(
+  <Section tone="dark" aria-label="Dark specimen">
+    Content
+  </Section>,
+);
+expect(screen.getByRole("region", { name: "Dark specimen" })).toHaveClass(
+  "bg-forest",
+);
 ```
 
 - [ ] **Step 2: Run the UI tests and confirm RED**
@@ -403,6 +439,7 @@ git commit -m "feat: add Studio Viana design primitives"
 ### Task 5: Build Reduced-Motion and GSAP Foundations with TDD
 
 **Files:**
+
 - Create: `tests/reduced-motion.test.tsx`
 - Create: `lib/animations/tokens.ts`
 - Create: `lib/animations/gsap.ts`
@@ -410,6 +447,7 @@ git commit -m "feat: add Studio Viana design primitives"
 - Create: `lib/animations/useIsomorphicLayoutEffect.ts`
 
 **Interfaces:**
+
 - Consumes: browser `matchMedia`, GSAP, and ScrollTrigger
 - Produces: `motionTokens`, configured `gsap`, `ScrollTrigger`, `refreshScrollTrigger(): void`, `useReducedMotion(): boolean`, and `useIsomorphicLayoutEffect`
 
@@ -463,12 +501,14 @@ git commit -m "feat: add motion tokens and browser-safe gsap setup"
 ### Task 6: Implement Lenis Integration with Lifecycle Tests
 
 **Files:**
+
 - Create: `tests/smooth-scroll.test.tsx`
 - Create: `components/providers/SmoothScrollProvider.tsx`
 - Create: `lib/animations/useLenis.ts`
 - Modify: `app/layout.tsx`
 
 **Interfaces:**
+
 - Consumes: `useReducedMotion`, configured `gsap`, and `ScrollTrigger`
 - Produces: `SmoothScrollProvider`, `LenisContextValue`, and `useLenis()`
 
@@ -530,12 +570,14 @@ git commit -m "feat: integrate lenis with gsap ticker"
 ### Task 7: Implement Text and Reveal Animations with TDD
 
 **Files:**
+
 - Create: `tests/animations.test.tsx`
 - Create: `components/animations/Reveal.tsx`
 - Create: `components/animations/SplitTextReveal.tsx`
 - Modify: `components/ui/GoldDivider.tsx`
 
 **Interfaces:**
+
 - Consumes: configured GSAP, ScrollTrigger, motion tokens, reduced-motion hook, isomorphic layout effect
 - Produces: `Reveal`, `SplitTextReveal`, and animated `GoldDivider`
 
@@ -584,6 +626,7 @@ git commit -m "feat: add accessible reveal animations"
 ### Task 8: Implement Image, Float, and Marquee Animations
 
 **Files:**
+
 - Modify: `tests/animations.test.tsx`
 - Create: `components/animations/ParallaxImage.tsx`
 - Create: `components/animations/ImageReveal.tsx`
@@ -594,6 +637,7 @@ git commit -m "feat: add accessible reveal animations"
 - Create: public `.gitkeep` files listed in the map
 
 **Interfaces:**
+
 - Consumes: Next Image, configured GSAP, ScrollTrigger, `refreshScrollTrigger`, motion hooks/tokens
 - Produces: four remaining animation components and fixed-dimension local preview assets
 
@@ -637,6 +681,7 @@ git commit -m "feat: add image and ambient motion primitives"
 ### Task 9: Compose and Verify the Temporary Showcase
 
 **Files:**
+
 - Create: `app/showcase/AnimationShowcase.tsx`
 - Modify: `app/page.tsx`
 - Modify: `app/globals.css`
@@ -644,6 +689,7 @@ git commit -m "feat: add image and ambient motion primitives"
 - Create: `tests/browser/showcase.spec.ts` if Playwright is required as the browser fallback
 
 **Interfaces:**
+
 - Consumes: all UI components, animation components, brand data, products, services, and approved concept images
 - Produces: finished Phase 0 preview, asset/run documentation, browser evidence, and completion checklist
 
