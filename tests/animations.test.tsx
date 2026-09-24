@@ -91,6 +91,26 @@ describe("Reveal", () => {
 });
 
 describe("SplitTextReveal", () => {
+  it("leaves controlled split tokens for a parent timeline", () => {
+    mocks.reduceMotion = false;
+    mocks.fromTo.mockClear();
+    const { container } = render(
+      <SplitTextReveal controlled as="h1" type="lines">
+        {"Where flowers become\nforever memories."}
+      </SplitTextReveal>,
+    );
+
+    expect(mocks.fromTo).not.toHaveBeenCalled();
+    expect(container.querySelectorAll("[data-split-token]")).toHaveLength(2);
+    expect(container.querySelector("[data-controlled-split]")).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", {
+        level: 1,
+        name: /Where flowers become\s+forever memories\./,
+      }),
+    ).toBeVisible();
+  });
+
   it("keeps one accessible heading while preserving word punctuation and spacing", () => {
     const { container } = render(
       <SplitTextReveal as="h2" type="words">

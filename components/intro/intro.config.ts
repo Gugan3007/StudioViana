@@ -44,7 +44,7 @@ interface IntroConfig {
 
 export const INTRO_MODE: IntroMode = "layers";
 
-export const introConfig = {
+export const introConfig: IntroConfig = {
   mode: INTRO_MODE,
   focalPoint: { x: 50, y: 48 },
   scrub: 1.2,
@@ -98,7 +98,7 @@ export const introConfig = {
       showMiddleLayer: false,
     },
   },
-} as const satisfies IntroConfig;
+};
 
 export function getSequenceFrameUrl(index: number): string {
   const { directory, extension, padding, prefix } = introConfig.sequence;

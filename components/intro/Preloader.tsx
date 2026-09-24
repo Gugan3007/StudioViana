@@ -172,7 +172,7 @@ export function Preloader({
       <div aria-hidden="true" className="intro-grain absolute inset-0 opacity-[0.07]" />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-8 border border-transparent max-sm:inset-4"
+        className="pointer-events-none absolute inset-8 border border-gold/70 max-sm:inset-4"
         data-preloader-progress-track
       />
       <div
@@ -185,6 +185,7 @@ export function Preloader({
               key={`${letter}-${index}`}
               className="inline-block"
               data-preloader-letter
+              style={{ animationDelay: `${index * 0.05}s` }}
             >
               {letter === " " ? "\u00a0" : letter}
             </span>

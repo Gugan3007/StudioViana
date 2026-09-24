@@ -12,6 +12,7 @@ interface SplitTextRevealProps {
   as?: "h1" | "h2" | "h3" | "p";
   children: string;
   className?: string;
+  controlled?: boolean;
   delay?: number;
   type?: "words" | "lines";
 }
@@ -20,6 +21,7 @@ export function SplitTextReveal({
   as = "h2",
   children,
   className,
+  controlled = false,
   delay = 0,
   type = "words",
 }: SplitTextRevealProps) {
@@ -30,7 +32,7 @@ export function SplitTextReveal({
     type === "lines" ? children.split("\n") : children.split(/(\s+)/);
 
   useIsomorphicLayoutEffect(() => {
-    if (shouldReduceMotion || !root.current) return;
+    if (controlled || shouldReduceMotion || !root.current) return;
 
     const context = gsap.context(() => {
       gsap.fromTo(
@@ -52,10 +54,14 @@ export function SplitTextReveal({
     }, root);
 
     return () => context.revert();
-  }, [children, delay, shouldReduceMotion, type]);
+  }, [children, controlled, delay, shouldReduceMotion, type]);
 
   return (
-    <div ref={root} className="contents">
+    <div
+      ref={root}
+      className="contents"
+      data-controlled-split={controlled || undefined}
+    >
       <Component className={cn(className)}>
         <span className="sr-only">{children}</span>
         <span aria-hidden="true">
