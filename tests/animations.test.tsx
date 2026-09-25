@@ -337,6 +337,14 @@ describe("ambient motion primitives", () => {
     expect(container.querySelectorAll('[aria-hidden="true"]')).toHaveLength(2);
   });
 
+  it("accepts reverse, velocity and skew controls", () => {
+    render(<Marquee reverse skew text="Studio Viana" velocityFactor={1.5} />);
+
+    expect(
+      screen.getByText("Studio Viana", { selector: ".sr-only" }),
+    ).toBeVisible();
+  });
+
   it("pauses and resumes Marquee motion outside and inside the viewport", () => {
     mocks.reduceMotion = false;
     let visibilityCallback:

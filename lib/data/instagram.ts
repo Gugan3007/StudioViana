@@ -20,14 +20,54 @@ export interface InstagramItem {
 export const instagramProfileUrl = "https://instagram.com/studio_viana.in";
 
 export const instagramItems: readonly InstagramItem[] = [
-  { id: "ig-01", src: ig01, alt: "Blush chenille lily detail from the Studio Viana feed" },
-  { id: "ig-02", src: ig02, alt: "Handcrafted flower card photographed in warm window light" },
-  { id: "ig-03", src: ig03, alt: "Lilac pearl dome bouquet ready for a thoughtful gift" },
-  { id: "ig-04", src: ig04, alt: "Single lasting chenille stem in the Studio Viana studio" },
-  { id: "ig-05", src: ig05, alt: "Mini bouquet of soft handcrafted chenille roses" },
-  { id: "ig-06", src: ig06, alt: "Close blush lily petals with tactile chenille fibres" },
-  { id: "ig-07", src: ig07, alt: "Small bouquet wrapped and finished with a sheer ribbon" },
-  { id: "ig-08", src: ig08, alt: "Violet bouquet edition against a warm cream backdrop" },
-  { id: "ig-09", src: ig09, alt: "Grand bouquet in blush, ivory and lilac tones" },
-  { id: "ig-10", src: ig10, alt: "Flower card bloom with pearl and ribbon detailing" },
+  {
+    id: "ig-01",
+    src: ig01,
+    alt: "Blush chenille lily detail from the Studio Viana feed",
+  },
+  {
+    id: "ig-02",
+    src: ig02,
+    alt: "Handcrafted flower card photographed in warm window light",
+  },
+  {
+    id: "ig-03",
+    src: ig03,
+    alt: "Lilac pearl dome bouquet ready for a thoughtful gift",
+  },
+  {
+    id: "ig-04",
+    src: ig04,
+    alt: "Single lasting chenille stem in the Studio Viana studio",
+  },
+  {
+    id: "ig-05",
+    src: ig05,
+    alt: "Mini bouquet of soft handcrafted chenille roses",
+  },
+  {
+    id: "ig-06",
+    src: ig06,
+    alt: "Close blush lily petals with tactile chenille fibres",
+  },
+  {
+    id: "ig-07",
+    src: ig07,
+    alt: "Small bouquet wrapped and finished with a sheer ribbon",
+  },
+  {
+    id: "ig-08",
+    src: ig08,
+    alt: "Violet bouquet edition against a warm cream backdrop",
+  },
+  {
+    id: "ig-09",
+    src: ig09,
+    alt: "Grand bouquet in blush, ivory and lilac tones",
+  },
+  {
+    id: "ig-10",
+    src: ig10,
+    alt: "Flower card bloom with pearl and ribbon detailing",
+  },
 ] as const;
