@@ -44,6 +44,7 @@ export function ProductPanel({ onOpenDetail, product }: ProductPanelProps) {
         aria-label={`View details for ${product.name}`}
         className="group relative block h-[min(76svh,50rem)] w-full cursor-pointer"
         data-cursor="view"
+        data-preload-product-detail
         onClick={(event) => onOpenDetail(product, event.currentTarget)}
         onPointerEnter={() => setCursorState("view")}
         onPointerLeave={() => setCursorState("default")}
@@ -146,6 +147,7 @@ export function ProductPanel({ onOpenDetail, product }: ProductPanelProps) {
         <div className="mt-7 flex flex-wrap items-center gap-4">
           <PriceTag>{product.priceLabel}</PriceTag>
           <Button
+            data-preload-product-detail
             onClick={(event) => onOpenDetail(product, event.currentTarget)}
             variant="outline-gold"
           >

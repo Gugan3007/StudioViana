@@ -335,3 +335,48 @@ html[data-js="true"]
   background-size: 180px 180px;
   mix-blend-mode: multiply;
 }
+
+[data-pearl] {
+  animation-name: pearl-rise;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  will-change: transform, opacity;
+}
+
+[data-pearl-field][data-paused="true"] [data-pearl] {
+  animation-play-state: paused;
+}
+
+@keyframes pearl-rise {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 8vh, 0) scale(0.7);
+  }
+  16% {
+    opacity: 0.65;
+  }
+  78% {
+    opacity: 0.35;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(18px, -112vh, 0) scale(1.15);
+  }
+}
+
+@keyframes counter-roll {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-pearl] {
+    animation: none !important;
+  }
+}

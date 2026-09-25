@@ -1,8 +1,24 @@
 "use client";
 
+import { AnimatePresence } from "framer-motion";
+import dynamic from "next/dynamic";
+import { useEffect, useRef } from "react";
+
 import { CollectionIndex } from "@/components/sections/collection/CollectionIndex";
 import { CollectionIntro } from "@/components/sections/collection/CollectionIntro";
-import type { Product } from "@/lib/data/products";
+import {
+  type GalleryHandle,
+  HorizontalGallery,
+} from "@/components/sections/collection/HorizontalGallery";
+import { GrandBouquetShowcase } from "@/components/sections/collection/GrandBouquetShowcase";
+import { useProductQueryParam } from "@/components/product/useProductQueryParam";
+import { getProductBySlug, type Product } from "@/lib/data/products";
+
+const loadProductDetail = () => import("@/components/product/ProductDetail");
+const DynamicProductDetail = dynamic(
+  () => loadProductDetail().then((module) => module.ProductDetail),
+  { ssr: false },
+);
 
 interface CollectionSectionProps {
   indexMode?: "detail" | "scroll";
@@ -13,22 +29,50 @@ export function CollectionSection({
   indexMode = "scroll",
   onSelectProduct,
 }: CollectionSectionProps) {
+  const gallery = useRef<GalleryHandle>(null);
+  const { closeProduct, openProduct, productSlug, replaceProduct } =
+    useProductQueryParam();
+  const selectedProduct = getProductBySlug(productSlug);
+
+  useEffect(() => {
+    const preload = (event: Event) => {
+      const target = event.target as Element | null;
+      if (target?.closest("[data-preload-product-detail]")) {
+        void loadProductDetail();
+      }
+    };
+    const openFromEvent = (event: Event) => {
+      const slug = (event as CustomEvent<{ slug?: string }>).detail?.slug;
+      if (slug) openProduct(slug);
+    };
+    document.addEventListener("focusin", preload);
+    document.addEventListener("pointerover", preload);
+    window.addEventListener("studio-viana:open-product", openFromEvent);
+    return () => {
+      document.removeEventListener("focusin", preload);
+      document.removeEventListener("pointerover", preload);
+      window.removeEventListener("studio-viana:open-product", openFromEvent);
+    };
+  }, [openProduct]);
+
+  const showProduct = (product: Product, trigger: HTMLElement) => {
+    if (onSelectProduct) {
+      onSelectProduct(product, trigger);
+      return;
+    }
+    openProduct(product.slug);
+  };
+
   const selectProduct = (product: Product, trigger: HTMLElement) => {
     if (onSelectProduct) {
       onSelectProduct(product, trigger);
       return;
     }
     if (indexMode === "detail") {
-      window.dispatchEvent(
-        new CustomEvent("studio-viana:open-product", {
-          detail: { slug: product.slug },
-        }),
-      );
+      showProduct(product, trigger);
       return;
     }
-    document
-      .querySelector<HTMLElement>(`[data-product-slug="${product.slug}"]`)
-      ?.scrollIntoView({ behavior: "smooth", block: "center" });
+    gallery.current?.scrollToProduct(product.slug);
   };
 
   return (
@@ -40,6 +84,18 @@ export function CollectionSection({
     >
       <CollectionIntro />
       <CollectionIndex onSelectProduct={selectProduct} />
+      <HorizontalGallery ref={gallery} onOpenDetail={showProduct} />
+      <GrandBouquetShowcase onOpenDetail={showProduct} />
+      <AnimatePresence>
+        {selectedProduct ? (
+          <DynamicProductDetail
+            key={selectedProduct.slug}
+            onClose={closeProduct}
+            onSelectProduct={(product) => replaceProduct(product.slug)}
+            product={selectedProduct}
+          />
+        ) : null}
+      </AnimatePresence>
     </section>
   );
 }

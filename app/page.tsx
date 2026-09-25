@@ -1,4 +1,5 @@
 import { IntroSection } from "@/components/intro/IntroSection";
+import { CollectionSection } from "@/components/sections/collection/CollectionSection";
 import { AboutStudio } from "@/components/sections/home/AboutStudio";
 import { HomeHero } from "@/components/sections/home/HomeHero";
 import { WhatWeDo } from "@/components/sections/home/WhatWeDo";
@@ -7,12 +8,6 @@ import { Section } from "@/components/ui/Section";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 
 const shells = [
-  {
-    id: "collection",
-    label: "Phase 3",
-    heading: "The Collection",
-    tone: "light" as const,
-  },
   {
     id: "pricing",
     label: "Phase 4",
@@ -34,6 +29,7 @@ export default function Home() {
       <HomeHero />
       <AboutStudio />
       <WhatWeDo />
+      <CollectionSection />
 
       {shells.map((shell) => {
         const headingId = `${shell.id}-heading`;

@@ -31,7 +31,7 @@ export function CollectionIndex({
   const [activeProduct, setActiveProduct] = useState<Product | null>(null);
 
   useIsomorphicLayoutEffect(() => {
-    if (!root.current) return;
+    if (shouldReduceMotion || !root.current) return;
     const context = gsap.context(() => {
       gsap.fromTo(
         root.current!.querySelectorAll("[data-index-line]"),
@@ -51,7 +51,7 @@ export function CollectionIndex({
       );
     }, root);
     return () => context.revert();
-  }, []);
+  }, [shouldReduceMotion]);
 
   useIsomorphicLayoutEffect(() => {
     if (!hasFinePointer || shouldReduceMotion || !preview.current) return;

@@ -56,7 +56,7 @@ vi.mock("next/image", () => ({
 }));
 /* eslint-enable @next/next/no-img-element, jsx-a11y/alt-text */
 
-describe("Phase 2 home page", () => {
+describe("Phase 3 home page", () => {
   it("composes intro, home, about, craft, collection, pricing, and contact in order", () => {
     render(<Home />);
     const main = screen.getByRole("main");
@@ -90,6 +90,14 @@ describe("Phase 2 home page", () => {
       screen.queryByText("A quiet place to test the flow"),
     ).not.toBeInTheDocument();
     expect(screen.queryByText("Design System")).not.toBeInTheDocument();
+    expect(
+      within(main).getByRole("heading", { level: 2, name: "The Collection" }),
+    ).toBeVisible();
+    expect(within(main).getAllByText("Flower Cards").length).toBeGreaterThan(0);
+    expect(
+      within(main).getAllByText("Corporate & Bulk Orders").length,
+    ).toBeGreaterThan(0);
+    expect(screen.queryByText("Phase 3")).not.toBeInTheDocument();
   });
 
   it("keeps all navigation targets labelled and includes the exact Home copy", () => {

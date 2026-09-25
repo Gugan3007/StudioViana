@@ -37,6 +37,7 @@ export function MobileProductCard({
         aria-label={`View details for ${product.name}`}
         className="relative block aspect-[4/5] w-full overflow-hidden bg-cream-soft"
         data-cursor="view"
+        data-preload-product-detail
         onClick={(event) => onOpenDetail(product, event.currentTarget)}
         type="button"
       >
@@ -85,6 +86,7 @@ export function MobileProductCard({
         <div className="mt-7 flex flex-wrap items-center gap-3">
           <PriceTag>{product.priceLabel}</PriceTag>
           <Button
+            data-preload-product-detail
             onClick={(event) => onOpenDetail(product, event.currentTarget)}
           >
             View Details
