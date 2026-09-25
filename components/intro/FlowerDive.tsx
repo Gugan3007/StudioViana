@@ -19,6 +19,7 @@ export function FlowerDive({
   const flowerSource = mobile
     ? introConfig.assets.mobileFlower
     : introConfig.assets.desktopFlower;
+  const flowerSizes = mobile ? "190vw" : "220vw";
 
   return (
     <div
@@ -26,7 +27,7 @@ export function FlowerDive({
       data-intro-dive
     >
       <div
-        className="absolute inset-0 overflow-hidden [clip-path:circle(0%_at_50%_50%)]"
+        className="absolute left-1/2 top-1/2 h-[142vmax] w-[142vmax] overflow-hidden rounded-full opacity-0"
         data-intro-flower-mask
       >
         <Image
@@ -36,8 +37,8 @@ export function FlowerDive({
           data-intro-flower
           fill
           placeholder="blur"
-          priority
-          sizes="100vw"
+          preload
+          sizes={flowerSizes}
           src={flowerSource}
           style={{
             objectPosition: `${introConfig.focalPoint.x}% ${introConfig.focalPoint.y}%`,
@@ -49,11 +50,11 @@ export function FlowerDive({
           <Image
             alt=""
             aria-hidden="true"
-            className="object-cover opacity-0 blur-md"
+            className="object-cover opacity-0"
             data-intro-middle
             data-testid="flower-middle-layer"
             fill
-            sizes="100vw"
+            sizes={flowerSizes}
             src={flowerSource}
             style={{
               objectPosition: `${introConfig.focalPoint.x}% ${introConfig.focalPoint.y}%`,
@@ -101,12 +102,12 @@ export function FlowerDive({
 
       <blockquote
         aria-label="The making of forever"
-        className="absolute inset-0 z-20 flex items-center justify-center text-center"
+        className="absolute inset-0 z-20 flex items-center justify-center px-6 text-center"
       >
         {introConfig.poem.map((line) => (
           <p
             key={line}
-            className="absolute max-w-[85vw] font-display text-[clamp(1.55rem,4vw,4rem)] italic leading-tight text-cream opacity-0 [text-shadow:0_2px_22px_rgba(22,36,27,0.42)]"
+            className="absolute max-w-[min(85vw,52rem)] font-display text-[clamp(1.55rem,4vw,4rem)] italic leading-tight text-cream opacity-0 [text-shadow:0_2px_24px_rgba(10,20,14,0.75)]"
             data-intro-poem-line
             data-testid="poem-line"
           >
@@ -129,7 +130,7 @@ export function FlowerDive({
 
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-[radial-gradient(circle_at_50%_48%,transparent_28%,rgba(10,20,14,0.68)_100%)] opacity-0"
+        className="absolute inset-0 bg-[radial-gradient(circle_at_50%_48%,rgba(10,20,14,0.06)_18%,rgba(10,20,14,0.76)_100%)] opacity-0"
         data-intro-vignette
       />
     </div>

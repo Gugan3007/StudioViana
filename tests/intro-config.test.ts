@@ -17,19 +17,33 @@ describe("introConfig", () => {
       complete: 100,
     });
     expect(introConfig.breakpoints.desktop).toMatchObject({
-      pinVh: 400,
-      diveScale: 6,
+      pinVh: 260,
+      diveScale: 2,
+      showMiddleLayer: false,
     });
     expect(introConfig.breakpoints.tablet).toMatchObject({
-      pinVh: 300,
-      diveScale: 4,
+      pinVh: 220,
+      diveScale: 1.85,
+      showMiddleLayer: false,
     });
     expect(introConfig.breakpoints.mobile).toMatchObject({
-      pinVh: 220,
-      diveScale: 3,
+      pinVh: 180,
+      diveScale: 1.7,
       showMiddleLayer: false,
       petalLayers: 1,
     });
+    expect(introConfig.scrub).toBeLessThanOrEqual(0.4);
+    expect(introConfig.preload).toEqual({
+      firstVisitMs: 450,
+      repeatVisitMs: 0,
+      maximumMs: 2500,
+    });
+    expect(introConfig.assets.desktopFlower).toBe(
+      "/images/craft/closeup-macro.jpg",
+    );
+    expect(introConfig.assets.mobileFlower).toBe(
+      "/images/craft/closeup-flower.jpg",
+    );
   });
 
   it("formats all frame URLs and prioritizes frame one then every tenth frame", () => {

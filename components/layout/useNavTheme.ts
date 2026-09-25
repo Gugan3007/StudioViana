@@ -1,16 +1,17 @@
 "use client";
 
 import type Lenis from "lenis";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export type NavTheme = "dark" | "light";
 
 export function useNavTheme(lenis: Lenis | null): NavTheme {
   const [theme, setTheme] = useState<NavTheme>("light");
+  const sampleFrame = useRef<number | null>(null);
 
   const sampleTheme = useCallback(() => {
     if (typeof document.elementsFromPoint !== "function") {
-      setTheme("light");
+      setTheme((current) => (current === "light" ? current : "light"));
       return;
     }
 
@@ -18,27 +19,42 @@ export function useNavTheme(lenis: Lenis | null): NavTheme {
       .elementsFromPoint(window.innerWidth / 2, 42)
       .map((element) => element.closest<HTMLElement>("[data-theme]"))
       .find((element): element is HTMLElement => Boolean(element));
-    setTheme(section?.dataset.theme === "dark" ? "dark" : "light");
+    const nextTheme = section?.dataset.theme === "dark" ? "dark" : "light";
+    setTheme((current) => (current === nextTheme ? current : nextTheme));
   }, []);
 
+  const scheduleSample = useCallback(() => {
+    if (sampleFrame.current !== null) return;
+    sampleFrame.current = window.requestAnimationFrame(() => {
+      sampleFrame.current = null;
+      sampleTheme();
+    });
+  }, [sampleTheme]);
+
   useEffect(() => {
-    const initialFrame = window.requestAnimationFrame(sampleTheme);
+    scheduleSample();
     if (lenis) {
-      const unsubscribe = lenis.on("scroll", sampleTheme);
+      const unsubscribe = lenis.on("scroll", scheduleSample);
       return () => {
-        window.cancelAnimationFrame(initialFrame);
+        if (sampleFrame.current !== null) {
+          window.cancelAnimationFrame(sampleFrame.current);
+          sampleFrame.current = null;
+        }
         unsubscribe();
       };
     }
 
-    window.addEventListener("scroll", sampleTheme, { passive: true });
-    window.addEventListener("resize", sampleTheme);
+    window.addEventListener("scroll", scheduleSample, { passive: true });
+    window.addEventListener("resize", scheduleSample);
     return () => {
-      window.cancelAnimationFrame(initialFrame);
-      window.removeEventListener("scroll", sampleTheme);
-      window.removeEventListener("resize", sampleTheme);
+      if (sampleFrame.current !== null) {
+        window.cancelAnimationFrame(sampleFrame.current);
+        sampleFrame.current = null;
+      }
+      window.removeEventListener("scroll", scheduleSample);
+      window.removeEventListener("resize", scheduleSample);
     };
-  }, [lenis, sampleTheme]);
+  }, [lenis, scheduleSample]);
 
   return theme;
 }

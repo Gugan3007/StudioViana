@@ -254,10 +254,10 @@ describe("IntroSection master timeline", () => {
     expect(scrollTrigger.trigger).toBe(screen.getByTestId("intro-section"));
     expect(scrollTrigger).toMatchObject({
       pin: true,
-      scrub: 1.2,
+      scrub: 0.35,
       invalidateOnRefresh: true,
     });
-    expect(scrollTrigger.end()).toBe("+=4000");
+    expect(scrollTrigger.end()).toBe("+=2600");
     expect(timelineMocks.timelines[0].addLabel.mock.calls).toEqual([
       ["brand", 0],
       ["flower", 15],
@@ -266,6 +266,17 @@ describe("IntroSection master timeline", () => {
       ["complete", 100],
     ]);
     expect(scrollTo).not.toHaveBeenCalled();
+
+    const animationVars = timelineMocks.timelines[0].to.mock.calls
+      .map((call) => call[1] as Record<string, unknown>)
+      .filter(Boolean);
+    const fromToVars = timelineMocks.timelines[0].fromTo.mock.calls.flatMap(
+      (call) => [call[1], call[2]] as Array<Record<string, unknown>>,
+    );
+    for (const vars of [...animationVars, ...fromToVars]) {
+      expect(vars).not.toHaveProperty("clipPath");
+      expect(vars).not.toHaveProperty("filter");
+    }
     scrollTo.mockRestore();
   });
 

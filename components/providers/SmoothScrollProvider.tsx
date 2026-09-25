@@ -13,22 +13,31 @@ interface SmoothScrollProviderProps {
 
 export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
   const shouldReduceMotion = useReducedMotion();
+  const [hasFinePointer, setHasFinePointer] = useState(false);
   const [lenis, setLenis] = useState<Lenis | null>(null);
 
   useEffect(() => {
-    if (shouldReduceMotion) return;
+    const pointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const update = () => setHasFinePointer(pointer.matches);
+
+    update();
+    pointer.addEventListener("change", update);
+    return () => pointer.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    if (shouldReduceMotion || !hasFinePointer) return;
 
     const instance = new Lenis({
-      lerp: 0.08,
+      lerp: 0.14,
       smoothWheel: true,
-      wheelMultiplier: 0.9,
-      touchMultiplier: 1.4,
+      wheelMultiplier: 1,
       syncTouch: false,
     });
     const unsubscribe = instance.on("scroll", ScrollTrigger.update);
     const update = (time: number) => instance.raf(time * 1000);
 
-    gsap.ticker.lagSmoothing(0);
+    gsap.ticker.lagSmoothing(500, 33);
     gsap.ticker.add(update);
     // The external Lenis instance becomes available only after client mount.
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -40,7 +49,7 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
       instance.destroy();
       setLenis(null);
     };
-  }, [shouldReduceMotion]);
+  }, [hasFinePointer, shouldReduceMotion]);
 
   const value = useMemo(() => ({ lenis }), [lenis]);
 

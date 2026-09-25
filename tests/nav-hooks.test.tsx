@@ -1,4 +1,4 @@
-import { act, renderHook } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import type Lenis from "lenis";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -37,6 +37,7 @@ describe("navigation hooks", () => {
   });
 
   afterEach(() => {
+    vi.restoreAllMocks();
     Object.defineProperty(document, "elementsFromPoint", {
       configurable: true,
       value: originalElementsFromPoint,
@@ -62,7 +63,7 @@ describe("navigation hooks", () => {
     expect(source.unsubscribe).toHaveBeenCalledOnce();
   });
 
-  it("uses the nearest declared theme region beneath the navbar", () => {
+  it("uses the nearest declared theme region beneath the navbar", async () => {
     const darkSection = document.createElement("section");
     const darkBand = document.createElement("div");
     darkBand.dataset.theme = "dark";
@@ -79,7 +80,7 @@ describe("navigation hooks", () => {
 
     act(() => source.emit(420, 1));
 
-    expect(result.current).toBe("dark");
+    await waitFor(() => expect(result.current).toBe("dark"));
     expect(document.elementsFromPoint).toHaveBeenCalledWith(
       window.innerWidth / 2,
       42,
@@ -97,5 +98,34 @@ describe("navigation hooks", () => {
     act(() => window.dispatchEvent(new Event("scroll")));
 
     expect(result.current).toBe("light");
+  });
+
+  it("samples the expensive hit test at most once per animation frame", () => {
+    const frames: FrameRequestCallback[] = [];
+    vi.spyOn(window, "requestAnimationFrame").mockImplementation((callback) => {
+      frames.push(callback);
+      return frames.length;
+    });
+    vi.spyOn(window, "cancelAnimationFrame").mockImplementation(() => {});
+    const elementsFromPoint = vi.fn(() => []);
+    Object.defineProperty(document, "elementsFromPoint", {
+      configurable: true,
+      value: elementsFromPoint,
+    });
+    const source = createLenisSource();
+
+    renderHook(() => useNavTheme(source.lenis));
+    act(() => frames.shift()?.(16));
+    expect(elementsFromPoint).toHaveBeenCalledOnce();
+
+    act(() => {
+      source.emit(100, 1);
+      source.emit(200, 1);
+      source.emit(300, 1);
+    });
+    expect(elementsFromPoint).toHaveBeenCalledOnce();
+
+    act(() => frames.shift()?.(32));
+    expect(elementsFromPoint).toHaveBeenCalledTimes(2);
   });
 });

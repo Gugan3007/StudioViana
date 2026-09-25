@@ -44,11 +44,13 @@ vi.mock("next/image", () => ({
       blurDataURL?: string;
       fill?: boolean;
       placeholder?: string;
+      preload?: boolean;
       priority?: boolean;
       src: string;
     },
   ) {
-    const { blurDataURL, fill, placeholder, priority, ...imageProps } = props;
+    const { blurDataURL, fill, placeholder, preload, priority, ...imageProps } =
+      props;
     void blurDataURL;
     void placeholder;
 
@@ -56,6 +58,7 @@ vi.mock("next/image", () => ({
       <img
         {...imageProps}
         data-fill={fill || undefined}
+        data-preload={preload || undefined}
         data-priority={priority || undefined}
       />
     );
@@ -120,7 +123,19 @@ describe("cinematic intro scenes", () => {
     );
     expect(
       screen.getByRole("img", { name: /macro handcrafted/i }),
-    ).toHaveAttribute("data-priority", "true");
+    ).toHaveAttribute("data-preload", "true");
+    expect(
+      screen.getByRole("img", { name: /macro handcrafted/i }),
+    ).toHaveAttribute("sizes", "220vw");
+    expect(document.querySelector("[data-intro-flower-mask]")).toHaveClass(
+      "rounded-full",
+    );
+    expect(
+      document.querySelector("[data-intro-flower-mask] > [data-intro-flower]"),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId("flower-middle-layer")).not.toHaveClass(
+      "blur-md",
+    );
   });
 
   it("uses the portrait flower and reduced layer set on mobile", () => {
@@ -130,7 +145,10 @@ describe("cinematic intro scenes", () => {
     expect(screen.queryByTestId("flower-middle-layer")).not.toBeInTheDocument();
     expect(
       screen.getByRole("img", { name: /macro handcrafted/i }),
-    ).toHaveAttribute("src", expect.stringContaining("mobile"));
+    ).toHaveAttribute("src", "/images/craft/closeup-flower.jpg");
+    expect(
+      screen.getByRole("img", { name: /macro handcrafted/i }),
+    ).toHaveAttribute("sizes", "190vw");
   });
 
   it("keeps the light bloom and particles decorative and non-interactive", () => {
@@ -242,7 +260,7 @@ describe("cinematic intro scenes", () => {
       resolvePreload({ loaded: ["/flower.svg"], failed: [], timedOut: false });
       await Promise.resolve();
     });
-    await act(() => vi.advanceTimersByTimeAsync(1799));
+    await act(() => vi.advanceTimersByTimeAsync(449));
     expect(onComplete).not.toHaveBeenCalled();
     await act(() => vi.advanceTimersByTimeAsync(1));
 
@@ -276,9 +294,7 @@ describe("cinematic intro scenes", () => {
       resolvePreload({ loaded: ["/repeat.svg"], failed: [], timedOut: false });
       await Promise.resolve();
     });
-    await act(() => vi.advanceTimersByTimeAsync(799));
-    expect(onRepeatComplete).not.toHaveBeenCalled();
-    await act(() => vi.advanceTimersByTimeAsync(1));
+    await act(() => vi.advanceTimersByTimeAsync(0));
     expect(onRepeatComplete).toHaveBeenCalledOnce();
     unmount();
 
@@ -310,7 +326,7 @@ describe("cinematic intro scenes", () => {
         urls={["/ready.svg", "/stalled.svg"]}
       />,
     );
-    await act(() => vi.advanceTimersByTimeAsync(6000));
+    await act(() => vi.advanceTimersByTimeAsync(2500));
     expect(onTimeout).toHaveBeenCalledOnce();
     expect(onTimeout).toHaveBeenCalledWith({
       loaded: ["/ready.svg"],
@@ -365,7 +381,7 @@ describe("cinematic intro scenes", () => {
     act(() => vi.runOnlyPendingTimers());
     fireEvent.click(screen.getByRole("button", { name: "Skip intro" }));
     expect(destination.scrollIntoView).toHaveBeenLastCalledWith({
-      behavior: "smooth",
+      behavior: "auto",
       block: "start",
     });
 

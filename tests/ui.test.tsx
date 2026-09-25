@@ -51,6 +51,21 @@ describe("Button", () => {
     await user.click(button);
     expect(onClick).toHaveBeenCalledOnce();
   });
+
+  it("keeps light-surface button labels readable in dark system mode", () => {
+    const { rerender } = render(
+      <Button variant="outline-gold">Explore</Button>,
+    );
+
+    expect(
+      screen.getByRole("button", { name: "Explore" }).className,
+    ).not.toMatch(/dark:text-cream/);
+
+    rerender(<Button variant="text-link">Details</Button>);
+    expect(
+      screen.getByRole("button", { name: "Details" }).className,
+    ).not.toMatch(/dark:text-cream/);
+  });
 });
 
 describe("layout primitives", () => {

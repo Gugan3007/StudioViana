@@ -36,7 +36,9 @@ export function SkipIntro({ destinationId, visible }: SkipIntroProps) {
       lenis.scrollTo(destination, { duration: 1.6 });
     } else {
       destination.scrollIntoView({
-        behavior: reducedMotion ? "auto" : "smooth",
+        // Native smooth scrolling can settle against a moving pin spacer on
+        // touch devices. The skip action should land exactly and immediately.
+        behavior: "auto",
         block: "start",
       });
     }

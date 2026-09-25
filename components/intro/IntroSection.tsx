@@ -85,12 +85,7 @@ export function IntroSection() {
             introConfig.assets.mobileFlower,
             ...getSequenceLoadOrder(sequenceFrames),
           ]
-        : [
-            introConfig.assets.logo,
-            introConfig.assets.desktopFlower,
-            introConfig.assets.mobileFlower,
-            ...introConfig.assets.petals,
-          ],
+        : [introConfig.assets.logo, ...introConfig.assets.petals],
     [mode, sequenceFrames],
   );
 
@@ -261,7 +256,6 @@ export function IntroSection() {
               clearActiveState();
               markIntroComplete();
               setAtHome(true);
-              refreshScrollTrigger();
             },
             onLeaveBack: () => {
               clearActiveState();
@@ -279,13 +273,23 @@ export function IntroSection() {
           .set(brandCopy, { autoAlpha: 1, yPercent: 0 }, 0)
           .set(logo, { autoAlpha: 1, scale: 1 }, 0)
           .set([frame, scrollCue], { autoAlpha: 1 }, 0)
-          .set(flowerMask, { clipPath: "circle(0% at 50% 50%)" }, 0)
+          .set(
+            flowerMask,
+            {
+              autoAlpha: 1,
+              scale: 0.001,
+              transformOrigin: "50% 50%",
+              xPercent: -50,
+              yPercent: -50,
+            },
+            0,
+          )
           .set(
             flower,
             {
               autoAlpha: 1,
               rotation: 0,
-              scale: 1.3,
+              scale: 1.18,
               transformOrigin: `${introConfig.focalPoint.x}% ${introConfig.focalPoint.y}%`,
             },
             0,
@@ -294,7 +298,6 @@ export function IntroSection() {
             petals,
             {
               autoAlpha: 0,
-              filter: "blur(0px)",
               scale: 1,
               xPercent: (index: number) => (index % 2 === 0 ? -18 : 18),
               yPercent: (index: number) => (index % 2 === 0 ? 7 : -9),
@@ -308,14 +311,14 @@ export function IntroSection() {
           .set(light, { autoAlpha: 0, scale: 0.5 }, 0);
 
         if (middle.length > 0) {
-          timeline.set(middle, { autoAlpha: 0, scale: 1.3 }, 0);
+          timeline.set(middle, { autoAlpha: 0, scale: 1.12 }, 0);
         }
         if (sequenceLayer) {
           timeline.set(
             sequenceLayer,
             {
               autoAlpha: mode === "sequence" ? 1 : 0,
-              clipPath: "circle(0% at 50% 50%)",
+              scale: mode === "sequence" ? 0.96 : 1,
             },
             0,
           );
@@ -336,10 +339,18 @@ export function IntroSection() {
         timeline
           .to(
             revealTarget,
-            { clipPath: "circle(18% at 50% 50%)", duration: 20 },
+            {
+              autoAlpha: 1,
+              duration: 20,
+              scale: mode === "layers" ? 0.22 : 1,
+            },
             introConfig.timeline.flower,
           )
-          .to(flower, { duration: 20, scale: 1.1 }, introConfig.timeline.flower)
+          .to(
+            flower,
+            { duration: 20, scale: 1.05 },
+            introConfig.timeline.flower,
+          )
           .to(ring, { duration: 20, scale: 1 }, introConfig.timeline.flower)
           .to(
             ringStroke,
@@ -363,7 +374,7 @@ export function IntroSection() {
         timeline
           .to(
             revealTarget,
-            { clipPath: "circle(150% at 50% 50%)", duration: 23 },
+            { duration: 23, scale: mode === "layers" ? 1.05 : 1 },
             introConfig.timeline.dive,
           )
           .to(
@@ -385,8 +396,7 @@ export function IntroSection() {
             {
               autoAlpha: 0,
               duration: 35,
-              filter: "blur(20px)",
-              scale: activeSettings.diveScale * 2,
+              scale: activeSettings.diveScale * 1.35,
               stagger: 1.4,
               xPercent: (index: number) => (index % 2 === 0 ? -26 : 28),
               yPercent: (index: number) => (index % 2 === 0 ? -16 : 19),
@@ -405,8 +415,7 @@ export function IntroSection() {
             {
               autoAlpha: activeSettings.showMiddleLayer ? 0.4 : 0,
               duration: 30,
-              filter: "blur(10px)",
-              scale: activeSettings.diveScale * 1.18,
+              scale: activeSettings.diveScale * 1.08,
             },
             introConfig.timeline.dive + 4,
           );
@@ -436,11 +445,10 @@ export function IntroSection() {
             .to(line, { autoAlpha: 1, duration: 0.2 }, start)
             .fromTo(
               words,
-              { autoAlpha: 0, filter: "blur(10px)", yPercent: 35 },
+              { autoAlpha: 0, yPercent: 28 },
               {
                 autoAlpha: 1,
                 duration: 3.5,
-                filter: "blur(0px)",
                 stagger: 0.18,
                 yPercent: 0,
               },

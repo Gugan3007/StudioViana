@@ -59,17 +59,12 @@ export function Preloader({
       exitContext.current = gsap.context(() => {
         gsap
           .timeline({ onComplete: complete })
-          .to("[data-preloader-progress-track]", {
-            duration: 0.45,
-            ease: "power2.inOut",
-            clipPath: "inset(0% 0% 0% 0%)",
+          .to("[data-preloader-content]", {
+            autoAlpha: 0,
+            duration: 0.2,
+            y: -8,
           })
-          .to(
-            "[data-preloader-content]",
-            { autoAlpha: 0, duration: 0.45, y: -12 },
-            "-=0.18",
-          )
-          .to(root.current, { autoAlpha: 0, duration: 0.7 });
+          .to(root.current, { autoAlpha: 0, duration: 0.25 }, "-=0.08");
       }, root);
     },
     [onComplete, reducedMotion, releaseScrollLock],

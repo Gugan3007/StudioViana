@@ -48,37 +48,49 @@ vi.mock("@/lib/animations/gsap", () => ({
   ScrollTrigger: { update: mocks.scrollTriggerUpdate },
 }));
 
-function installMatchMedia(initialMatches = false) {
-  let matches = initialMatches;
-  const listeners = new Set<(event: MediaQueryListEvent) => void>();
-  const mediaQuery = {
-    get matches() {
-      return matches;
-    },
-    media: "(prefers-reduced-motion: reduce)",
-    onchange: null,
-    addEventListener: (
-      _type: "change",
-      listener: (event: MediaQueryListEvent) => void,
-    ) => listeners.add(listener),
-    removeEventListener: (
-      _type: "change",
-      listener: (event: MediaQueryListEvent) => void,
-    ) => listeners.delete(listener),
-    addListener: vi.fn(),
-    removeListener: vi.fn(),
-    dispatchEvent: vi.fn(),
-  } as MediaQueryList;
+function installMatchMedia({ finePointer = true, reducedMotion = false } = {}) {
+  const states = new Map<string, boolean>([
+    ["(prefers-reduced-motion: reduce)", reducedMotion],
+    ["(hover: hover) and (pointer: fine)", finePointer],
+  ]);
+  const listeners = new Map<
+    string,
+    Set<(event: MediaQueryListEvent) => void>
+  >();
   vi.stubGlobal(
     "matchMedia",
-    vi.fn(() => mediaQuery),
+    vi.fn((query: string) => {
+      const queryListeners = listeners.get(query) ?? new Set();
+      listeners.set(query, queryListeners);
+      return {
+        get matches() {
+          return states.get(query) ?? false;
+        },
+        media: query,
+        onchange: null,
+        addEventListener: (
+          _type: "change",
+          listener: (event: MediaQueryListEvent) => void,
+        ) => queryListeners.add(listener),
+        removeEventListener: (
+          _type: "change",
+          listener: (event: MediaQueryListEvent) => void,
+        ) => queryListeners.delete(listener),
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      } as MediaQueryList;
+    }),
   );
 
   return {
-    setMatches(nextMatches: boolean) {
-      matches = nextMatches;
-      const event = { matches, media: mediaQuery.media } as MediaQueryListEvent;
-      listeners.forEach((listener) => listener(event));
+    setMatches(query: string, nextMatches: boolean) {
+      states.set(query, nextMatches);
+      const event = {
+        matches: nextMatches,
+        media: query,
+      } as MediaQueryListEvent;
+      listeners.get(query)?.forEach((listener) => listener(event));
     },
   };
 }
@@ -92,7 +104,7 @@ describe("SmoothScrollProvider", () => {
     mocks.ticker.remove.mockClear();
     mocks.ticker.lagSmoothing.mockClear();
     mocks.scrollTriggerUpdate.mockClear();
-    installMatchMedia(false);
+    installMatchMedia();
   });
 
   it("synchronizes one Lenis instance to the GSAP ticker and cleans it up", () => {
@@ -105,10 +117,9 @@ describe("SmoothScrollProvider", () => {
     const tickerCallback = mocks.ticker.add.mock.calls.at(-1)![0];
 
     expect(mocks.Lenis).toHaveBeenLastCalledWith({
-      lerp: 0.08,
+      lerp: 0.14,
       smoothWheel: true,
-      wheelMultiplier: 0.9,
-      touchMultiplier: 1.4,
+      wheelMultiplier: 1,
       syncTouch: false,
     });
     expect(activeInstance.on).toHaveBeenCalledWith(
@@ -116,7 +127,7 @@ describe("SmoothScrollProvider", () => {
       mocks.scrollTriggerUpdate,
     );
     expect(mocks.activeTickers.size).toBe(1);
-    expect(mocks.ticker.lagSmoothing).toHaveBeenCalledWith(0);
+    expect(mocks.ticker.lagSmoothing).toHaveBeenCalledWith(500, 33);
 
     tickerCallback(1.25);
     expect(activeInstance.raf).toHaveBeenCalledWith(1250);
@@ -129,14 +140,24 @@ describe("SmoothScrollProvider", () => {
   });
 
   it("destroys active smooth scrolling when reduced motion is enabled", () => {
-    const media = installMatchMedia(false);
+    const media = installMatchMedia();
     render(<SmoothScrollProvider>Content</SmoothScrollProvider>);
     const activeInstance = mocks.instances.at(-1)!;
 
-    act(() => media.setMatches(true));
+    act(() => media.setMatches("(prefers-reduced-motion: reduce)", true));
 
     expect(activeInstance.destroy).toHaveBeenCalledOnce();
     expect(mocks.Lenis).toHaveBeenCalledTimes(1);
+    expect(mocks.activeTickers.size).toBe(0);
+  });
+
+  it("keeps native scrolling on touch and coarse-pointer devices", () => {
+    installMatchMedia({ finePointer: false });
+
+    render(<SmoothScrollProvider>Content</SmoothScrollProvider>);
+
+    expect(mocks.Lenis).not.toHaveBeenCalled();
+    expect(mocks.ticker.add).not.toHaveBeenCalled();
     expect(mocks.activeTickers.size).toBe(0);
   });
 });

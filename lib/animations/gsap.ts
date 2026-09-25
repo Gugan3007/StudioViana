@@ -3,6 +3,7 @@ import { Flip } from "gsap/Flip";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 let pluginsRegistered = false;
+let refreshFrame: number | null = null;
 
 if (typeof window !== "undefined" && !pluginsRegistered) {
   gsap.registerPlugin(ScrollTrigger, Flip);
@@ -11,9 +12,12 @@ if (typeof window !== "undefined" && !pluginsRegistered) {
 }
 
 export function refreshScrollTrigger() {
-  if (typeof window === "undefined") return;
+  if (typeof window === "undefined" || refreshFrame !== null) return;
 
-  window.requestAnimationFrame(() => ScrollTrigger.refresh());
+  refreshFrame = window.requestAnimationFrame(() => {
+    refreshFrame = null;
+    ScrollTrigger.refresh();
+  });
 }
 
 export { Flip, gsap, ScrollTrigger };

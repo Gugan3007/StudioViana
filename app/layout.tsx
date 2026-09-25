@@ -27,6 +27,7 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "Studio Viana — Handcrafted Chenille Florals",
   description: "Flowers that never fade, feelings that never end.",
+  icons: { icon: "/brand/logo-placeholder.svg" },
 };
 
 export const viewport: Viewport = { themeColor: "#1F3326" };

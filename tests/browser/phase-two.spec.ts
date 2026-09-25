@@ -355,7 +355,18 @@ for (const width of [360, 390, 768, 1024, 1440, 1920]) {
       "[data-intro-mode] img, #home img, #about img, #craft img",
     );
     for (const image of await images.all()) {
-      if (await image.isVisible()) await image.scrollIntoViewIfNeeded();
+      if (!(await image.isVisible())) continue;
+      await image.scrollIntoViewIfNeeded();
+      await expect
+        .poll(
+          () =>
+            image.evaluate((element) => {
+              const candidate = element as HTMLImageElement;
+              return candidate.complete && candidate.naturalWidth > 0;
+            }),
+          { timeout: 15_000 },
+        )
+        .toBe(true);
     }
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     await page.waitForTimeout(350);

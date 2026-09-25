@@ -127,22 +127,18 @@ test("first visit reports real progress and honors the minimum loader time", asy
   const startedAt = Date.now();
 
   await expect(page.locator("[data-preloader]")).toBeVisible();
-  await expect(page.getByText(/^\d{3}$/)).toHaveText("100", {
-    timeout: 6_500,
-  });
-  await expect(page.locator("[data-preloader]")).toHaveAttribute(
-    "data-preloader-phase",
-    "exiting",
-  );
-  await page.waitForTimeout(400);
   const frameBounds = await page
     .locator("[data-preloader-progress-track]")
     .boundingBox();
   expect(frameBounds).not.toBeNull();
   expect(frameBounds!.x).toBeGreaterThanOrEqual(30);
+  await expect(page.getByText(/^\d{3}$/)).toHaveText("100", {
+    timeout: 6_500,
+  });
   await waitForIntro(page);
 
-  expect(Date.now() - startedAt).toBeGreaterThanOrEqual(1_700);
+  expect(Date.now() - startedAt).toBeGreaterThanOrEqual(350);
+  expect(Date.now() - startedAt).toBeLessThan(1_600);
   expect(errors).toEqual([]);
 });
 
@@ -159,17 +155,21 @@ test("desktop intro scrubs forward and backward through every visual state", asy
 
   const intro = page.getByTestId("intro-section");
   await expect(intro).toHaveAttribute("data-intro-breakpoint", "desktop");
-  await expect(intro).toHaveAttribute("data-pin-vh", "400");
+  await expect(intro).toHaveAttribute("data-pin-vh", "260");
   await expect(page.locator("html")).toHaveClass(/lenis/);
   await expect(page.getByRole("button", { name: "Skip intro" })).toBeVisible();
   await page.screenshot({ path: screenshots.brand });
 
   await moveToProgress(page, 0.25);
-  const circularClip = await page
+  const revealScale = await page
     .locator("[data-intro-flower-mask]")
-    .evaluate((element) => getComputedStyle(element).clipPath);
-  const radius = Number(circularClip.match(/circle\(([\d.]+)%/)?.[1] ?? 0);
-  expect(radius).toBeGreaterThan(0);
+    .evaluate((element) => {
+      const transform = getComputedStyle(element).transform;
+      const matrix = new DOMMatrixReadOnly(transform);
+      return Math.hypot(matrix.a, matrix.b);
+    });
+  expect(revealScale).toBeGreaterThan(0.05);
+  expect(revealScale).toBeLessThan(0.5);
   await page.screenshot({ path: screenshots.circle });
 
   await moveToProgress(page, 0.64);
@@ -229,7 +229,7 @@ test("tablet and 320px mobile use their reduced layer contracts without overflow
   );
   await expect(page.getByTestId("intro-section")).toHaveAttribute(
     "data-pin-vh",
-    "300",
+    "220",
   );
   expect(await page.locator("[data-intro-particle]").count()).toBe(6);
   await expectHealthyDocument(page);
@@ -243,12 +243,12 @@ test("tablet and 320px mobile use their reduced layer contracts without overflow
   );
   await expect(page.getByTestId("intro-section")).toHaveAttribute(
     "data-pin-vh",
-    "220",
+    "180",
   );
   expect(await page.locator("[data-intro-petal]").count()).toBe(1);
   await expect(
     page.getByRole("img", { name: /macro handcrafted/i }),
-  ).toHaveAttribute("src", /flower-macro-mobile-placeholder/);
+  ).toHaveAttribute("src", /closeup-flower/);
 
   const skipBounds = await page
     .getByRole("button", { name: "Skip intro" })
