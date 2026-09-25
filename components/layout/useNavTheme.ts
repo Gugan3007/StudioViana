@@ -16,7 +16,7 @@ export function useNavTheme(lenis: Lenis | null): NavTheme {
 
     const section = document
       .elementsFromPoint(window.innerWidth / 2, 42)
-      .map((element) => element.closest<HTMLElement>("section[data-theme]"))
+      .map((element) => element.closest<HTMLElement>("[data-theme]"))
       .find((element): element is HTMLElement => Boolean(element));
     setTheme(section?.dataset.theme === "dark" ? "dark" : "light");
   }, []);

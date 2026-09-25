@@ -51,6 +51,17 @@ export function Navbar() {
   }, [lenis]);
 
   useEffect(() => {
+    const sampleActiveSection = () => {
+      const readingLine = window.innerHeight * 0.45;
+      const active = navigationItems.find((item) => {
+        const target = document.querySelector<HTMLElement>(item.href);
+        if (!target) return false;
+        const bounds = target.getBoundingClientRect();
+        return bounds.top <= readingLine && bounds.bottom >= readingLine;
+      });
+      if (active) setActiveSection(active.href.slice(1));
+    };
+
     const triggers = navigationItems.flatMap((item) => {
       const target = document.querySelector<HTMLElement>(item.href);
       if (!target) return [];
@@ -61,7 +72,9 @@ export function Navbar() {
           start: "top 45%",
           end: "bottom 45%",
           onToggle: (self) => {
-            if (self.isActive) setActiveSection(item.href.slice(1));
+            if (!self.isActive) return;
+            setActiveSection(item.href.slice(1));
+            window.requestAnimationFrame(sampleActiveSection);
           },
         }),
       ];
@@ -81,7 +94,9 @@ export function Navbar() {
       setMenuOpen(false);
 
       if (lenis && !shouldReduceMotion) {
-        lenis.scrollTo(target, { duration: 1.4, offset: -84 });
+        // Passing the numeric document position prevents CSS scroll-margin
+        // from being added to Lenis's explicit fixed-header offset twice.
+        lenis.scrollTo(target.offsetTop, { duration: 1.4, offset: -84 });
       } else {
         target.scrollIntoView({
           behavior: shouldReduceMotion ? "auto" : "smooth",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { PaperGrain } from "@/components/decor/PaperGrain";
 import { HeroCollage } from "@/components/sections/home/HeroCollage";
@@ -25,11 +25,47 @@ export function HomeHero() {
   const { lenis } = useLenis();
   const { introComplete } = useIntro();
   const shouldReduceMotion = useReducedMotion();
+  const [heroVisible, setHeroVisible] = useState(false);
+  const entranceReady = introComplete || heroVisible || shouldReduceMotion;
+
+  useEffect(() => {
+    const section = root.current;
+    if (!section || introComplete || shouldReduceMotion) return;
+
+    // A native anchor jump can reach Home before the pinned intro's onLeave
+    // state propagates. First-view observation starts the same one-shot hero
+    // timeline immediately, while IntroContext still owns navbar completion.
+    if (typeof IntersectionObserver !== "undefined") {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry?.isIntersecting) return;
+          setHeroVisible(true);
+          observer.disconnect();
+        },
+        { threshold: 0.1 },
+      );
+      observer.observe(section);
+      return () => observer.disconnect();
+    }
+
+    const checkVisibility = () => {
+      const bounds = section.getBoundingClientRect();
+      if (bounds.top < window.innerHeight && bounds.bottom > 0) {
+        setHeroVisible(true);
+      }
+    };
+    const frame = window.requestAnimationFrame(checkVisibility);
+    window.addEventListener("scroll", checkVisibility, { passive: true });
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", checkVisibility);
+    };
+  }, [introComplete, shouldReduceMotion]);
 
   useIsomorphicLayoutEffect(() => {
     const section = root.current;
     if (!section || entered.current) return;
-    if (!introComplete && !shouldReduceMotion) return;
+    if (!entranceReady) return;
 
     entered.current = true;
     section.dataset.heroEntered = "true";
@@ -130,7 +166,7 @@ export function HomeHero() {
     }, root);
 
     return () => context.revert();
-  }, [introComplete, shouldReduceMotion]);
+  }, [entranceReady, shouldReduceMotion]);
 
   const scrollToCollection = useCallback(
     (event: React.MouseEvent<HTMLAnchorElement>) => {
@@ -138,7 +174,7 @@ export function HomeHero() {
       if (!target) return;
       event.preventDefault();
       if (lenis && !shouldReduceMotion) {
-        lenis.scrollTo(target, { duration: 1.4, offset: -84 });
+        lenis.scrollTo(target.offsetTop, { duration: 1.4, offset: -84 });
       } else {
         target.scrollIntoView({
           behavior: shouldReduceMotion ? "auto" : "smooth",

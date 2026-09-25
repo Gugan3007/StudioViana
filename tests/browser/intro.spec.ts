@@ -78,7 +78,10 @@ async function expectHealthyDocument(page: Page) {
     ),
   ).toBe(true);
 
-  const images = page.locator("img");
+  // Phase 2 intentionally lazy-loads below-fold About and Craft media. This
+  // intro health check owns only the eager intro and Home hero surfaces; the
+  // Phase 2 suite scrolls the full document and validates every image.
+  const images = page.locator("[data-intro-mode] img, #home img");
   expect(await images.count()).toBeGreaterThan(0);
   await expect
     .poll(() =>

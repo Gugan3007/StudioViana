@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ImgHTMLAttributes } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -97,6 +97,7 @@ function renderHero() {
 
 describe("HomeHero", () => {
   beforeEach(() => {
+    vi.unstubAllGlobals();
     heroMocks.reduceMotion = false;
     heroMocks.revert.mockClear();
     heroMocks.scrollTo.mockClear();
@@ -149,6 +150,40 @@ describe("HomeHero", () => {
     expect(heroMocks.timeline.addLabel).toHaveBeenCalledWith("images", 0.72);
   });
 
+  it("starts on first view when a native jump reaches the hero before intro state settles", async () => {
+    const user = userEvent.setup();
+    let visibilityCallback:
+      ((entries: IntersectionObserverEntry[]) => void) | undefined;
+    const disconnect = vi.fn();
+    class MockIntersectionObserver {
+      constructor(callback: (entries: IntersectionObserverEntry[]) => void) {
+        visibilityCallback = callback;
+      }
+
+      disconnect = disconnect;
+      observe = vi.fn();
+      unobserve = vi.fn();
+    }
+    vi.stubGlobal("IntersectionObserver", MockIntersectionObserver);
+    renderHero();
+    const hero = screen.getByTestId("home-hero");
+    expect(hero).not.toHaveAttribute("data-hero-entered");
+
+    act(() => {
+      visibilityCallback?.([
+        { isIntersecting: true } as IntersectionObserverEntry,
+      ]);
+    });
+
+    await waitFor(() =>
+      expect(hero).toHaveAttribute("data-hero-entered", "true"),
+    );
+    expect(heroMocks.timeline.fromTo).toHaveBeenCalled();
+
+    await user.click(screen.getByRole("button", { name: "Finish intro" }));
+    expect(heroMocks.revert).not.toHaveBeenCalled();
+  });
+
   it("renders the static final state when motion is reduced", async () => {
     heroMocks.reduceMotion = true;
     renderHero();
@@ -169,7 +204,7 @@ describe("HomeHero", () => {
     await user.click(screen.getByRole("link", { name: "Explore Collection" }));
 
     expect(heroMocks.scrollTo).toHaveBeenCalledWith(
-      document.getElementById("collection"),
+      document.getElementById("collection")!.offsetTop,
       { duration: 1.4, offset: -84 },
     );
   });

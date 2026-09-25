@@ -166,6 +166,15 @@ html.lenis body {
   transform: translate3d(0, 110%, 0);
 }
 
+/* Once Home owns the entrance, remove the SSR safety offset beneath GSAP.
+   Otherwise yPercent animates on top of the stylesheet's existing 110%. */
+[data-home-hero][data-hero-entered="true"]
+  [data-controlled-split="true"]
+  [data-split-token] {
+  opacity: 1;
+  transform: none;
+}
+
 [data-intro-active="true"] [data-intro-logo],
 [data-intro-active="true"] [data-intro-flower],
 [data-intro-active="true"] [data-intro-middle],

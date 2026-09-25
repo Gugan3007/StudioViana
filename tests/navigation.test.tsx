@@ -120,7 +120,7 @@ describe("Navbar", () => {
     await user.click(screen.getByRole("link", { name: "Craft" }));
 
     expect(navigationMocks.lenis.scrollTo).toHaveBeenCalledWith(
-      document.getElementById("craft"),
+      document.getElementById("craft")!.offsetTop,
       { duration: 1.4, offset: -84 },
     );
   });
@@ -160,7 +160,7 @@ describe("Navbar", () => {
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument(),
     );
     expect(navigationMocks.lenis.scrollTo).toHaveBeenCalledWith(
-      document.getElementById("pricing"),
+      document.getElementById("pricing")!.offsetTop,
       { duration: 1.4, offset: -84 },
     );
   });

@@ -62,13 +62,17 @@ describe("navigation hooks", () => {
     expect(source.unsubscribe).toHaveBeenCalledOnce();
   });
 
-  it("uses the nearest declared section theme beneath the navbar", () => {
+  it("uses the nearest declared theme region beneath the navbar", () => {
     const darkSection = document.createElement("section");
-    darkSection.dataset.theme = "dark";
+    const darkBand = document.createElement("div");
+    darkBand.dataset.theme = "dark";
+    const darkCopy = document.createElement("span");
+    darkBand.append(darkCopy);
+    darkSection.append(darkBand);
     const lightSection = document.createElement("section");
     Object.defineProperty(document, "elementsFromPoint", {
       configurable: true,
-      value: vi.fn(() => [lightSection, darkSection]),
+      value: vi.fn(() => [lightSection, darkCopy, darkSection]),
     });
     const source = createLenisSource();
     const { result } = renderHook(() => useNavTheme(source.lenis));
