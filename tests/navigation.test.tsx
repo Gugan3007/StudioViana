@@ -70,7 +70,9 @@ function renderNavigation() {
         <section id="home" />
         <section id="about" />
         <section id="craft" />
+        <section id="craft-closeup" />
         <section id="collection" />
+        <section id="gallery" />
         <section id="pricing" />
         <section id="contact" />
       </main>
@@ -111,6 +113,10 @@ describe("Navbar", () => {
         /^https:\/\/wa\.me\/919488713438\?text=.*Studio%20Viana/,
       ),
     );
+    expect(screen.getByRole("link", { name: "Gallery" })).toHaveAttribute(
+      "href",
+      "#gallery",
+    );
   });
 
   it("smooth-scrolls to anchors with the fixed-header offset", async () => {
@@ -120,7 +126,7 @@ describe("Navbar", () => {
     await user.click(screen.getByRole("link", { name: "Craft" }));
 
     expect(navigationMocks.lenis.scrollTo).toHaveBeenCalledWith(
-      document.getElementById("craft")!.offsetTop,
+      document.getElementById("craft-closeup")!.offsetTop,
       { duration: 1.4, offset: -84 },
     );
   });
@@ -137,7 +143,7 @@ describe("Navbar", () => {
     expect(trigger).toHaveAttribute("aria-expanded", "true");
     expect(navigationMocks.lenis.stop).toHaveBeenCalledOnce();
     expect(within(dialog).getByText("01")).toBeVisible();
-    expect(within(dialog).getByText("05")).toBeVisible();
+    expect(within(dialog).getByText("06")).toBeVisible();
     expect(within(dialog).getByText("studioviana30@gmail.com")).toBeVisible();
     expect(within(dialog).getByText("@studio_viana.in")).toBeVisible();
 

@@ -20,9 +20,10 @@ import { cn } from "@/lib/utils";
 const navigationItems = [
   { href: "#collection", label: "Collection", number: "01" },
   { href: "#about", label: "About", number: "02" },
-  { href: "#craft", label: "Craft", number: "03" },
-  { href: "#pricing", label: "Pricing", number: "04" },
-  { href: "#contact", label: "Contact", number: "05" },
+  { href: "#craft-closeup", label: "Craft", number: "03" },
+  { href: "#gallery", label: "Gallery", number: "04" },
+  { href: "#pricing", label: "Pricing", number: "05" },
+  { href: "#contact", label: "Contact", number: "06" },
 ] as const satisfies readonly NavigationItem[];
 
 const whatsappHref = whatsappLink(

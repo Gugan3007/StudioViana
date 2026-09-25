@@ -56,8 +56,8 @@ vi.mock("next/image", () => ({
 }));
 /* eslint-enable @next/next/no-img-element, jsx-a11y/alt-text */
 
-describe("Phase 3 home page", () => {
-  it("composes intro, home, about, craft, collection, pricing, and contact in order", () => {
+describe("Phase 4 home page", () => {
+  it("composes the five Phase 4 chapters before the Phase 5 shells", () => {
     render(<Home />);
     const main = screen.getByRole("main");
     const intro = within(main).getByTestId("intro-section");
@@ -71,6 +71,11 @@ describe("Phase 3 home page", () => {
       "about",
       "craft",
       "collection",
+      "craft-closeup",
+      "process",
+      "gallery",
+      "testimonials",
+      "instagram",
       "pricing",
       "contact",
     ]);
@@ -98,6 +103,7 @@ describe("Phase 3 home page", () => {
       within(main).getAllByText("Corporate & Bulk Orders").length,
     ).toBeGreaterThan(0);
     expect(screen.queryByText("Phase 3")).not.toBeInTheDocument();
+    expect(screen.getAllByText("Phase 5")).toHaveLength(2);
   });
 
   it("keeps all navigation targets labelled and includes the exact Home copy", () => {
@@ -114,6 +120,11 @@ describe("Phase 3 home page", () => {
       "about",
       "craft",
       "collection",
+      "craft-closeup",
+      "process",
+      "gallery",
+      "testimonials",
+      "instagram",
       "pricing",
       "contact",
     ]) {

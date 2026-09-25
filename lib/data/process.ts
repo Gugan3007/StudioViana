@@ -49,8 +49,7 @@ export const processSteps: readonly ProcessStepData[] = [
   },
   {
     alt: "Close view of blush chenille petals shaped by hand",
-    description:
-      "Each bloom is shaped by hand in our studio, petal by petal.",
+    description: "Each bloom is shaped by hand in our studio, petal by petal.",
     icon: "hands",
     image: step03,
     number: "03",
@@ -75,4 +74,3 @@ export const processSteps: readonly ProcessStepData[] = [
     title: "Delivered to last forever",
   },
 ] as const;
-

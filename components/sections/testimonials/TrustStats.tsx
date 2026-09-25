@@ -13,16 +13,11 @@ interface CountedValueProps {
 function CountedValue({ active, stat }: CountedValueProps) {
   const shouldReduceMotion = useReducedMotion();
   const target = stat.numericTarget;
-  const [value, setValue] = useState(
-    shouldReduceMotion && target !== undefined ? target : 0,
-  );
+  const [value, setValue] = useState(0);
 
   useEffect(() => {
     if (target === undefined || !active) return;
-    if (shouldReduceMotion) {
-      setValue(target);
-      return;
-    }
+    if (shouldReduceMotion) return;
 
     let frame = 0;
     const duration = 1_400;
@@ -38,7 +33,7 @@ function CountedValue({ active, stat }: CountedValueProps) {
   }, [active, shouldReduceMotion, target]);
 
   if (target === undefined) return stat.value;
-  return `${stat.prefix ?? ""}${value}${stat.suffix ?? ""}`;
+  return `${stat.prefix ?? ""}${shouldReduceMotion ? target : value}${stat.suffix ?? ""}`;
 }
 
 export function TrustStats({ active }: { active: boolean }) {

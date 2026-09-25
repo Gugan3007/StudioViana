@@ -1,6 +1,6 @@
 # Studio Viana — Editorial floral experience
 
-Studio Viana is a Next.js App Router experience for handcrafted chenille florals. Phase 0 established the strict TypeScript foundation and design system; Phase 1 added the reversible cinematic flower dive; Phase 2 delivered the responsive Home, About and Craft story; Phase 3 now adds an eight-product editorial Collection, shareable product configuration and the Grand Bouquet finale.
+Studio Viana is a Next.js App Router experience for handcrafted chenille florals. Phase 0 established the strict TypeScript foundation and design system; Phase 1 added the reversible cinematic flower dive; Phase 2 delivered the responsive Home, About and Craft story; Phase 3 added an eight-product editorial Collection and shareable product detail; Phase 4 now completes the tactile craft story, process timeline, filterable gallery/lightbox, testimonials and social finale.
 
 ## Run locally
 
@@ -21,7 +21,7 @@ npm run check
 PLAYWRIGHT_PRODUCTION=true npx playwright test
 ```
 
-Phase 2's six-image story inventory and checklist are documented in [`docs/phase-2-home-story.md`](docs/phase-2-home-story.md). Phase 3's 19-image catalogue contract, motion values, runtime ownership, verification checklist and Phase 4 handoff are documented in [`docs/phase-3-collection.md`](docs/phase-3-collection.md). Product imagery belongs in `/public/images/products/`; preserve each documented filename when replacing an image.
+Phase 2's six-image story inventory and checklist are documented in [`docs/phase-2-home-story.md`](docs/phase-2-home-story.md). Phase 3's catalogue contract and product runtime live in [`docs/phase-3-collection.md`](docs/phase-3-collection.md). Phase 4's complete 35-image inventory, motion values, five process-photo prompts and verification checklist live in [`docs/phase-4-craft-gallery.md`](docs/phase-4-craft-gallery.md). Preserve every documented filename when replacing development photography.
 
 ## Intro configuration
 
@@ -116,7 +116,10 @@ Create a second transparent depth layer for a luxury chenille-flower fly-through
 - `/public/brand` — logo, favicon, and approved marks
 - `/public/images/hero` — Phase 1 flower and transparent depth layers
 - `/public/images/products` — approved and retouched catalogue imagery
+- `/public/images/craft` — Phase 4 framed flower and high-resolution macro
+- `/public/images/process` — five 4:5 making-process photographs
 - `/public/images/gallery` — editorial and lifestyle photography
+- `/public/images/instagram` — ten square social-strip photographs
 - `/public/sequence` — numbered WebP dive frames
 
 ## Verification checklist

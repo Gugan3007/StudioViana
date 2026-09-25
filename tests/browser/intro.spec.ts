@@ -188,10 +188,11 @@ test("desktop intro scrubs forward and backward through every visual state", asy
   const reverseScale = await flowerScale(page);
   expect(reverseScale).toBeLessThan(deepScale);
   await moveToProgress(page, 0);
-  await expect(page.getByRole("img", { name: "Studio Viana" })).not.toHaveCSS(
-    "opacity",
-    "0",
-  );
+  await expect(
+    page
+      .getByTestId("intro-section")
+      .getByRole("img", { exact: true, name: "Studio Viana" }),
+  ).not.toHaveCSS("opacity", "0");
 
   await page.evaluate(() => document.getElementById("home")?.scrollIntoView());
   await page.waitForTimeout(1_450);
@@ -378,7 +379,11 @@ test("reduced motion uses a static unpinned flow", async ({ page }) => {
   );
   await expect(page.locator(".pin-spacer")).toHaveCount(0);
   await expect(page.locator("html")).not.toHaveClass(/lenis-smooth/);
-  await expect(page.getByRole("img", { name: "Studio Viana" })).toBeVisible();
+  await expect(
+    page
+      .getByTestId("intro-section")
+      .getByRole("img", { exact: true, name: "Studio Viana" }),
+  ).toBeVisible();
   await expect(
     page.getByRole("img", { name: /macro handcrafted/i }),
   ).toBeVisible();

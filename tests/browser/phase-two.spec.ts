@@ -109,10 +109,17 @@ test("navbar links, direction, active section, dark theme, and service preview w
 
   const nav = page.getByRole("banner");
   const primary = page.getByRole("navigation", { name: /primary/i });
-  const expectedLinks = ["Collection", "About", "Craft", "Pricing", "Contact"];
-  for (const label of expectedLinks) {
+  const expectedLinks = {
+    About: "#about",
+    Collection: "#collection",
+    Contact: "#contact",
+    Craft: "#craft-closeup",
+    Gallery: "#gallery",
+    Pricing: "#pricing",
+  } as const;
+  for (const [label, href] of Object.entries(expectedLinks)) {
     const link = primary.getByRole("link", { name: label });
-    await expect(link).toHaveAttribute("href", `#${label.toLowerCase()}`);
+    await expect(link).toHaveAttribute("href", href);
   }
 
   if ((await nav.getAttribute("data-nav-hidden")) === "true") {

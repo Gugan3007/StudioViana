@@ -34,6 +34,7 @@
 ### Task 1: Phase 4 data, configuration and media inventory
 
 **Files:**
+
 - Create: `lib/data/process.ts`
 - Create: `lib/data/gallery.ts`
 - Create: `lib/data/testimonials.ts`
@@ -46,6 +47,7 @@
 - Create: `tests/phase-four-data.test.ts`
 
 **Interfaces:**
+
 - Consumes: `ProductImage`, catalogue slugs and existing static image loader behavior.
 - Produces: `processSteps`, `craftMotion`, `galleryItems`, `galleryFilters`, `GalleryItemData`, `GalleryCategory`, `testimonials`, `trustStats`, `instagramItems`, `instagramProfileUrl`.
 
@@ -60,9 +62,22 @@ import { testimonials, trustStats } from "@/lib/data/testimonials";
 
 describe("Phase 4 data", () => {
   it("supplies the exact complete section inventories", () => {
-    expect(processSteps.map((step) => step.number)).toEqual(["01", "02", "03", "04", "05"]);
+    expect(processSteps.map((step) => step.number)).toEqual([
+      "01",
+      "02",
+      "03",
+      "04",
+      "05",
+    ]);
     expect(galleryItems).toHaveLength(18);
-    expect(galleryFilters).toEqual(["All", "Bouquets", "Hampers", "Flower Cards", "Single Stems", "Occasions"]);
+    expect(galleryFilters).toEqual([
+      "All",
+      "Bouquets",
+      "Hampers",
+      "Flower Cards",
+      "Single Stems",
+      "Occasions",
+    ]);
     expect(new Set(galleryItems.map((item) => item.id)).size).toBe(18);
     expect(testimonials).toHaveLength(5);
     expect(testimonials.every((item) => item.placeholder)).toBe(true);
@@ -81,11 +96,7 @@ Expected: FAIL because the four Phase 4 data modules do not exist.
 
 ```ts
 export type GalleryCategory =
-  | "Bouquets"
-  | "Hampers"
-  | "Flower Cards"
-  | "Single Stems"
-  | "Occasions";
+  "Bouquets" | "Hampers" | "Flower Cards" | "Single Stems" | "Occasions";
 
 export interface GalleryItemData {
   readonly alt: string;
@@ -125,6 +136,7 @@ git commit -m "feat: define the phase four content system"
 ### Task 2: Up Close and process story
 
 **Files:**
+
 - Create: `components/decor/SectionDivider.tsx`
 - Create: `components/sections/craft/AnnotationCallout.tsx`
 - Create: `components/sections/craft/LineIcon.tsx`
@@ -135,6 +147,7 @@ git commit -m "feat: define the phase four content system"
 - Create: `tests/craft-phase-four.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `processSteps`, `craftMotion`, `ImageReveal`, `SplitTextReveal`, `Button`, `SectionLabel`, GSAP helpers and reduced-motion hook.
 - Produces: `<UpClose />`, `<ProcessSection />`, `<SectionDivider />`, `data-process-node` geometry for `StemPath`.
 
@@ -143,15 +156,24 @@ git commit -m "feat: define the phase four content system"
 ```tsx
 it("renders exact Up Close copy and three annotations", () => {
   const { container } = render(<UpClose />);
-  expect(screen.getByRole("heading", { name: "Every fibre, shaped by hand." })).toBeVisible();
-  expect(container.querySelectorAll("[data-annotation-callout]")).toHaveLength(3);
-  expect(container.querySelector("#craft-closeup")).toHaveAttribute("data-theme", "dark");
+  expect(
+    screen.getByRole("heading", { name: "Every fibre, shaped by hand." }),
+  ).toBeVisible();
+  expect(container.querySelectorAll("[data-annotation-callout]")).toHaveLength(
+    3,
+  );
+  expect(container.querySelector("#craft-closeup")).toHaveAttribute(
+    "data-theme",
+    "dark",
+  );
 });
 
 it("renders five process nodes and the custom-order CTA", () => {
   const { container } = render(<ProcessSection />);
   expect(container.querySelectorAll("[data-process-node]")).toHaveLength(5);
-  expect(screen.getByRole("link", { name: "Start your order" })).toHaveAttribute("href", expect.stringContaining("wa.me"));
+  expect(
+    screen.getByRole("link", { name: "Start your order" }),
+  ).toHaveAttribute("href", expect.stringContaining("wa.me"));
 });
 ```
 
@@ -195,6 +217,7 @@ git commit -m "feat: tell the studio craft story"
 ### Task 3: Filterable masonry gallery
 
 **Files:**
+
 - Create: `components/sections/gallery/GalleryFilters.tsx`
 - Create: `components/sections/gallery/GalleryItem.tsx`
 - Create: `components/sections/gallery/MasonryGrid.tsx`
@@ -203,6 +226,7 @@ git commit -m "feat: tell the studio craft story"
 - Create: `tests/gallery-phase-four.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `galleryItems`, `galleryFilters`, cursor store, `Flip`, ScrollTrigger refresh and gallery item intent callbacks.
 - Produces: `GallerySection`, a visible filtered item array, lazy-lightbox preload intent, selected item/trigger state and `data-gallery-item` markup.
 
@@ -215,7 +239,9 @@ it("shows twelve pieces first, filters the complete inventory, then loads all", 
   expect(container.querySelectorAll("[data-gallery-item]")).toHaveLength(12);
   await user.click(screen.getByRole("button", { name: "Hampers" }));
   expect(screen.getByText(/Showing \d+ pieces/)).toBeVisible();
-  expect(container.querySelectorAll('[data-gallery-category="Hampers"]')).not.toHaveLength(0);
+  expect(
+    container.querySelectorAll('[data-gallery-category="Hampers"]'),
+  ).not.toHaveLength(0);
   await user.click(screen.getByRole("button", { name: "All" }));
   await user.click(screen.getByRole("button", { name: "View more pieces" }));
   expect(container.querySelectorAll("[data-gallery-item]")).toHaveLength(18);
@@ -256,12 +282,14 @@ git commit -m "feat: build the crafted masonry gallery"
 ### Task 4: Accessible lazy gallery lightbox
 
 **Files:**
+
 - Create: `components/sections/gallery/Lightbox.tsx`
 - Modify: `components/sections/gallery/GallerySection.tsx`
 - Modify: `components/sections/gallery/GalleryItem.tsx`
 - Create: `tests/lightbox-phase-four.test.tsx`
 
 **Interfaces:**
+
 - Consumes: selected/visible `GalleryItemData[]`, initial item ID, originating HTMLElement, `useScrollLock`, WhatsApp helper and `studio-viana:open-product` event contract.
 - Produces: dynamically loaded `Lightbox`, focus restoration, keyboard/touch navigation and optional product launch.
 
@@ -271,12 +299,18 @@ git commit -m "feat: build the crafted masonry gallery"
 it("traps focus, navigates, opens a product and restores the trigger", async () => {
   const user = userEvent.setup();
   render(<GallerySection />);
-  const trigger = screen.getAllByRole("button", { name: /Open .* in gallery/ })[0];
+  const trigger = screen.getAllByRole("button", {
+    name: /Open .* in gallery/,
+  })[0];
   await user.click(trigger);
-  const dialog = await screen.findByRole("dialog", { name: /gallery lightbox/i });
+  const dialog = await screen.findByRole("dialog", {
+    name: /gallery lightbox/i,
+  });
   expect(document.documentElement.style.overflow).toBe("hidden");
   await user.keyboard("{ArrowRight}");
-  expect(within(dialog).getByTestId("lightbox-counter")).toHaveTextContent("02 / 12");
+  expect(within(dialog).getByTestId("lightbox-counter")).toHaveTextContent(
+    "02 / 12",
+  );
   await user.keyboard("{Escape}");
   expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   expect(trigger).toHaveFocus();
@@ -316,12 +350,14 @@ git commit -m "feat: add the editorial gallery lightbox"
 ### Task 5: Testimonial slider and trust statistics
 
 **Files:**
+
 - Create: `components/sections/testimonials/TestimonialSlide.tsx`
 - Create: `components/sections/testimonials/TrustStats.tsx`
 - Create: `components/sections/testimonials/Testimonials.tsx`
 - Create: `tests/testimonials-phase-four.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `testimonials`, `trustStats`, reduced-motion and IntersectionObserver.
 - Produces: `Testimonials`, `aria-live` slide content, manual/swipe navigation and off-screen-paused six-second autoplay.
 
@@ -334,8 +370,12 @@ it("navigates placeholder reviews and does not autoplay when reduced", async () 
   const region = screen.getByRole("region", { name: "Customer testimonials" });
   expect(region).toHaveAttribute("aria-live", "polite");
   const first = within(region).getByTestId("testimonial-name").textContent;
-  await user.click(within(region).getByRole("button", { name: "Next testimonial" }));
-  expect(within(region).getByTestId("testimonial-name")).not.toHaveTextContent(first ?? "");
+  await user.click(
+    within(region).getByRole("button", { name: "Next testimonial" }),
+  );
+  expect(within(region).getByTestId("testimonial-name")).not.toHaveTextContent(
+    first ?? "",
+  );
 });
 ```
 
@@ -348,7 +388,8 @@ Expected: FAIL because testimonial components do not exist.
 
 ```ts
 const AUTOPLAY_MS = 6000;
-const advance = () => setActiveIndex((index) => (index + 1) % testimonials.length);
+const advance = () =>
+  setActiveIndex((index) => (index + 1) % testimonials.length);
 ```
 
 Use one interval only while intersecting, unhovered and motion-allowed; reset progress on manual navigation, support pointer swipe and render four editable stats with count-up only for finite numeric targets.
@@ -368,6 +409,7 @@ git commit -m "feat: add kind words and trust proof"
 ### Task 6: Instagram rail and velocity marquee
 
 **Files:**
+
 - Modify: `components/animations/Marquee.tsx`
 - Create: `components/sections/instagram/InstagramStrip.tsx`
 - Create: `components/sections/instagram/VelocityMarquee.tsx`
@@ -375,6 +417,7 @@ git commit -m "feat: add kind words and trust proof"
 - Modify: `tests/animations.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `instagramItems`, `instagramProfileUrl`, Lenis/ScrollTrigger velocity, pointer/reduced-motion hooks and extended Marquee props.
 - Produces: `MarqueeProps.velocityFactor`, `MarqueeProps.skew`, `MarqueeProps.reverse`, `InstagramStrip`, `VelocityMarquee`.
 
@@ -382,14 +425,25 @@ git commit -m "feat: add kind words and trust proof"
 
 ```tsx
 it("renders ten profile links and two accessible velocity rows", () => {
-  render(<><InstagramStrip /><VelocityMarquee /></>);
-  expect(screen.getAllByRole("link", { name: /View .* on Instagram/ })).toHaveLength(10);
-  expect(screen.getByText(/Handcrafted, made to order and curated with love/)).toHaveClass("sr-only");
+  render(
+    <>
+      <InstagramStrip />
+      <VelocityMarquee />
+    </>,
+  );
+  expect(
+    screen.getAllByRole("link", { name: /View .* on Instagram/ }),
+  ).toHaveLength(10);
+  expect(
+    screen.getByText(/Handcrafted, made to order and curated with love/),
+  ).toHaveClass("sr-only");
 });
 
 it("accepts reverse, velocity and skew controls", () => {
   render(<Marquee text="Studio Viana" reverse velocityFactor={1.5} skew />);
-  expect(screen.getByText("Studio Viana", { selector: ".sr-only" })).toBeVisible();
+  expect(
+    screen.getByText("Studio Viana", { selector: ".sr-only" }),
+  ).toBeVisible();
 });
 ```
 
@@ -428,6 +482,7 @@ git commit -m "feat: create the social velocity finale"
 ### Task 7: Compose, verify and document Phase 4
 
 **Files:**
+
 - Modify: `app/page.tsx`
 - Modify: `components/layout/Navbar.tsx`
 - Modify: `tests/home-page.test.tsx`
@@ -438,6 +493,7 @@ git commit -m "feat: create the social velocity finale"
 - Modify: `README.md`
 
 **Interfaces:**
+
 - Consumes: all Phase 4 section components, final IDs/theme surfaces, existing product overlay event and Phase 5 shells.
 - Produces: final page order, Gallery navigation state, browser evidence, tweakable-value guide, exact image list, five generation prompts and testing checklist.
 
@@ -446,7 +502,9 @@ git commit -m "feat: create the social velocity finale"
 ```tsx
 it("composes the five Phase 4 chapters before Phase 5 shells", () => {
   const { container } = render(<Home />);
-  const ids = Array.from(container.querySelectorAll("main > section[id]")).map((node) => node.id);
+  const ids = Array.from(container.querySelectorAll("main > section[id]")).map(
+    (node) => node.id,
+  );
   expect(ids.indexOf("craft-closeup")).toBeLessThan(ids.indexOf("process"));
   expect(ids.indexOf("process")).toBeLessThan(ids.indexOf("gallery"));
   expect(ids.indexOf("gallery")).toBeLessThan(ids.indexOf("testimonials"));

@@ -35,8 +35,8 @@ export function Testimonials() {
     const section = root.current;
     if (!section) return;
     if (typeof IntersectionObserver === "undefined") {
-      setIsIntersecting(true);
-      return;
+      const frame = window.requestAnimationFrame(() => setIsIntersecting(true));
+      return () => window.cancelAnimationFrame(frame);
     }
 
     const observer = new IntersectionObserver(

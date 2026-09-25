@@ -174,7 +174,7 @@ export function Lightbox({
     >
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-[0.07] [background-image:url('/images/noise.svg')]"
+        className="pointer-events-none absolute inset-0 opacity-[0.07] [background-image:radial-gradient(rgba(255,255,255,0.6)_0.55px,transparent_0.55px)] [background-size:5px_5px]"
       />
       <button
         ref={closeButton}
@@ -188,7 +188,7 @@ export function Lightbox({
 
       <button
         aria-label="Previous gallery piece"
-        className="absolute bottom-6 left-4 z-20 grid h-12 w-12 place-items-center border border-gold/50 text-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold md:bottom-auto md:left-7 md:top-1/2 md:-translate-y-1/2"
+        className="absolute left-4 top-1/3 z-20 grid h-12 w-12 -translate-y-1/2 place-items-center border border-gold/50 bg-forest-deep/55 text-xl backdrop-blur-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold md:left-7 md:top-1/2"
         onClick={() => navigate(-1)}
         type="button"
       >
@@ -196,7 +196,7 @@ export function Lightbox({
       </button>
       <button
         aria-label="Next gallery piece"
-        className="absolute bottom-6 right-4 z-20 grid h-12 w-12 place-items-center border border-gold/50 text-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold md:bottom-auto md:right-7 md:top-1/2 md:-translate-y-1/2"
+        className="absolute right-4 top-1/3 z-20 grid h-12 w-12 -translate-y-1/2 place-items-center border border-gold/50 bg-forest-deep/55 text-xl backdrop-blur-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold md:right-7 md:top-1/2"
         onClick={() => navigate(1)}
         type="button"
       >
@@ -205,6 +205,7 @@ export function Lightbox({
 
       <div
         className="relative grid h-full w-full max-w-6xl items-center gap-6 md:grid-cols-[minmax(0,1fr)_18rem] md:gap-10"
+        data-lightbox-stage
         onPointerDown={(event) => {
           pointerStart.current = event.clientX;
         }}
@@ -220,12 +221,12 @@ export function Lightbox({
           <AnimatePresence
             custom={navigation.direction}
             initial={false}
-            mode="popLayout"
+            mode="wait"
           >
             <motion.div
               key={current.id}
               animate="center"
-              className="relative h-[min(65svh,48rem)] w-full"
+              className="relative h-[min(48svh,32rem)] w-full md:h-[min(65svh,48rem)]"
               custom={navigation.direction}
               exit="exit"
               initial="enter"
