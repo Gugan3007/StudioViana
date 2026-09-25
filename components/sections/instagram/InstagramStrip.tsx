@@ -55,9 +55,17 @@ function InstagramTile({
 
   if (decorative) {
     return (
-      <span className="group relative block aspect-square w-[min(68vw,19rem)] shrink-0 overflow-hidden sm:w-64 lg:w-[22vw]">
+      <a
+        aria-hidden="true"
+        className="group relative block aspect-square w-[min(68vw,19rem)] shrink-0 overflow-hidden sm:w-64 lg:w-[22vw]"
+        data-instagram-duplicate
+        href={instagramProfileUrl}
+        rel="noreferrer"
+        tabIndex={-1}
+        target="_blank"
+      >
         {content}
-      </span>
+      </a>
     );
   }
 
@@ -106,6 +114,7 @@ export function InstagramStrip() {
     observer?.observe(root.current);
 
     let velocityTween: gsap.core.Tween | undefined;
+    let settleTimer = 0;
     const trigger = ScrollTrigger.create({
       end: "bottom top",
       onUpdate(self) {
@@ -117,16 +126,27 @@ export function InstagramStrip() {
           overwrite: true,
           timeScale: (velocity < 0 ? -1 : 1) * magnitude,
         });
+        window.clearTimeout(settleTimer);
+        settleTimer = window.setTimeout(() => {
+          velocityTween?.kill();
+          velocityTween = gsap.to(loop, {
+            duration: 0.8,
+            overwrite: true,
+            timeScale: 1,
+          });
+        }, 180);
       },
       start: "top bottom",
       trigger: root.current,
     });
 
     return () => {
+      window.clearTimeout(settleTimer);
       velocityTween?.kill();
       observer?.disconnect();
       trigger.kill();
       loop.kill();
+      gsap.set(track.current, { clearProps: "transform" });
       timeline.current = null;
     };
   }, [shouldReduceMotion]);
@@ -157,11 +177,9 @@ export function InstagramStrip() {
       </header>
 
       <div
-        className={
-          shouldReduceMotion
-            ? "mt-14 overflow-x-auto px-gutter"
-            : "mt-14 overflow-hidden"
-        }
+        className="mt-14 px-gutter"
+        data-instagram-motion={shouldReduceMotion ? "static" : "loop"}
+        data-instagram-rail
         onPointerEnter={() => timeline.current?.pause()}
         onPointerLeave={() => {
           if (visible.current) timeline.current?.play();

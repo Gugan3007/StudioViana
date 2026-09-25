@@ -14,19 +14,19 @@ import closeupMacro from "@/public/images/craft/closeup-macro.jpg";
 
 const callouts = [
   {
-    className: "md:-left-48 md:top-[18%]",
+    className: "xl:left-3 xl:top-[18%] min-[1400px]:-left-44",
     description: "Soft fibres become a lasting stem.",
     label: "Hand-twisted chenille stems",
     path: "M180 58 C120 58 88 35 0 8",
   },
   {
-    className: "md:-right-48 md:top-[42%] md:text-right",
+    className: "xl:right-3 xl:top-[42%] xl:text-right min-[1400px]:-right-36",
     description: "No two blooms carry the same touch.",
     label: "Each petal shaped individually",
     path: "M0 60 C72 60 104 30 180 6",
   },
   {
-    className: "md:-left-44 md:bottom-[8%]",
+    className: "xl:bottom-[8%] xl:left-3 min-[1400px]:-left-40",
     description: "The final details, placed one by one.",
     label: "Finished with pearls & ribbon",
     path: "M180 10 C120 10 82 36 0 62",
@@ -48,7 +48,7 @@ export function UpClose() {
     // Desktop is one 200vh narrative: copy enters, the framed bloom magnifies,
     // the macro crossfades in, callout lines draw in order, then the image
     // settles before the pinned stage releases into the process story.
-    mediaQuery.add("(min-width: 768px)", () => {
+    mediaQuery.add("(min-width: 1280px)", () => {
       const timeline = gsap.timeline({
         defaults: { ease: "none" },
         scrollTrigger: {
@@ -90,7 +90,7 @@ export function UpClose() {
         .to(media.current, { scale: craftMotion.desktopReleaseZoom });
     });
 
-    mediaQuery.add("(max-width: 767px)", () =>
+    mediaQuery.add("(max-width: 1279px)", () =>
       gsap.fromTo(
         media.current,
         { scale: 1 },
@@ -115,7 +115,7 @@ export function UpClose() {
       ref={root}
       id="craft-closeup"
       aria-labelledby="craft-closeup-heading"
-      className="relative min-h-[100svh] overflow-hidden bg-forest-deep text-cream md:h-[200vh]"
+      className="relative min-h-[100svh] overflow-hidden bg-forest-deep text-cream xl:h-[200vh]"
       data-theme="dark"
     >
       <div
@@ -167,7 +167,7 @@ export function UpClose() {
             </div>
           </div>
 
-          <ol className="mt-9 grid gap-6 md:absolute md:inset-0 md:mt-0 md:block">
+          <ol className="mt-9 grid gap-6 xl:absolute xl:inset-0 xl:mt-0 xl:block">
             {callouts.map((callout, index) => (
               <AnnotationCallout
                 key={callout.label}

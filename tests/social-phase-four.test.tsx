@@ -7,6 +7,10 @@ import { VelocityMarquee } from "@/components/sections/instagram/VelocityMarquee
 
 const socialMocks = vi.hoisted(() => ({
   reduceMotion: false,
+  set: vi.fn(),
+  to: vi.fn(() => ({ kill: vi.fn() })),
+  triggerUpdate: undefined as
+    ((self: { getVelocity: () => number }) => void) | undefined,
 }));
 
 vi.mock("@/lib/animations/useReducedMotion", () => ({
@@ -20,16 +24,25 @@ vi.mock("@/lib/animations/useFinePointer", () => ({
 vi.mock("@/lib/animations/gsap", () => ({
   gsap: {
     quickTo: vi.fn(() => vi.fn()),
+    set: socialMocks.set,
     timeline: vi.fn(() => ({
+      fromTo: vi.fn().mockReturnThis(),
       kill: vi.fn(),
       pause: vi.fn(),
       play: vi.fn(),
       to: vi.fn().mockReturnThis(),
     })),
-    to: vi.fn(() => ({ kill: vi.fn() })),
+    to: socialMocks.to,
   },
   ScrollTrigger: {
-    create: vi.fn(() => ({ getVelocity: () => 0, kill: vi.fn() })),
+    create: vi.fn(
+      (config: {
+        onUpdate?: (self: { getVelocity: () => number }) => void;
+      }) => {
+        socialMocks.triggerUpdate = config.onUpdate;
+        return { getVelocity: () => 0, kill: vi.fn() };
+      },
+    ),
   },
 }));
 
@@ -63,11 +76,12 @@ vi.mock("next/image", () => ({
 describe("Phase 4 social finale", () => {
   beforeEach(() => {
     socialMocks.reduceMotion = false;
+    socialMocks.triggerUpdate = undefined;
     vi.clearAllMocks();
   });
 
   it("renders ten profile links and two accessible velocity rows", () => {
-    render(
+    const { container } = render(
       <>
         <InstagramStrip />
         <VelocityMarquee />
@@ -77,8 +91,39 @@ describe("Phase 4 social finale", () => {
     expect(
       screen.getAllByRole("link", { name: /View .* on Instagram/ }),
     ).toHaveLength(10);
+    expect(container.querySelectorAll("#instagram a[href]")).toHaveLength(22);
+    const duplicateLinks = container.querySelectorAll(
+      "#instagram [data-instagram-duplicate]",
+    );
+    expect(duplicateLinks).toHaveLength(10);
+    duplicateLinks.forEach((link) => {
+      expect(link).toHaveAttribute("aria-hidden", "true");
+      expect(link).toHaveAttribute("tabindex", "-1");
+    });
     expect(
       screen.getByText(/Handcrafted, made to order and curated with love/),
     ).toHaveClass("sr-only");
+  });
+
+  it("settles the Instagram rail and clears its transform on cleanup", () => {
+    vi.useFakeTimers();
+    const { unmount } = render(<InstagramStrip />);
+
+    socialMocks.triggerUpdate?.({ getVelocity: () => -2_400 });
+    expect(socialMocks.to).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ timeScale: expect.any(Number) }),
+    );
+    vi.advanceTimersByTime(250);
+    expect(socialMocks.to).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ timeScale: 1 }),
+    );
+
+    unmount();
+    expect(socialMocks.set).toHaveBeenCalledWith(expect.anything(), {
+      clearProps: "transform",
+    });
+    vi.useRealTimers();
   });
 });

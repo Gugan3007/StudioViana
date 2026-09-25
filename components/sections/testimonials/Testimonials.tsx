@@ -19,7 +19,9 @@ export function Testimonials() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState<-1 | 1>(1);
   const [isIntersecting, setIsIntersecting] = useState(false);
+  const [isFocusWithin, setIsFocusWithin] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [isManuallyPaused, setIsManuallyPaused] = useState(false);
   const [resetKey, setResetKey] = useState(0);
 
   const navigate = useCallback((nextDirection: -1 | 1) => {
@@ -47,7 +49,12 @@ export function Testimonials() {
     return () => observer.disconnect();
   }, []);
 
-  const autoplaying = isIntersecting && !isHovered && !shouldReduceMotion;
+  const autoplaying =
+    isIntersecting &&
+    !isFocusWithin &&
+    !isHovered &&
+    !isManuallyPaused &&
+    !shouldReduceMotion;
   useEffect(() => {
     if (!autoplaying) return;
     const timer = window.setInterval(() => navigate(1), AUTOPLAY_MS);
@@ -82,8 +89,13 @@ export function Testimonials() {
 
       <div
         aria-label="Customer testimonials"
-        aria-live="polite"
+        aria-live={autoplaying ? "off" : "polite"}
         className="relative mx-auto mt-16 max-w-5xl md:mt-20"
+        onBlurCapture={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget as Node | null))
+            setIsFocusWithin(false);
+        }}
+        onFocusCapture={() => setIsFocusWithin(true)}
         onPointerDown={(event) => {
           pointerStart.current = event.clientX;
         }}
@@ -136,6 +148,17 @@ export function Testimonials() {
             type="button"
           >
             →
+          </button>
+          <button
+            aria-label={
+              isManuallyPaused ? "Resume testimonials" : "Pause testimonials"
+            }
+            aria-pressed={isManuallyPaused}
+            className="ml-1 border-b border-gold/50 pb-1 font-body text-[0.58rem] uppercase tracking-[0.16em] text-forest focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold"
+            onClick={() => setIsManuallyPaused((paused) => !paused)}
+            type="button"
+          >
+            {isManuallyPaused ? "Resume" : "Pause"}
           </button>
         </div>
       </div>

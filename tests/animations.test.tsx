@@ -13,6 +13,8 @@ import { GoldDivider } from "@/components/ui/GoldDivider";
 const mocks = vi.hoisted(() => ({
   reduceMotion: false,
   fromTo: vi.fn(),
+  marqueeFromTo: vi.fn().mockReturnThis(),
+  quickToValue: vi.fn(),
   revert: vi.fn(),
   refresh: vi.fn(),
   timelineKill: vi.fn(),
@@ -20,7 +22,10 @@ const mocks = vi.hoisted(() => ({
   timelinePlay: vi.fn(),
   timelineTimeScale: vi.fn(),
   to: vi.fn(),
+  set: vi.fn(),
   triggerKill: vi.fn(),
+  triggerUpdate: undefined as
+    ((self: { getVelocity: () => number }) => void) | undefined,
 }));
 
 vi.mock("@/lib/animations/useReducedMotion", () => ({
@@ -54,18 +59,27 @@ vi.mock("@/lib/animations/gsap", () => ({
       return { revert: mocks.revert };
     }),
     fromTo: mocks.fromTo,
-    quickTo: vi.fn(() => vi.fn()),
+    quickTo: vi.fn(() => mocks.quickToValue),
+    set: mocks.set,
     to: mocks.to,
     timeline: vi.fn(() => ({
       kill: mocks.timelineKill,
       pause: mocks.timelinePause,
       play: mocks.timelinePlay,
       timeScale: mocks.timelineTimeScale,
+      fromTo: mocks.marqueeFromTo,
       to: vi.fn().mockReturnThis(),
     })),
   },
   ScrollTrigger: {
-    create: vi.fn(() => ({ getVelocity: () => 0, kill: mocks.triggerKill })),
+    create: vi.fn(
+      (config: {
+        onUpdate?: (self: { getVelocity: () => number }) => void;
+      }) => {
+        mocks.triggerUpdate = config.onUpdate;
+        return { getVelocity: () => 0, kill: mocks.triggerKill };
+      },
+    ),
   },
   refreshScrollTrigger: mocks.refresh,
 }));
@@ -226,6 +240,10 @@ describe("ambient motion primitives", () => {
       pause: mocks.timelinePause,
       play: mocks.timelinePlay,
     });
+    mocks.marqueeFromTo.mockClear();
+    mocks.quickToValue.mockClear();
+    mocks.set.mockClear();
+    mocks.triggerUpdate = undefined;
     vi.stubGlobal(
       "matchMedia",
       vi.fn(
@@ -343,6 +361,36 @@ describe("ambient motion primitives", () => {
     expect(
       screen.getByText("Studio Viana", { selector: ".sr-only" }),
     ).toBeVisible();
+    expect(mocks.marqueeFromTo).toHaveBeenCalledWith(
+      expect.anything(),
+      { xPercent: -50 },
+      expect.objectContaining({ xPercent: 0 }),
+    );
+  });
+
+  it("returns velocity and skew to their base state after scrolling settles", () => {
+    vi.useFakeTimers();
+    const { unmount } = render(
+      <Marquee skew text="Studio Viana" velocityFactor={1} />,
+    );
+
+    mocks.triggerUpdate?.({ getVelocity: () => 2_400 });
+    expect(mocks.to).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ timeScale: expect.any(Number) }),
+    );
+    vi.advanceTimersByTime(250);
+    expect(mocks.to).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ timeScale: 1 }),
+    );
+    expect(mocks.quickToValue).toHaveBeenLastCalledWith(0);
+
+    unmount();
+    expect(mocks.set).toHaveBeenCalledWith(expect.anything(), {
+      clearProps: "transform",
+    });
+    vi.useRealTimers();
   });
 
   it("pauses and resumes Marquee motion outside and inside the viewport", () => {

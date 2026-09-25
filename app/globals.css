@@ -43,6 +43,15 @@ body {
   min-height: 100%;
 }
 
+[data-instagram-rail] {
+  overflow-x: auto;
+}
+
+html[data-js="true"] [data-instagram-rail][data-instagram-motion="loop"] {
+  overflow-x: hidden;
+  padding-inline: 0;
+}
+
 main > section[id]:not(#home) {
   scroll-margin-top: 84px;
 }

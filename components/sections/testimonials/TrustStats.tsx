@@ -33,7 +33,9 @@ function CountedValue({ active, stat }: CountedValueProps) {
   }, [active, shouldReduceMotion, target]);
 
   if (target === undefined) return stat.value;
-  return `${stat.prefix ?? ""}${shouldReduceMotion ? target : value}${stat.suffix ?? ""}`;
+  const displayedValue =
+    shouldReduceMotion || !active ? target : Math.min(value, target);
+  return `${stat.prefix ?? ""}${displayedValue}${stat.suffix ?? ""}`;
 }
 
 export function TrustStats({ active }: { active: boolean }) {

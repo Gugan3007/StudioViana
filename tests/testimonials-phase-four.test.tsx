@@ -111,6 +111,40 @@ describe("Phase 4 testimonials", () => {
     expect(within(region).getByTestId("testimonial-name")).toHaveTextContent(
       visibleName ?? "",
     );
+
+    fireEvent.pointerLeave(container.querySelector("#testimonials")!);
+    fireEvent.focus(
+      within(region).getByRole("button", { name: "Next testimonial" }),
+    );
+    act(() => vi.advanceTimersByTime(6_000));
+    expect(within(region).getByTestId("testimonial-name")).toHaveTextContent(
+      visibleName ?? "",
+    );
+    expect(region).toHaveAttribute("aria-live", "polite");
     vi.useRealTimers();
+  });
+
+  it("offers an explicit pause control and suppresses autoplay announcements", () => {
+    const { container } = render(<Testimonials />);
+    const region = screen.getByRole("region", {
+      name: "Customer testimonials",
+    });
+    act(() => {
+      testimonialMocks.callbacks[0]?.(
+        [{ isIntersecting: true } as IntersectionObserverEntry],
+        {} as IntersectionObserver,
+      );
+    });
+    expect(region).toHaveAttribute("aria-live", "off");
+
+    const pause = within(region).getByRole("button", {
+      name: "Pause testimonials",
+    });
+    fireEvent.click(pause);
+    expect(
+      within(region).getByRole("button", { name: "Resume testimonials" }),
+    ).toHaveAttribute("aria-pressed", "true");
+    expect(region).toHaveAttribute("aria-live", "polite");
+    expect(container.querySelector("#testimonials")).toBeInTheDocument();
   });
 });

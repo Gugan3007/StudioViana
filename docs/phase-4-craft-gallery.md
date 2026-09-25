@@ -18,7 +18,7 @@ Production browser files run serially because the animation and Chrome trace bud
 - `UpClose.tsx` owns the desktop pin and macro crossfade. Mobile receives an unpinned reading order; reduced motion receives the complete macro and annotation list statically.
 - `StemPath.tsx` measures the five process nodes relative to their timeline, joins them with cubic curves, and recalculates after a 120 ms debounced resize.
 - `GallerySection.tsx` owns filtering, the 12→18 item limit, Flip state and the one selected lightbox record. `Lightbox.tsx` owns focus, swipe, zoom, adjacent preloading and scroll lock.
-- `Testimonials.tsx` owns the visible/intersecting/hover state for one six-second timer. Its screen-reader copy changes immediately even while the decorative word transition completes.
+- `Testimonials.tsx` owns visible/intersecting/hover/focus/manual-pause state for one six-second timer. Its screen-reader copy changes immediately for manual changes and automatic changes do not generate live announcements.
 - `InstagramStrip.tsx` and `Marquee.tsx` retain one loop each, pause off-screen/hovered and map scroll velocity into a clamped time scale. Reduced motion leaves static, horizontally reachable content.
 
 ## Tweakable values

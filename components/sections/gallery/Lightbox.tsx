@@ -149,7 +149,7 @@ export function Lightbox({
     window.setTimeout(() => {
       window.dispatchEvent(
         new CustomEvent("studio-viana:open-product", {
-          detail: { slug: current.productSlug },
+          detail: { returnFocus: origin, slug: current.productSlug },
         }),
       );
     }, 0);
@@ -161,7 +161,7 @@ export function Lightbox({
       aria-label={`Gallery lightbox: ${current.title}`}
       aria-modal="true"
       animate={{ opacity: 1 }}
-      className="fixed inset-0 z-[140] grid min-h-[100svh] place-items-center overflow-hidden bg-forest-deep/[0.97] px-4 pb-8 pt-20 text-cream md:px-16 md:py-12"
+      className="fixed inset-0 z-[140] grid min-h-[100svh] place-items-start overflow-y-auto overflow-x-hidden bg-forest-deep/[0.97] px-4 pb-8 pt-20 text-cream md:place-items-center md:overflow-hidden md:px-16 md:py-12"
       data-lenis-prevent
       data-lightbox
       exit={{ opacity: 0 }}
@@ -204,7 +204,7 @@ export function Lightbox({
       </button>
 
       <div
-        className="relative grid h-full w-full max-w-6xl items-center gap-6 md:grid-cols-[minmax(0,1fr)_18rem] md:gap-10"
+        className="relative grid min-h-[calc(100svh-7rem)] w-full max-w-6xl items-center gap-6 md:h-full md:min-h-0 md:grid-cols-[minmax(0,1fr)_18rem] md:gap-10"
         data-lightbox-stage
         onPointerDown={(event) => {
           pointerStart.current = event.clientX;

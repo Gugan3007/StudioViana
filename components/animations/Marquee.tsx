@@ -48,17 +48,19 @@ export function Marquee({
         ? "right"
         : "left"
       : direction;
-    const baseDirection = effectiveDirection === "left" ? 1 : -1;
+    const fromX = effectiveDirection === "left" ? 0 : -50;
+    const toX = effectiveDirection === "left" ? -50 : 0;
     const timeline = gsap.timeline({ repeat: -1 });
     timelineRef.current = timeline;
-    timeline.to(track.current, {
-      xPercent: effectiveDirection === "left" ? -50 : 50,
-      duration: speed,
-      ease: "none",
-      modifiers: {
-        xPercent: (value: string) => String(Number.parseFloat(value) % 50),
+    timeline.fromTo(
+      track.current,
+      { xPercent: fromX },
+      {
+        xPercent: toX,
+        duration: speed,
+        ease: "none",
       },
-    });
+    );
 
     // The single loop is retained for the component lifetime. Intersection
     // state only pauses or resumes it, avoiding off-screen animation work.
@@ -73,6 +75,7 @@ export function Marquee({
     observer?.observe(root.current);
 
     let velocityTween: gsap.core.Tween | undefined;
+    let settleTimer = 0;
     const skewTo = skew
       ? gsap.quickTo(root.current, "skewX", {
           duration: 0.35,
@@ -92,8 +95,7 @@ export function Marquee({
         // Scroll velocity becomes a clamped multiplier on the one retained
         // loop. Its sign flips the row while quickTo maps velocity / 300 into
         // a smoothed, capped eight-degree wrapper skew.
-        const scrollDirection = velocity < 0 ? -baseDirection : baseDirection;
-        const timeScale = scrollDirection * magnitude;
+        const timeScale = (velocity < 0 ? -1 : 1) * magnitude;
         velocityTween?.kill();
         velocityTween = gsap.to(timeline, {
           timeScale,
@@ -101,15 +103,28 @@ export function Marquee({
           overwrite: true,
         });
         skewTo?.(Math.min(8, Math.max(-8, velocity / 300)));
+        window.clearTimeout(settleTimer);
+        settleTimer = window.setTimeout(() => {
+          velocityTween?.kill();
+          velocityTween = gsap.to(timeline, {
+            duration: 0.8,
+            overwrite: true,
+            timeScale: 1,
+          });
+          skewTo?.(0);
+        }, 180);
       },
     });
 
     return () => {
+      window.clearTimeout(settleTimer);
       velocityTween?.kill();
       skewTo?.tween?.kill();
       observer?.disconnect();
       trigger.kill();
       timeline.kill();
+      gsap.set(track.current, { clearProps: "transform" });
+      gsap.set(root.current, { clearProps: "transform" });
       timelineRef.current = null;
     };
   }, [

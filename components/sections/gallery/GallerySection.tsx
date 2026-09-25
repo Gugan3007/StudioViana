@@ -7,8 +7,9 @@ import { GalleryFilters } from "@/components/sections/gallery/GalleryFilters";
 import { MasonryGrid } from "@/components/sections/gallery/MasonryGrid";
 import { Button } from "@/components/ui/Button";
 import { SectionLabel } from "@/components/ui/SectionLabel";
-import { Flip, refreshScrollTrigger } from "@/lib/animations/gsap";
+import { Flip, gsap, refreshScrollTrigger } from "@/lib/animations/gsap";
 import { useIsomorphicLayoutEffect as useIsomorphicGalleryLayoutEffect } from "@/lib/animations/useIsomorphicLayoutEffect";
+import { useReducedMotion } from "@/lib/animations/useReducedMotion";
 import type { GalleryFilter } from "@/lib/data/gallery";
 import { galleryItems } from "@/lib/data/gallery";
 
@@ -27,9 +28,13 @@ interface SelectedGalleryItem {
 export function GallerySection() {
   const grid = useRef<HTMLDivElement>(null);
   const pendingFlip = useRef<ReturnType<typeof Flip.getState> | null>(null);
+  const shouldReduceMotion = useReducedMotion();
   const [activeFilter, setActiveFilter] = useState<GalleryFilter>("All");
   const [showAll, setShowAll] = useState(false);
   const [selected, setSelected] = useState<SelectedGalleryItem | null>(null);
+  const [mountedIds, setMountedIds] = useState(
+    () => new Set(galleryItems.slice(0, INITIAL_ITEMS).map((item) => item.id)),
+  );
 
   const matchingItems = useMemo(
     () =>
@@ -45,12 +50,24 @@ export function GallerySection() {
         : matchingItems,
     [activeFilter, matchingItems, showAll],
   );
+  const mountedItems = useMemo(
+    () => galleryItems.filter((item) => mountedIds.has(item.id)),
+    [mountedIds],
+  );
+  const visibleIds = useMemo(
+    () => new Set(visibleItems.map((item) => item.id)),
+    [visibleItems],
+  );
 
   const captureLayout = useCallback(() => {
+    if (shouldReduceMotion) {
+      pendingFlip.current = null;
+      return;
+    }
     pendingFlip.current = Flip.getState(
-      grid.current?.querySelectorAll("[data-gallery-item]") ?? [],
+      grid.current?.querySelectorAll("[data-gallery-cell]") ?? [],
     );
-  }, []);
+  }, [shouldReduceMotion]);
 
   const changeFilter = useCallback(
     (filter: GalleryFilter) => {
@@ -58,6 +75,13 @@ export function GallerySection() {
       // Capture the old geometry before React commits the new inventory; the
       // layout effect below then lets Flip animate from old to new positions.
       captureLayout();
+      setMountedIds((current) => {
+        const next = new Set(current);
+        galleryItems.forEach((item) => {
+          if (filter === "All" || item.category === filter) next.add(item.id);
+        });
+        return next;
+      });
       setActiveFilter(filter);
     },
     [activeFilter, captureLayout],
@@ -65,28 +89,44 @@ export function GallerySection() {
 
   const loadMore = useCallback(() => {
     captureLayout();
+    setMountedIds(new Set(galleryItems.map((item) => item.id)));
     setShowAll(true);
   }, [captureLayout]);
 
   useIsomorphicGalleryLayoutEffect(() => {
     const state = pendingFlip.current;
-    if (!state) return;
+    if (!state || shouldReduceMotion) {
+      pendingFlip.current = null;
+      refreshScrollTrigger();
+      return;
+    }
     pendingFlip.current = null;
+    const targets = grid.current?.querySelectorAll("[data-gallery-cell]") ?? [];
     const animation = Flip.from(state, {
       absolute: true,
+      absoluteOnLeave: true,
       duration: 0.7,
       ease: "power3.inOut",
       fade: true,
+      onEnter: (elements) =>
+        gsap.fromTo(
+          elements,
+          { opacity: 0, scale: 0.96 },
+          { duration: 0.45, opacity: 1, scale: 1 },
+        ),
+      onLeave: (elements) =>
+        gsap.to(elements, { duration: 0.35, opacity: 0, scale: 0.96 }),
       onComplete: refreshScrollTrigger,
       prune: true,
       stagger: 0.025,
+      targets,
     });
     refreshScrollTrigger();
 
     return () => {
       animation?.kill();
     };
-  }, [activeFilter, showAll]);
+  }, [activeFilter, shouldReduceMotion, showAll]);
 
   return (
     <section
@@ -122,11 +162,12 @@ export function GallerySection() {
 
       <div ref={grid} className="mx-auto mt-16 max-w-7xl md:mt-24">
         <MasonryGrid
-          items={visibleItems}
+          items={mountedItems}
           onIntent={() => {
             void loadLightbox();
           }}
           onSelect={(item, trigger) => setSelected({ id: item.id, trigger })}
+          visibleIds={visibleIds}
         />
       </div>
 

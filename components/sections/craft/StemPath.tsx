@@ -100,23 +100,52 @@ export function StemPath() {
   }, [path, shouldReduceMotion]);
 
   return (
-    <svg
-      ref={svg}
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0 h-full w-full overflow-visible"
-    >
-      <path
-        ref={pathElement}
-        d={path}
-        data-stem-path
-        fill="none"
-        stroke="currentColor"
-        strokeDashoffset={shouldReduceMotion ? 0 : undefined}
-        strokeLinecap="round"
-        strokeWidth="1.25"
-        className="text-gold/70"
-        style={shouldReduceMotion ? { strokeDashoffset: 0 } : undefined}
-      />
-    </svg>
+    <>
+      <svg
+        aria-hidden="true"
+        className={`pointer-events-none absolute inset-0 h-full w-full text-gold/70 ${path ? "hidden" : ""}`}
+        preserveAspectRatio="none"
+        viewBox="0 0 100 100"
+      >
+        <path
+          className="md:hidden"
+          d="M 4 0 C 4 20, 4 32, 4 50 C 4 68, 4 82, 4 100"
+          data-stem-fallback
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          vectorEffect="non-scaling-stroke"
+          strokeWidth="1.25"
+        />
+        <path
+          className="hidden md:block"
+          d="M 50 0 C 38 18, 62 30, 50 48 C 38 66, 62 82, 50 100"
+          data-stem-fallback-desktop
+          fill="none"
+          stroke="currentColor"
+          strokeLinecap="round"
+          vectorEffect="non-scaling-stroke"
+          strokeWidth="1.25"
+        />
+      </svg>
+      <svg
+        ref={svg}
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 h-full w-full overflow-visible"
+      >
+        <path
+          ref={pathElement}
+          d={path}
+          data-stem-path
+          fill="none"
+          stroke="currentColor"
+          strokeDashoffset={shouldReduceMotion ? 0 : undefined}
+          strokeLinecap="round"
+          strokeWidth="1.25"
+          className="text-gold/70"
+          style={shouldReduceMotion ? { strokeDashoffset: 0 } : undefined}
+        />
+      </svg>
+    </>
   );
 }

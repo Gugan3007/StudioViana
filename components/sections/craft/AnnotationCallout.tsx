@@ -20,18 +20,18 @@ export function AnnotationCallout({
   return (
     <li
       className={cn(
-        "grid grid-cols-[2rem_1fr] gap-3 md:absolute md:block md:w-52",
+        "grid grid-cols-[2rem_1fr] gap-3 xl:absolute xl:block xl:w-52",
         className,
       )}
       data-annotation-callout
     >
-      <span className="font-display text-xl italic text-gold md:hidden">
+      <span className="font-display text-xl italic text-gold xl:hidden">
         {String(index).padStart(2, "0")}
       </span>
       <span>
         <svg
           aria-hidden="true"
-          className="absolute hidden overflow-visible text-gold md:block"
+          className="absolute hidden overflow-visible text-gold xl:block"
           fill="none"
           viewBox={viewBox}
         >

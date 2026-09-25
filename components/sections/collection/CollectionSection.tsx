@@ -2,7 +2,7 @@
 
 import { AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { CollectionIndex } from "@/components/sections/collection/CollectionIndex";
 import { CollectionIntro } from "@/components/sections/collection/CollectionIntro";
@@ -30,6 +30,8 @@ export function CollectionSection({
   onSelectProduct,
 }: CollectionSectionProps) {
   const gallery = useRef<GalleryHandle>(null);
+  const [productReturnFocus, setProductReturnFocus] =
+    useState<HTMLElement | null>(null);
   const { closeProduct, openProduct, productSlug, replaceProduct } =
     useProductQueryParam();
   const selectedProduct = getProductBySlug(productSlug);
@@ -42,7 +44,14 @@ export function CollectionSection({
       }
     };
     const openFromEvent = (event: Event) => {
-      const slug = (event as CustomEvent<{ slug?: string }>).detail?.slug;
+      const detail = (
+        event as CustomEvent<{
+          returnFocus?: HTMLElement;
+          slug?: string;
+        }>
+      ).detail;
+      const slug = detail?.slug;
+      setProductReturnFocus(detail?.returnFocus ?? null);
       if (slug) openProduct(slug);
     };
     document.addEventListener("focusin", preload);
@@ -60,6 +69,7 @@ export function CollectionSection({
       onSelectProduct(product, trigger);
       return;
     }
+    setProductReturnFocus(trigger);
     openProduct(product.slug);
   };
 
@@ -89,9 +99,13 @@ export function CollectionSection({
       <AnimatePresence>
         {selectedProduct ? (
           <DynamicProductDetail
-            onClose={closeProduct}
+            onClose={() => {
+              closeProduct();
+              setProductReturnFocus(null);
+            }}
             onSelectProduct={(product) => replaceProduct(product.slug)}
             product={selectedProduct}
+            returnFocusTo={productReturnFocus}
           />
         ) : null}
       </AnimatePresence>

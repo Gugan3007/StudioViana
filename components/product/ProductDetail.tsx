@@ -18,6 +18,7 @@ interface ProductDetailProps {
   onClose: () => void;
   onSelectProduct: (product: Product) => void;
   product: Product;
+  returnFocusTo?: HTMLElement | null;
 }
 
 const initialConfiguration = (product: Product): OrderConfiguration => ({
@@ -33,10 +34,12 @@ export function ProductDetail({
   onClose,
   onSelectProduct,
   product,
+  returnFocusTo,
 }: ProductDetailProps) {
   const root = useRef<HTMLDivElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
   const onCloseRef = useRef(onClose);
+  const returnFocusRef = useRef(returnFocusTo);
   const { lenis } = useLenis();
   useScrollLock(lenis);
   const [configurationState, setConfigurationState] = useState(() => ({
@@ -65,6 +68,7 @@ export function ProductDetail({
     const dialog = root.current;
     if (!dialog) return;
     const previousFocus = document.activeElement as HTMLElement | null;
+    const returnFocusTarget = returnFocusRef.current;
     closeButton.current?.focus();
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -98,7 +102,10 @@ export function ProductDetail({
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
-      previousFocus?.focus();
+      const focusTarget = returnFocusTarget?.isConnected
+        ? returnFocusTarget
+        : previousFocus;
+      focusTarget?.focus();
       refreshScrollTrigger();
     };
   }, []);

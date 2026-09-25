@@ -66,12 +66,15 @@ async function openPage(page: Page, reduced = false) {
   await waitForPage(page);
 }
 
-async function createTouchPage(browser: Browser) {
+async function createTouchPage(
+  browser: Browser,
+  viewport = { height: 780, width: 320 },
+) {
   const context = await browser.newContext({
     hasTouch: true,
     isMobile: true,
     reducedMotion: "reduce",
-    viewport: { height: 780, width: 320 },
+    viewport,
   });
   const page = await context.newPage();
   await markIntroSeen(page);
@@ -98,6 +101,15 @@ test("desktop craft chapters draw, reverse, switch theme and match the editorial
     "data-nav-theme",
     "dark",
   );
+  await expect
+    .poll(() =>
+      closeup
+        .locator("img")
+        .evaluateAll((images) =>
+          images.every((image) => (image as HTMLImageElement).complete),
+        ),
+    )
+    .toBe(true);
   await page.screenshot({ path: screenshots.upClose });
 
   const process = page.locator("#process");
@@ -133,6 +145,29 @@ test("desktop craft chapters draw, reverse, switch theme and match the editorial
   expect(errors).toEqual([]);
 });
 
+test("tablet craft annotations remain inside the visible section", async ({
+  page,
+}) => {
+  await markIntroSeen(page);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+
+  for (const width of [768, 1024, 1280]) {
+    await page.setViewportSize({ height: 900, width });
+    await page.goto("/", { waitUntil: "networkidle" });
+    await waitForPage(page);
+    const closeup = page.locator("#craft-closeup");
+    await closeup.scrollIntoViewIfNeeded();
+    for (const callout of await closeup
+      .locator("[data-annotation-callout]")
+      .all()) {
+      const bounds = await callout.boundingBox();
+      expect(bounds).not.toBeNull();
+      expect(bounds!.x).toBeGreaterThanOrEqual(0);
+      expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(width);
+    }
+  }
+});
+
 test("gallery filters, loads, navigates, zooms and hands one dialog to product detail", async ({
   page,
 }) => {
@@ -149,13 +184,43 @@ test("gallery filters, loads, navigates, zooms and hands one dialog to product d
   await gallery.getByRole("button", { exact: true, name: "All" }).click();
   await gallery.getByRole("button", { name: "View more pieces" }).click();
   await expect(gallery.locator("[data-gallery-item]")).toHaveCount(18);
+  await expect
+    .poll(() =>
+      gallery
+        .locator("[data-gallery-item] img")
+        .evaluateAll((images) =>
+          images.every((image) => (image as HTMLImageElement).complete),
+        ),
+    )
+    .toBe(true);
   await page.screenshot({ path: screenshots.gallery });
+
+  await gallery.getByRole("button", { name: "Occasions" }).click();
+  await expect(
+    gallery.locator('[data-gallery-category="Occasions"]'),
+  ).toHaveCount(4);
+  await gallery
+    .locator('[data-gallery-category="Occasions"]')
+    .first()
+    .getByRole("button")
+    .click();
+  let lightbox = page.getByRole("dialog", { name: /Gallery lightbox/ });
+  await expect(lightbox.getByTestId("lightbox-counter")).toHaveText(
+    /01\s*\/\s*04/,
+  );
+  await page.keyboard.press("ArrowRight");
+  await expect(lightbox.getByTestId("lightbox-counter")).toHaveText(
+    /02\s*\/\s*04/,
+  );
+  await page.keyboard.press("Escape");
+  await gallery.getByRole("button", { exact: true, name: "All" }).click();
+  await expect(gallery.locator("[data-gallery-item]")).toHaveCount(18);
 
   const trigger = gallery.getByRole("button", {
     name: "Open A Note in Bloom in gallery",
   });
   await trigger.click();
-  const lightbox = page.getByRole("dialog", { name: /Gallery lightbox/ });
+  lightbox = page.getByRole("dialog", { name: /Gallery lightbox/ });
   await expect(lightbox).toBeVisible();
   await expect(page.locator("html")).toHaveCSS("overflow", "hidden");
   await page.keyboard.press("ArrowRight");
@@ -176,6 +241,7 @@ test("gallery filters, loads, navigates, zooms and hands one dialog to product d
   await expect(page.locator("[role=dialog]")).toHaveCount(1);
   await page.keyboard.press("Escape");
   await expect(product).toHaveCount(0);
+  await expect(trigger).toBeFocused();
   expect(errors).toEqual([]);
 });
 
@@ -305,6 +371,36 @@ test("320px touch keeps two gallery columns and reachable lightbox gestures", as
   await context.close();
 });
 
+test("short portrait and landscape phones can reach every lightbox action", async ({
+  browser,
+}) => {
+  const { context, page } = await createTouchPage(browser, {
+    height: 568,
+    width: 320,
+  });
+  const gallery = page.locator("#gallery");
+  await gallery.scrollIntoViewIfNeeded();
+  const trigger = gallery.getByRole("button", {
+    name: "Open A Note in Bloom in gallery",
+  });
+  await trigger.click();
+  let lightbox = page.getByRole("dialog", { name: /Gallery lightbox/ });
+  await expect(lightbox).toHaveCSS("overflow-y", "auto");
+  let action = lightbox.getByRole("button", { name: "View this piece" });
+  await action.scrollIntoViewIfNeeded();
+  await expect(action).toBeInViewport();
+  await page.keyboard.press("Escape");
+
+  await page.setViewportSize({ height: 320, width: 568 });
+  await trigger.click();
+  lightbox = page.getByRole("dialog", { name: /Gallery lightbox/ });
+  action = lightbox.getByRole("button", { name: "View this piece" });
+  await action.scrollIntoViewIfNeeded();
+  await expect(action).toBeInViewport();
+  await page.keyboard.press("Escape");
+  await context.close();
+});
+
 test("Phase 4 copy and the initial gallery remain readable without JavaScript", async ({
   browser,
 }) => {
@@ -318,11 +414,25 @@ test("Phase 4 copy and the initial gallery remain readable without JavaScript", 
     "Every fibre, shaped by hand.",
   );
   await expect(page.locator("#process")).toContainText("From Stem to Story");
+  await expect(page.locator("[data-stem-fallback]")).toHaveAttribute(
+    "d",
+    /L|C/,
+  );
   await expect(page.locator("#gallery [data-gallery-item]")).toHaveCount(12);
   await expect(page.locator("#testimonials")).toContainText(
     "Loved by those who gift",
   );
+  await expect(page.locator("#testimonials")).toContainText(
+    "500+Blooms handcrafted",
+  );
+  await expect(page.locator("#testimonials")).toContainText(
+    "100%Made to order",
+  );
   await expect(page.locator("#instagram")).toContainText("@studio_viana.in");
+  await expect(page.locator("[data-instagram-rail]")).toHaveCSS(
+    "overflow-x",
+    "auto",
+  );
   await context.close();
 });
 

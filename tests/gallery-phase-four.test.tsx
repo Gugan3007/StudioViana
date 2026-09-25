@@ -6,11 +6,16 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { GallerySection } from "@/components/sections/gallery/GallerySection";
 
 const galleryMocks = vi.hoisted(() => ({
-  flipFrom: vi.fn(),
+  flipFrom: vi.fn((_state: unknown, _options: Record<string, unknown>) => {
+    void _state;
+    void _options;
+    return { kill: vi.fn() };
+  }),
   getState: vi.fn(() => ({ targets: [] })),
   reduceMotion: false,
   refresh: vi.fn(),
   revert: vi.fn(),
+  to: vi.fn(() => ({ kill: vi.fn() })),
 }));
 
 vi.mock("@/lib/animations/useReducedMotion", () => ({
@@ -32,6 +37,7 @@ vi.mock("@/lib/animations/gsap", () => ({
       add: vi.fn(),
       revert: galleryMocks.revert,
     })),
+    to: galleryMocks.to,
   },
   refreshScrollTrigger: galleryMocks.refresh,
 }));
@@ -101,5 +107,19 @@ describe("Phase 4 gallery", () => {
     expect(galleryMocks.getState).toHaveBeenCalled();
     expect(galleryMocks.flipFrom).toHaveBeenCalled();
     expect(galleryMocks.refresh).toHaveBeenCalled();
+    const flipOptions = galleryMocks.flipFrom.mock.calls.at(-1)?.[1];
+    expect(flipOptions).toEqual(
+      expect.objectContaining({
+        absoluteOnLeave: true,
+        onEnter: expect.any(Function),
+        onLeave: expect.any(Function),
+        targets: expect.anything(),
+      }),
+    );
+    expect(
+      Array.from(
+        document.querySelectorAll<HTMLElement>("[data-gallery-cell]"),
+      ).every((item) => item.dataset.flipId?.startsWith("gallery-")),
+    ).toBe(true);
   });
 });

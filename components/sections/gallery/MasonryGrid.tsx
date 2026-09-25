@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 import { GalleryItem } from "@/components/sections/gallery/GalleryItem";
 import { gsap } from "@/lib/animations/gsap";
@@ -12,20 +12,18 @@ interface MasonryGridProps {
   items: readonly GalleryItemData[];
   onIntent?: () => void;
   onSelect?: (item: GalleryItemData, trigger: HTMLButtonElement) => void;
+  visibleIds: ReadonlySet<string>;
 }
 
-export function MasonryGrid({ items, onIntent, onSelect }: MasonryGridProps) {
+export function MasonryGrid({
+  items,
+  onIntent,
+  onSelect,
+  visibleIds,
+}: MasonryGridProps) {
   const root = useRef<HTMLDivElement>(null);
   const [spotlight, setSpotlight] = useState<string | null>(null);
   const shouldReduceMotion = useReducedMotion();
-  const columns = useMemo(
-    () =>
-      Array.from({ length: 4 }, (_, column) =>
-        items.filter((_, index) => index % 4 === column),
-      ),
-    [items],
-  );
-
   useIsomorphicLayoutEffect(() => {
     if (shouldReduceMotion || !root.current) return;
 
@@ -48,12 +46,21 @@ export function MasonryGrid({ items, onIntent, onSelect }: MasonryGridProps) {
     }, root);
     const media = gsap.matchMedia();
     media.add("(min-width: 1280px)", () => {
-      const columnElements = root.current?.querySelectorAll(
-        "[data-gallery-column]",
+      const cells = Array.from(
+        root.current?.querySelectorAll<HTMLElement>("[data-gallery-item]") ??
+          [],
       );
-      if (!columnElements) return;
+      const columns = new Map<number, HTMLElement[]>();
+      cells.forEach((cell) => {
+        const parallax = cell.querySelector<HTMLElement>(
+          "[data-gallery-parallax]",
+        );
+        if (!parallax) return;
+        const key = Math.round(cell.offsetLeft);
+        columns.set(key, [...(columns.get(key) ?? []), parallax]);
+      });
 
-      columnElements.forEach((column, index) => {
+      Array.from(columns.values()).forEach((column, index) => {
         gsap.fromTo(
           column,
           { yPercent: index % 2 === 0 ? 8 : -8 },
@@ -80,26 +87,19 @@ export function MasonryGrid({ items, onIntent, onSelect }: MasonryGridProps) {
   return (
     <div
       ref={root}
-      className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5 xl:grid-cols-4"
+      className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5 xl:block xl:columns-4 xl:gap-5"
       data-masonry-grid
     >
-      {columns.map((column, columnIndex) => (
-        <div
-          key={columnIndex}
-          className="contents xl:block"
-          data-gallery-column
-        >
-          {column.map((item) => (
-            <GalleryItem
-              key={item.id}
-              dimmed={spotlight !== null && spotlight !== item.id}
-              item={item}
-              onIntent={onIntent}
-              onSelect={onSelect}
-              onSpotlight={setSpotlight}
-            />
-          ))}
-        </div>
+      {items.map((item) => (
+        <GalleryItem
+          key={item.id}
+          dimmed={spotlight !== null && spotlight !== item.id}
+          item={item}
+          onIntent={onIntent}
+          onSelect={onSelect}
+          onSpotlight={setSpotlight}
+          visible={visibleIds.has(item.id)}
+        />
       ))}
     </div>
   );
