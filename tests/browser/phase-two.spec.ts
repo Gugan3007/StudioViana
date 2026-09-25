@@ -129,17 +129,20 @@ test("navbar links, direction, active section, dark theme, and service preview w
         ),
     )
     .toBeLessThan(8);
-  await expect(nav).toHaveAttribute("data-nav-hidden", "true");
+  await expect(nav).not.toHaveAttribute("data-nav-hidden", "true");
   await expect(primary.getByRole("link", { name: "About" })).toHaveAttribute(
     "aria-current",
     "page",
   );
+  await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
+  await page.mouse.wheel(0, 120);
+  await expect(nav).toHaveAttribute("data-nav-hidden", "true");
   await page.mouse.wheel(0, -600);
   await expect(nav).not.toHaveAttribute("data-nav-hidden", "true");
 
   const firstService = page.locator("#craft article").first();
   await firstService.scrollIntoViewIfNeeded();
-  await firstService.hover();
+  await firstService.dispatchEvent("pointerenter");
   await expect(firstService.locator("[data-cursor-preview]")).toHaveAttribute(
     "data-visible",
     "true",
@@ -171,12 +174,11 @@ test("navbar links, direction, active section, dark theme, and service preview w
   expect(errors).toEqual([]);
 });
 
-test("mobile menu traps focus, navigates, and closes with Escape", async ({
+test("normal-motion mobile menu traps focus, exposes close, navigates, and restores focus", async ({
   page,
 }) => {
   const errors = monitorRuntime(page);
   await markIntroSeen(page);
-  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/", { waitUntil: "networkidle" });
   await waitForPage(page);
@@ -188,18 +190,122 @@ test("mobile menu traps focus, navigates, and closes with Escape", async ({
     await expect(nav).not.toHaveAttribute("data-nav-hidden", "true");
   }
   const trigger = page.getByRole("button", { name: "Open menu" });
+  await trigger.focus();
+  await expect(nav).not.toHaveAttribute("data-nav-hidden", "true");
   await trigger.click();
   const dialog = page.getByRole("dialog", { name: "Mobile navigation" });
   await expect(dialog).toBeVisible();
-  await expect(dialog.getByRole("link", { name: /Collection/ })).toBeFocused();
+  const close = dialog.getByRole("button", { name: "Close menu" });
+  await expect(close).toBeFocused({ timeout: 3_000 });
+  expect(
+    await close.evaluate((element) => {
+      const bounds = element.getBoundingClientRect();
+      const hit = document.elementFromPoint(
+        bounds.left + bounds.width / 2,
+        bounds.top + bounds.height / 2,
+      );
+      return hit === element || element.contains(hit);
+    }),
+  ).toBe(true);
   await page.keyboard.press("Shift+Tab");
   await expect(
     dialog.getByRole("link", { name: "@studio_viana.in" }),
   ).toBeFocused();
+
+  await dialog.getByRole("link", { name: /About/ }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect
+    .poll(() =>
+      page
+        .locator("#about")
+        .evaluate((element) =>
+          Math.abs(element.getBoundingClientRect().top - 84),
+        ),
+    )
+    .toBeLessThan(8);
+
+  await page.mouse.wheel(0, -500);
+  await expect(nav).not.toHaveAttribute("data-nav-hidden", "true");
+  const reopenedTrigger = page.getByRole("button", { name: "Open menu" });
+  await reopenedTrigger.focus();
+  await reopenedTrigger.click();
+  await expect(close).toBeFocused({ timeout: 3_000 });
   await page.keyboard.press("Escape");
   await expect(dialog).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Open menu" })).toBeFocused();
   expect(errors).toEqual([]);
+});
+
+test("focused navigation stays visible and alpha color treatments render", async ({
+  page,
+}) => {
+  await markIntroSeen(page);
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/", { waitUntil: "networkidle" });
+  await skipToHome(page);
+
+  const nav = page.getByRole("banner");
+  await page.mouse.wheel(0, 900);
+  await expect(nav).toHaveAttribute("data-nav-hidden", "true");
+  await page
+    .getByRole("navigation", { name: /primary/i })
+    .getByRole("link", { name: "About" })
+    .focus();
+  await expect(nav).not.toHaveAttribute("data-nav-hidden", "true");
+  await expect
+    .poll(() => nav.evaluate((element) => element.getBoundingClientRect().top))
+    .toBeGreaterThan(-1);
+
+  await expect(nav).not.toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+  await expect(
+    page.locator("#about").getByText("The Grand Bouquet", { exact: true }),
+  ).not.toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+  await expect(page.locator("[data-hero-badge]")).not.toHaveCSS(
+    "background-color",
+    "rgba(0, 0, 0, 0)",
+  );
+  await expect(page.locator("[data-band-overlay]")).not.toHaveCSS(
+    "background-image",
+    "none",
+  );
+});
+
+test("coarse pointers do not receive infinite ambient motion", async ({
+  browser,
+}) => {
+  const context = await browser.newContext({
+    hasTouch: true,
+    isMobile: true,
+    viewport: { width: 390, height: 844 },
+  });
+  const page = await context.newPage();
+  await markIntroSeen(page);
+  await page.goto("/", { waitUntil: "networkidle" });
+  await skipToHome(page);
+  await page.waitForTimeout(2_500);
+
+  const badge = page.locator("[data-hero-badge]");
+  const first = await badge.evaluate(
+    (element) => getComputedStyle(element).transform,
+  );
+  await page.waitForTimeout(1_200);
+  const second = await badge.evaluate(
+    (element) => getComputedStyle(element).transform,
+  );
+  expect(second).toBe(first);
+  await context.close();
+});
+
+test("the Home heading is readable without JavaScript", async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  const tokens = page.locator("#home [data-split-token]");
+  await expect(tokens).toHaveCount(3);
+  for (const token of await tokens.all()) {
+    await expect(token).toHaveCSS("opacity", "1");
+  }
+  await context.close();
 });
 
 test("reduced motion renders complete static values without ambient animation", async ({
@@ -271,7 +377,7 @@ test("Home, About, and Craft scroll has no 50ms main-thread tasks in production"
   );
   const errors = monitorRuntime(page);
   await markIntroSeen(page);
-  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/", { waitUntil: "networkidle" });
   await waitForPage(page);

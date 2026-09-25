@@ -14,6 +14,16 @@
   --muted: #6b665e;
   --blush: #e9c9c9;
   --lilac: #c9b6e4;
+  --forest-rgb: 31 51 38;
+  --forest-deep-rgb: 22 36 27;
+  --cream-rgb: 247 240 230;
+  --cream-soft-rgb: 251 247 241;
+  --gold-rgb: 184 146 90;
+  --gold-light-rgb: 214 185 138;
+  --charcoal-rgb: 42 42 38;
+  --muted-rgb: 107 102 94;
+  --blush-rgb: 233 201 201;
+  --lilac-rgb: 201 182 228;
   --font-lora: Georgia, serif;
   --font-poppins: Arial, sans-serif;
 }
@@ -161,14 +171,15 @@ html.lenis body {
   animation: intro-scroll-drop 1.8s cubic-bezier(0.65, 0, 0.35, 1) infinite;
 }
 
-[data-controlled-split="true"] [data-split-token] {
+html[data-js="true"] [data-controlled-split="true"] [data-split-token] {
   opacity: 0;
   transform: translate3d(0, 110%, 0);
 }
 
 /* Once Home owns the entrance, remove the SSR safety offset beneath GSAP.
    Otherwise yPercent animates on top of the stylesheet's existing 110%. */
-[data-home-hero][data-hero-entered="true"]
+html[data-js="true"]
+  [data-home-hero][data-hero-entered="true"]
   [data-controlled-split="true"]
   [data-split-token] {
   opacity: 1;

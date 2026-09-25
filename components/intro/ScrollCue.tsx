@@ -9,7 +9,7 @@ export function ScrollCue() {
       </span>
       <span
         aria-hidden="true"
-        className="intro-scroll-line bg-gold/30 relative h-10 w-px overflow-hidden"
+        className="intro-scroll-line relative h-10 w-px overflow-hidden bg-gold/30"
       >
         <span className="intro-scroll-drop absolute inset-x-0 top-0 h-4 bg-gold-light" />
       </span>

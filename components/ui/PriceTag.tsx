@@ -9,7 +9,7 @@ export function PriceTag({
   return (
     <span
       className={cn(
-        "border-gold/70 inline-flex min-h-12 items-center border px-5 font-display text-xl text-charcoal",
+        "inline-flex min-h-12 items-center border border-gold/70 px-5 font-display text-xl text-charcoal",
         className,
       )}
       {...props}

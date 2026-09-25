@@ -4,6 +4,7 @@ import { useRef } from "react";
 
 import { gsap, ScrollTrigger } from "@/lib/animations/gsap";
 import { useIsomorphicLayoutEffect } from "@/lib/animations/useIsomorphicLayoutEffect";
+import { useFinePointer } from "@/lib/animations/useFinePointer";
 import { useReducedMotion } from "@/lib/animations/useReducedMotion";
 import { cn } from "@/lib/utils";
 
@@ -23,9 +24,16 @@ export function Marquee({
   const root = useRef<HTMLDivElement>(null);
   const track = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
+  const hasFinePointer = useFinePointer();
 
   useIsomorphicLayoutEffect(() => {
-    if (shouldReduceMotion || !root.current || !track.current) return;
+    if (
+      shouldReduceMotion ||
+      !hasFinePointer ||
+      !root.current ||
+      !track.current
+    )
+      return;
 
     const timeline = gsap.timeline({ repeat: -1 });
     timeline.to(track.current, {
@@ -77,7 +85,7 @@ export function Marquee({
       trigger.kill();
       timeline.kill();
     };
-  }, [direction, shouldReduceMotion, speed]);
+  }, [direction, hasFinePointer, shouldReduceMotion, speed]);
 
   return (
     <div ref={root} className={cn("overflow-hidden", className)}>

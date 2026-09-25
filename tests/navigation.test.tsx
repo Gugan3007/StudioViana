@@ -163,5 +163,8 @@ describe("Navbar", () => {
       document.getElementById("pricing")!.offsetTop,
       { duration: 1.4, offset: -84 },
     );
+    expect(
+      navigationMocks.lenis.start.mock.invocationCallOrder[0],
+    ).toBeLessThan(navigationMocks.lenis.scrollTo.mock.invocationCallOrder[0]);
   });
 });

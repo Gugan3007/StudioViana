@@ -26,7 +26,7 @@ export function AnimationShowcase() {
         aria-labelledby="motion-heading"
       >
         <Container>
-          <div className="border-gold/30 mb-16 grid gap-8 border-b pb-12 md:grid-cols-12 md:items-end">
+          <div className="mb-16 grid gap-8 border-b border-gold/30 pb-12 md:grid-cols-12 md:items-end">
             <div className="md:col-span-8">
               <SectionLabel>05 / Motion language</SectionLabel>
               <Heading
@@ -46,7 +46,7 @@ export function AnimationShowcase() {
           </div>
 
           <div className="grid gap-x-8 gap-y-20 lg:grid-cols-2">
-            <article className="border-gold/40 border-t pt-5">
+            <article className="border-t border-gold/40 pt-5">
               <p className={specimenLabel}>Reveal / stagger</p>
               <Reveal className="mt-12 space-y-4" stagger={0.1}>
                 <p
@@ -63,7 +63,7 @@ export function AnimationShowcase() {
               </Reveal>
             </article>
 
-            <article className="border-gold/40 border-t pt-5">
+            <article className="border-t border-gold/40 pt-5">
               <p className={specimenLabel}>Split text / words</p>
               <SplitTextReveal
                 as="h3"
@@ -74,7 +74,7 @@ export function AnimationShowcase() {
               </SplitTextReveal>
             </article>
 
-            <article className="border-gold/40 border-t pt-5">
+            <article className="border-t border-gold/40 pt-5">
               <p className={specimenLabel}>Image reveal / clip</p>
               <ImageReveal
                 alt="Abstract botanical study in forest, blush, and cream"
@@ -83,7 +83,7 @@ export function AnimationShowcase() {
               />
             </article>
 
-            <article className="border-gold/40 border-t pt-5 lg:mt-24">
+            <article className="border-t border-gold/40 pt-5 lg:mt-24">
               <p className={specimenLabel}>Parallax image / scroll</p>
               <ParallaxImage
                 alt="Abstract lilac botanical arrangement"
@@ -115,7 +115,7 @@ export function AnimationShowcase() {
               >
                 A system that feels alive
               </Heading>
-              <p className="text-cream/65 mt-7 max-w-md text-sm leading-7">
+              <p className="mt-7 max-w-md text-sm leading-7 text-cream/65">
                 A restrained floating study tests continuous motion, pointer
                 response, and graceful cleanup.
               </p>
@@ -123,7 +123,7 @@ export function AnimationShowcase() {
 
             <div className="relative flex min-h-[32rem] items-center justify-center lg:col-span-7">
               <div
-                className="border-gold/20 absolute inset-8 border"
+                className="absolute inset-8 border border-gold/20"
                 aria-hidden="true"
               />
               <Float
@@ -143,9 +143,9 @@ export function AnimationShowcase() {
           </div>
         </Container>
 
-        <div className="border-gold/20 border-y py-10">
+        <div className="border-y border-gold/20 py-10">
           <Marquee
-            className="text-cream/90 font-display text-[clamp(3rem,8vw,8rem)] leading-none tracking-[-0.04em]"
+            className="font-display text-[clamp(3rem,8vw,8rem)] leading-none tracking-[-0.04em] text-cream/90"
             speed={28}
             text="FLOWERS THAT NEVER FADE · "
           />

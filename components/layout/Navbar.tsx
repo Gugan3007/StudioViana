@@ -39,6 +39,7 @@ export function Navbar() {
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [focusWithin, setFocusWithin] = useState(false);
 
   useEffect(() => {
     const update = (scroll: number) => setScrolled(scroll > 80);
@@ -94,6 +95,9 @@ export function Navbar() {
       setMenuOpen(false);
 
       if (lenis && !shouldReduceMotion) {
+        // The mobile overlay stops Lenis. Restart before requesting the
+        // destination because stopped Lenis instances ignore scrollTo calls.
+        lenis.start();
         // Passing the numeric document position prevents CSS scroll-margin
         // from being added to Lenis's explicit fixed-header offset twice.
         lenis.scrollTo(target.offsetTop, { duration: 1.4, offset: -84 });
@@ -107,7 +111,7 @@ export function Navbar() {
     [lenis, shouldReduceMotion],
   );
 
-  const hidden = scrolled && direction === "down" && !menuOpen;
+  const hidden = scrolled && direction === "down" && !menuOpen && !focusWithin;
   const dark = theme === "dark";
 
   return (
@@ -122,11 +126,20 @@ export function Navbar() {
               : "border-gold/40 bg-cream/[0.85] backdrop-blur-xl"),
           !scrolled && "border-transparent bg-transparent",
           hidden && "-translate-y-full",
-          !introComplete && !scrolled && "pointer-events-none opacity-0",
+          !introComplete &&
+            !scrolled &&
+            !focusWithin &&
+            "pointer-events-none opacity-0",
         )}
         data-nav-hidden={hidden || undefined}
         data-nav-theme={theme}
-        data-nav-visible={introComplete || scrolled || undefined}
+        data-nav-visible={introComplete || scrolled || focusWithin || undefined}
+        onBlurCapture={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget)) {
+            setFocusWithin(false);
+          }
+        }}
+        onFocusCapture={() => setFocusWithin(true)}
       >
         <div className="mx-auto grid h-full max-w-content grid-cols-[1fr_auto] items-center px-gutter lg:grid-cols-[1fr_auto_1fr]">
           <a
@@ -186,12 +199,14 @@ export function Navbar() {
             ref={triggerRef}
             aria-controls="mobile-navigation"
             aria-expanded={menuOpen}
+            aria-hidden={menuOpen || undefined}
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             className={cn(
               "relative z-[100] flex h-12 w-12 items-center justify-center justify-self-end text-current lg:hidden",
-              menuOpen && "text-cream",
+              menuOpen && "pointer-events-none text-cream",
             )}
             onClick={() => setMenuOpen((open) => !open)}
+            tabIndex={menuOpen ? -1 : 0}
             type="button"
           >
             <span

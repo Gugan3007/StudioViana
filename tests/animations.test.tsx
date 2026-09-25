@@ -19,6 +19,7 @@ const mocks = vi.hoisted(() => ({
   timelinePause: vi.fn(),
   timelinePlay: vi.fn(),
   timelineTimeScale: vi.fn(),
+  to: vi.fn(),
   triggerKill: vi.fn(),
 }));
 
@@ -54,11 +55,7 @@ vi.mock("@/lib/animations/gsap", () => ({
     }),
     fromTo: mocks.fromTo,
     quickTo: vi.fn(() => vi.fn()),
-    to: vi.fn(() => ({
-      kill: mocks.timelineKill,
-      pause: mocks.timelinePause,
-      play: mocks.timelinePlay,
-    })),
+    to: mocks.to,
     timeline: vi.fn(() => ({
       kill: mocks.timelineKill,
       pause: mocks.timelinePause,
@@ -207,6 +204,50 @@ describe("ambient motion primitives", () => {
     mocks.reduceMotion = false;
     vi.clearAllMocks();
     vi.unstubAllGlobals();
+    mocks.to.mockReturnValue({
+      kill: mocks.timelineKill,
+      pause: mocks.timelinePause,
+      play: mocks.timelinePlay,
+    });
+    vi.stubGlobal(
+      "matchMedia",
+      vi.fn(
+        (query: string) =>
+          ({
+            matches: query.includes("pointer: fine"),
+            media: query,
+            onchange: null,
+            addEventListener: vi.fn(),
+            removeEventListener: vi.fn(),
+            addListener: vi.fn(),
+            removeListener: vi.fn(),
+            dispatchEvent: vi.fn(),
+          }) as MediaQueryList,
+      ),
+    );
+  });
+
+  it("does not create Float motion for a coarse pointer", () => {
+    vi.stubGlobal(
+      "matchMedia",
+      vi.fn(
+        (query: string) =>
+          ({
+            matches: !query.includes("pointer: fine"),
+            media: query,
+            onchange: null,
+            addEventListener: vi.fn(),
+            removeEventListener: vi.fn(),
+            addListener: vi.fn(),
+            removeListener: vi.fn(),
+            dispatchEvent: vi.fn(),
+          }) as MediaQueryList,
+      ),
+    );
+
+    render(<Float>Still flower</Float>);
+
+    expect(mocks.to).not.toHaveBeenCalled();
   });
 
   it("pauses and resumes Float motion as it leaves and enters the viewport", () => {

@@ -36,6 +36,13 @@ export default function RootLayout({
 }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="en">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: "document.documentElement.dataset.js='true'",
+          }}
+        />
+      </head>
       <body className={`${lora.variable} ${poppins.variable}`}>
         <SmoothScrollProvider>
           <IntroProvider>

@@ -73,7 +73,7 @@ export function AmbientParticles({ className, count }: AmbientParticlesProps) {
       {visibleParticles.map((particle) => (
         <span
           key={`${particle.left}-${particle.top}`}
-          className="intro-particle bg-gold-light/60 absolute block rounded-full blur-[2px]"
+          className="intro-particle absolute block rounded-full bg-gold-light/60 blur-[2px]"
           data-intro-particle
           style={{
             animationDelay: particle.delay,

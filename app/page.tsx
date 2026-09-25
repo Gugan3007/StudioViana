@@ -46,7 +46,7 @@ export default function Home() {
             tone={shell.tone}
           >
             <Container>
-              <div className="border-gold/30 border-t pt-8">
+              <div className="border-t border-gold/30 pt-8">
                 <SectionLabel>{shell.label}</SectionLabel>
                 <h2
                   className="mt-5 max-w-4xl font-display text-[clamp(2.7rem,6vw,5.8rem)] leading-[1.02] tracking-[-0.04em] text-charcoal"

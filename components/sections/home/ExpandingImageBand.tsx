@@ -83,7 +83,10 @@ export function ExpandingImageBand() {
           src={lilyBand}
           style={{ transform: shouldReduceMotion ? "scale(1)" : "scale(1.2)" }}
         />
-        <div className="from-forest/75 via-forest/5 absolute inset-0 bg-gradient-to-t to-transparent" />
+        <div
+          className="absolute inset-0 bg-gradient-to-t from-forest/75 via-forest/5 to-transparent"
+          data-band-overlay
+        />
         <h2
           ref={headline}
           className="absolute bottom-[clamp(3rem,8vw,7rem)] left-1/2 w-[min(90%,78rem)] -translate-x-1/2 text-center font-display text-[clamp(2.5rem,4.5vw,4.5rem)] leading-[1.04] tracking-[-0.035em] text-cream"

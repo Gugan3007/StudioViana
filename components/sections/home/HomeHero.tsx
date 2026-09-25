@@ -311,7 +311,7 @@ export function HomeHero() {
             data-hero-copy
             data-hero-entrance
           >
-            <span className="bg-gold/30 relative h-12 w-px overflow-hidden">
+            <span className="relative h-12 w-px overflow-hidden bg-gold/30">
               <span className="intro-scroll-drop absolute inset-x-0 top-0 h-5 bg-gold" />
             </span>
             Scroll

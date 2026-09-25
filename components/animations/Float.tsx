@@ -4,6 +4,7 @@ import { type ReactNode, useId, useRef } from "react";
 
 import { gsap } from "@/lib/animations/gsap";
 import { useIsomorphicLayoutEffect } from "@/lib/animations/useIsomorphicLayoutEffect";
+import { useFinePointer } from "@/lib/animations/useFinePointer";
 import { useReducedMotion } from "@/lib/animations/useReducedMotion";
 import { cn } from "@/lib/utils";
 
@@ -29,6 +30,7 @@ export function Float({
   const floatLayer = useRef<HTMLDivElement>(null);
   const pointerLayer = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
+  const hasFinePointer = useFinePointer();
   const id = useId();
   const offset =
     [...id].reduce((total, character) => total + character.charCodeAt(0), 0) %
@@ -38,6 +40,7 @@ export function Float({
     if (
       !enabled ||
       shouldReduceMotion ||
+      !hasFinePointer ||
       !floatLayer.current ||
       !pointerLayer.current
     )
@@ -62,9 +65,6 @@ export function Float({
     if (visibilityObserver) visibilityObserver.observe(floatLayer.current);
     else floatingTween.play();
 
-    const pointerMedia = window.matchMedia(
-      "(hover: hover) and (pointer: fine)",
-    );
     const moveX = gsap.quickTo(pointerLayer.current, "x", {
       duration: 0.8,
       ease: "power3.out",
@@ -79,17 +79,9 @@ export function Float({
       moveX(x);
       moveY(y);
     };
-    const syncPointer = () => {
-      window.removeEventListener("pointermove", handlePointer);
-      if (pointerMedia.matches)
-        window.addEventListener("pointermove", handlePointer);
-    };
-
-    syncPointer();
-    pointerMedia.addEventListener("change", syncPointer);
+    window.addEventListener("pointermove", handlePointer);
 
     return () => {
-      pointerMedia.removeEventListener("change", syncPointer);
       window.removeEventListener("pointermove", handlePointer);
       visibilityObserver?.disconnect();
       floatingTween.kill();
@@ -98,6 +90,7 @@ export function Float({
     delay,
     duration,
     enabled,
+    hasFinePointer,
     mouseParallax,
     offset,
     shouldReduceMotion,

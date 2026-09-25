@@ -118,7 +118,7 @@ export function HeroCollage() {
     >
       <div
         aria-hidden="true"
-        className="bg-blush/25 absolute inset-[10%_1%_6%_0] rounded-full blur-3xl"
+        className="absolute inset-[10%_1%_6%_0] rounded-full bg-blush/25 blur-3xl"
       />
       {collageItems.map((item, index) => (
         <div
@@ -133,7 +133,7 @@ export function HeroCollage() {
           {index === 0 ? (
             <span
               aria-hidden="true"
-              className="border-gold/70 absolute -inset-3 translate-x-1.5 translate-y-1.5 border"
+              className="absolute -inset-3 translate-x-1.5 translate-y-1.5 border border-gold/70"
             />
           ) : null}
           <Float

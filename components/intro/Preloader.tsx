@@ -167,7 +167,7 @@ export function Preloader({
       />
       <div
         aria-hidden="true"
-        className="border-gold/70 pointer-events-none absolute inset-8 border max-sm:inset-4"
+        className="pointer-events-none absolute inset-8 border border-gold/70 max-sm:inset-4"
         data-preloader-progress-track
       />
       <div
@@ -186,7 +186,7 @@ export function Preloader({
             </span>
           ))}
         </p>
-        <div className="bg-gold/25 mt-9 h-px w-full overflow-hidden">
+        <div className="mt-9 h-px w-full overflow-hidden bg-gold/25">
           <span
             className="block h-full origin-left bg-gold-light transition-transform duration-150"
             data-preloader-progress

@@ -16,7 +16,7 @@ export function BrandMoment({ particleCount }: BrandMomentProps) {
     >
       <div
         aria-hidden="true"
-        className="border-gold/55 pointer-events-none absolute inset-8 border max-sm:inset-4"
+        className="pointer-events-none absolute inset-8 border border-gold/55 max-sm:inset-4"
         data-intro-frame
       />
 

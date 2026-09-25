@@ -74,7 +74,7 @@ export function CursorImageFollow({
     <div
       ref={preview}
       aria-hidden="true"
-      className="border-gold/60 pointer-events-none absolute left-0 top-0 z-20 h-60 w-48 overflow-hidden border bg-cream shadow-soft transition-opacity duration-300"
+      className="pointer-events-none absolute left-0 top-0 z-20 h-60 w-48 overflow-hidden border border-gold/60 bg-cream shadow-soft transition-opacity duration-300"
       data-cursor-preview
       data-visible={visible}
       style={{ opacity: visible ? 1 : 0 }}

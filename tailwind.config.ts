@@ -8,16 +8,16 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        forest: "var(--forest)",
-        "forest-deep": "var(--forest-deep)",
-        cream: "var(--cream)",
-        "cream-soft": "var(--cream-soft)",
-        gold: "var(--gold)",
-        "gold-light": "var(--gold-light)",
-        charcoal: "var(--charcoal)",
-        muted: "var(--muted)",
-        blush: "var(--blush)",
-        lilac: "var(--lilac)",
+        forest: "rgb(var(--forest-rgb) / <alpha-value>)",
+        "forest-deep": "rgb(var(--forest-deep-rgb) / <alpha-value>)",
+        cream: "rgb(var(--cream-rgb) / <alpha-value>)",
+        "cream-soft": "rgb(var(--cream-soft-rgb) / <alpha-value>)",
+        gold: "rgb(var(--gold-rgb) / <alpha-value>)",
+        "gold-light": "rgb(var(--gold-light-rgb) / <alpha-value>)",
+        charcoal: "rgb(var(--charcoal-rgb) / <alpha-value>)",
+        muted: "rgb(var(--muted-rgb) / <alpha-value>)",
+        blush: "rgb(var(--blush-rgb) / <alpha-value>)",
+        lilac: "rgb(var(--lilac-rgb) / <alpha-value>)",
       },
       fontFamily: {
         display: ["var(--font-lora)", "Georgia", "serif"],

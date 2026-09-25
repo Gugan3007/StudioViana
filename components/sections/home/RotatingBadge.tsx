@@ -5,16 +5,18 @@ import { useId, useRef } from "react";
 import { MandalaMark } from "@/components/decor/MandalaMark";
 import { gsap, ScrollTrigger } from "@/lib/animations/gsap";
 import { useIsomorphicLayoutEffect } from "@/lib/animations/useIsomorphicLayoutEffect";
+import { useFinePointer } from "@/lib/animations/useFinePointer";
 import { useReducedMotion } from "@/lib/animations/useReducedMotion";
 import { cn } from "@/lib/utils";
 
 export function RotatingBadge({ className }: { className?: string }) {
   const root = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
+  const hasFinePointer = useFinePointer();
   const pathId = `badge-path-${useId().replaceAll(":", "")}`;
 
   useIsomorphicLayoutEffect(() => {
-    if (shouldReduceMotion || !root.current) return;
+    if (shouldReduceMotion || !hasFinePointer || !root.current) return;
 
     const rotation = gsap.to(root.current, {
       duration: 24,
@@ -52,14 +54,14 @@ export function RotatingBadge({ className }: { className?: string }) {
       velocityTrigger.kill();
       rotation.kill();
     };
-  }, [shouldReduceMotion]);
+  }, [hasFinePointer, shouldReduceMotion]);
 
   return (
     <div
       ref={root}
       aria-hidden="true"
       className={cn(
-        "border-gold/35 bg-cream/95 relative grid aspect-square w-28 place-items-center rounded-full border text-charcoal shadow-soft sm:w-32",
+        "relative grid aspect-square w-28 place-items-center rounded-full border border-gold/35 bg-cream/95 text-charcoal shadow-soft sm:w-32",
         className,
       )}
       data-hero-badge

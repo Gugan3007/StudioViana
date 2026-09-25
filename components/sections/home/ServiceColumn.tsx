@@ -54,7 +54,7 @@ export function ServiceColumn({ image, service }: ServiceColumnProps) {
   return (
     <article
       ref={article}
-      className="border-gold/30 group relative flex min-h-[24rem] flex-col border-t py-9 transition-transform duration-500 ease-out lg:hover:-translate-y-1.5"
+      className="group relative flex min-h-[24rem] flex-col border-t border-gold/30 py-9 transition-transform duration-500 ease-out lg:hover:-translate-y-1.5"
       data-reveal-item
     >
       <p
@@ -71,7 +71,7 @@ export function ServiceColumn({ image, service }: ServiceColumnProps) {
         {service.description}
       </p>
       <a
-        className="border-gold/50 mt-auto w-fit border-b pb-1 text-[0.68rem] font-medium uppercase tracking-[0.22em] text-charcoal transition-colors hover:border-gold hover:text-gold"
+        className="mt-auto w-fit border-b border-gold/50 pb-1 text-[0.68rem] font-medium uppercase tracking-[0.22em] text-charcoal transition-colors hover:border-gold hover:text-gold"
         href="#collection"
       >
         Discover{" "}
