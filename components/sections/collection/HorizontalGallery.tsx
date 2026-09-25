@@ -86,7 +86,6 @@ export const HorizontalGallery = forwardRef<
         ease: "none",
         x: () => -distance(),
         scrollTrigger: {
-          anticipatePin: 1,
           end: () => `+=${distance()}`,
           invalidateOnRefresh: true,
           onUpdate(self) {

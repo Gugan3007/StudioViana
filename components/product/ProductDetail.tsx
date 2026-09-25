@@ -105,7 +105,7 @@ export function ProductDetail({
       aria-label={`${product.name} details`}
       aria-modal="true"
       animate={{ opacity: 1 }}
-      className="bg-cream/98 fixed inset-0 z-[120] overflow-y-auto text-charcoal"
+      className="fixed inset-0 z-[120] overflow-y-auto bg-charcoal/70 p-0 text-charcoal lg:p-5"
       data-lenis-prevent
       data-product-detail
       exit={{ opacity: 0 }}
@@ -126,7 +126,7 @@ export function ProductDetail({
         ×
       </button>
 
-      <div className="min-h-full lg:grid lg:grid-cols-[55%_45%]">
+      <div className="min-h-full bg-cream lg:grid lg:min-h-[calc(100svh-2.5rem)] lg:grid-cols-[55%_45%]">
         <ProductImageGallery
           onSelectVariant={(variant) =>
             setConfiguration({

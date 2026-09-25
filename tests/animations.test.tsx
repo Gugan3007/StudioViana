@@ -138,6 +138,23 @@ describe("SplitTextReveal", () => {
     expect(container.querySelectorAll("[data-split-token]")).toHaveLength(2);
   });
 
+  it("groups character tokens into unbreakable words", () => {
+    const { container } = render(
+      <SplitTextReveal as="h2" type="characters">
+        The Grand Bouquet
+      </SplitTextReveal>,
+    );
+
+    const words = container.querySelectorAll("[data-split-word]");
+    expect(words).toHaveLength(3);
+    expect(Array.from(words, (word) => word.textContent)).toEqual([
+      "The",
+      "Grand",
+      "Bouquet",
+    ]);
+    expect(container.querySelectorAll("[data-split-token]")).toHaveLength(15);
+  });
+
   it("uses explicit newlines as lines and otherwise keeps the string whole", () => {
     const { container, rerender } = render(
       <SplitTextReveal as="p" type="lines">

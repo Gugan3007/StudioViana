@@ -6,6 +6,7 @@ export default defineConfig({
   testDir: "./tests/browser",
   outputDir: "/tmp/studio-viana-playwright",
   fullyParallel: false,
+  workers: useProductionServer ? 1 : undefined,
   retries: 0,
   reporter: "line",
   use: {

@@ -241,6 +241,9 @@ export function IntroSection() {
             end: () =>
               `+=${Math.round(window.innerHeight * (activeSettings.pinVh / 100))}`,
             pin: true,
+            // This is the first page pin, so it must establish its spacer
+            // before downstream triggers measure their document positions.
+            refreshPriority: 10,
             scrub: introConfig.scrub,
             anticipatePin: 1,
             invalidateOnRefresh: true,

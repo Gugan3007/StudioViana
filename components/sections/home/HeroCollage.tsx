@@ -153,7 +153,7 @@ export function HeroCollage() {
             >
               <Image
                 fill
-                priority
+                priority={index === 0}
                 alt={item.alt}
                 className="object-cover"
                 onLoad={refreshScrollTrigger}

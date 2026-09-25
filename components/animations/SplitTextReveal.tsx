@@ -80,32 +80,65 @@ export function SplitTextReveal({
       >
         <span className="sr-only">{children}</span>
         <span aria-hidden="true">
-          {tokens.map((token, index) => {
-            if (type !== "lines" && /^\s+$/.test(token)) return token;
-
-            return (
-              <Fragment key={`${token}-${index}`}>
-                <span
-                  className={cn(
-                    "overflow-hidden",
-                    type === "lines" ? "block" : "inline-block",
-                  )}
-                >
+          {type === "characters"
+            ? children.split(/(\s+)/).map((word, wordIndex) => {
+                if (/^\s+$/.test(word)) return word;
+                return (
                   <span
-                    className="inline-block"
-                    data-split-token
-                    style={
-                      shouldReduceMotion
-                        ? { opacity: 1, transform: "translateY(0)" }
-                        : undefined
-                    }
+                    key={`${word}-${wordIndex}`}
+                    className="inline-block whitespace-nowrap"
+                    data-split-word
                   >
-                    {token}
+                    {Array.from(word).map((character, characterIndex) => (
+                      <span
+                        key={`${character}-${characterIndex}`}
+                        className="inline-block overflow-hidden"
+                      >
+                        <span
+                          className="inline-block"
+                          data-split-token
+                          style={
+                            shouldReduceMotion
+                              ? {
+                                  opacity: 1,
+                                  transform: "translateY(0)",
+                                }
+                              : undefined
+                          }
+                        >
+                          {character}
+                        </span>
+                      </span>
+                    ))}
                   </span>
-                </span>
-              </Fragment>
-            );
-          })}
+                );
+              })
+            : tokens.map((token, index) => {
+                if (/^\s+$/.test(token)) return token;
+
+                return (
+                  <Fragment key={`${token}-${index}`}>
+                    <span
+                      className={cn(
+                        "overflow-hidden",
+                        type === "lines" ? "block" : "inline-block",
+                      )}
+                    >
+                      <span
+                        className="inline-block"
+                        data-split-token
+                        style={
+                          shouldReduceMotion
+                            ? { opacity: 1, transform: "translateY(0)" }
+                            : undefined
+                        }
+                      >
+                        {token}
+                      </span>
+                    </span>
+                  </Fragment>
+                );
+              })}
         </span>
       </Component>
     </div>

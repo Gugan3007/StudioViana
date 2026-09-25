@@ -342,6 +342,14 @@ for (const width of [360, 390, 768, 1024, 1440, 1920]) {
     await page.setViewportSize({ width, height: width < 768 ? 844 : 1000 });
     await page.goto("/", { waitUntil: "networkidle" });
     await waitForPage(page);
+    // Phase 2 owns the intro and Home/About/Craft media. Collection assets are
+    // lazy and are traversed product-by-product by the Phase 3 suite.
+    const images = page.locator(
+      "[data-intro-mode] img, #home img, #about img, #craft img",
+    );
+    for (const image of await images.all()) {
+      if (await image.isVisible()) await image.scrollIntoViewIfNeeded();
+    }
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     await page.waitForTimeout(350);
 
@@ -352,12 +360,13 @@ for (const width of [360, 390, 768, 1024, 1440, 1920]) {
           document.documentElement.clientWidth,
       ),
     ).toBe(true);
-    const images = page.locator("img");
     await expect
       .poll(() =>
         images.evaluateAll((elements) =>
           elements.every((image) => {
             const element = image as HTMLImageElement;
+            const bounds = element.getBoundingClientRect();
+            if (bounds.width === 0 || bounds.height === 0) return true;
             return element.complete && element.naturalWidth > 0;
           }),
         ),

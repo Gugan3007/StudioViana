@@ -67,7 +67,6 @@ export function ProductPanel({ onOpenDetail, product }: ProductPanelProps) {
             >
               <Image
                 fill
-                priority={Number(product.number) <= 3}
                 alt={activeAlt}
                 className="scale-[1.12] object-cover transition-transform duration-700 group-hover:scale-[1.08]"
                 data-panel-image
