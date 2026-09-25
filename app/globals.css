@@ -139,6 +139,15 @@ html.lenis body {
   }
 }
 
+@keyframes pricing-type {
+  from {
+    max-width: 0;
+  }
+  to {
+    max-width: 8rem;
+  }
+}
+
 /* Phase 1 cinematic intro */
 
 .intro-grain {

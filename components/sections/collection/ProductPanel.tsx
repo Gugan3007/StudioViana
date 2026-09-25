@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-import { useState } from "react";
+import { type MouseEvent, useState } from "react";
 
 import { VariantThumbs } from "@/components/sections/collection/VariantThumbs";
 import { Button } from "@/components/ui/Button";
@@ -10,8 +10,10 @@ import { PillTag } from "@/components/ui/PillTag";
 import { PriceTag } from "@/components/ui/PriceTag";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import type { Product, ProductVariant } from "@/lib/data/products";
+import { ORDER_MODE } from "@/lib/data/site";
 import { setCursorState } from "@/lib/store/cursorStore";
 import { whatsappLink } from "@/lib/utils";
+import { openProductOrder } from "@/lib/utils/orderEntry";
 import { orderMessage } from "@/lib/utils/whatsapp";
 import { cn } from "@/lib/utils";
 
@@ -154,6 +156,14 @@ export function ProductPanel({ onOpenDetail, product }: ProductPanelProps) {
           </Button>
           <Button
             href={whatsappLink(message)}
+            onClick={(event: MouseEvent<HTMLAnchorElement>) => {
+              if (ORDER_MODE !== "builder") return;
+              event.preventDefault();
+              openProductOrder(product, {
+                flower: selectedFlower,
+                variant: selectedVariant?.name,
+              });
+            }}
             rel="noreferrer"
             target="_blank"
             variant="text-link"

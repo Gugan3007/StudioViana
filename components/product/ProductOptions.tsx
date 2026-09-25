@@ -1,12 +1,14 @@
 "use client";
 
-import { useId } from "react";
+import { type MouseEvent, useId } from "react";
 
 import { VariantThumbs } from "@/components/sections/collection/VariantThumbs";
 import { Button } from "@/components/ui/Button";
 import { PriceTag } from "@/components/ui/PriceTag";
 import type { Product, ProductVariant } from "@/lib/data/products";
+import { ORDER_MODE } from "@/lib/data/site";
 import { whatsappLink } from "@/lib/utils";
+import { openProductOrder } from "@/lib/utils/orderEntry";
 import {
   enquiryMessage,
   type OrderConfiguration,
@@ -218,6 +220,11 @@ export function ProductOptions({
         </PriceTag>
         <Button
           href={whatsappLink(orderMessage(product, configuration))}
+          onClick={(event: MouseEvent<HTMLAnchorElement>) => {
+            if (ORDER_MODE !== "builder") return;
+            event.preventDefault();
+            openProductOrder(product, configuration);
+          }}
           rel="noreferrer"
           target="_blank"
           variant="solid-forest"
