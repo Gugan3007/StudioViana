@@ -1,8 +1,6 @@
 # Studio Viana — Cinematic Intro
 
-Studio Viana is a Next.js App Router experience for handcrafted chenille florals. Phase 0 established the strict TypeScript foundation, editorial design system, typed catalogue, reusable motion primitives, and Lenis/GSAP integration. Phase 1 replaces the temporary specimen page with a reversible, scroll-scrubbed flower dive that resolves into a cream Home hero placeholder.
-
-The full Home hero, navigation, About, and What We Do sections are intentionally reserved for Phase 2.
+Studio Viana is a Next.js App Router experience for handcrafted chenille florals. Phase 0 established the strict TypeScript foundation and design system; Phase 1 added the reversible cinematic flower dive; Phase 2 now delivers the responsive navigation, editorial Home hero, founder-led About story, and image-led What We Do section.
 
 ## Run locally
 
@@ -20,7 +18,10 @@ npm run test
 npm run test:browser
 npm run test:performance
 npm run check
+PLAYWRIGHT_PRODUCTION=true npx playwright test tests/browser/intro.spec.ts tests/browser/phase-two.spec.ts
 ```
+
+Phase 2's exact six-image inventory, tweakable motion values, and operating checklist are documented in [`docs/phase-2-home-story.md`](docs/phase-2-home-story.md). Product imagery belongs in `/public/images/products/`; preserve each documented filename and aspect ratio when replacing an image.
 
 ## Intro configuration
 
