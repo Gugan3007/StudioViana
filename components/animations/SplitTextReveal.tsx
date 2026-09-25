@@ -15,7 +15,7 @@ interface SplitTextRevealProps {
   controlled?: boolean;
   delay?: number;
   id?: string;
-  type?: "words" | "lines";
+  type?: "characters" | "words" | "lines";
 }
 
 export function SplitTextReveal({
@@ -31,7 +31,11 @@ export function SplitTextReveal({
   const root = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
   const tokens =
-    type === "lines" ? children.split("\n") : children.split(/(\s+)/);
+    type === "lines"
+      ? children.split("\n")
+      : type === "characters"
+        ? Array.from(children)
+        : children.split(/(\s+)/);
 
   useIsomorphicLayoutEffect(() => {
     if (controlled || shouldReduceMotion || !root.current) return;
@@ -39,11 +43,16 @@ export function SplitTextReveal({
     const context = gsap.context(() => {
       gsap.fromTo(
         root.current!.querySelectorAll("[data-split-token]"),
-        { autoAlpha: 0, yPercent: 110 },
+        {
+          autoAlpha: 0,
+          filter: type === "characters" ? "blur(8px)" : "blur(0px)",
+          yPercent: 110,
+        },
         {
           autoAlpha: 1,
           delay,
           duration: motionTokens.duration.slow,
+          filter: "blur(0px)",
           stagger: motionTokens.stagger,
           yPercent: 0,
           scrollTrigger: {
@@ -72,7 +81,7 @@ export function SplitTextReveal({
         <span className="sr-only">{children}</span>
         <span aria-hidden="true">
           {tokens.map((token, index) => {
-            if (type === "words" && /^\s+$/.test(token)) return token;
+            if (type !== "lines" && /^\s+$/.test(token)) return token;
 
             return (
               <Fragment key={`${token}-${index}`}>
