@@ -94,7 +94,9 @@ export function StemPath() {
       strokeDashoffset: 0,
     });
 
-    return () => tween.kill();
+    return () => {
+      tween.kill();
+    };
   }, [path, shouldReduceMotion]);
 
   return (
