@@ -25,7 +25,7 @@ export function GalleryItem({
   return (
     <motion.button
       layout
-      aria-label={`View ${item.title}`}
+      aria-label={`Open ${item.title} in gallery`}
       className={cn(
         "group relative mb-3 block w-full break-inside-avoid overflow-hidden border border-gold/20 bg-cream text-left transition-opacity duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold md:mb-5",
         dimmed && "opacity-60",
@@ -34,7 +34,7 @@ export function GalleryItem({
       data-gallery-category={item.category}
       data-gallery-item
       data-gallery-item-id={item.id}
-      layoutId={`gallery-${item.id}`}
+      layoutId={`gallery-image-${item.id}`}
       onBlur={() => onSpotlight(null)}
       onClick={(event) => onSelect?.(item, event.currentTarget)}
       onFocus={() => {

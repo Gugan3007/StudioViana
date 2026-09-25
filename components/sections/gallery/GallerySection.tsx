@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useCallback, useMemo, useRef, useState } from "react";
 
 import { GalleryFilters } from "@/components/sections/gallery/GalleryFilters";
@@ -12,12 +13,23 @@ import type { GalleryFilter } from "@/lib/data/gallery";
 import { galleryItems } from "@/lib/data/gallery";
 
 const INITIAL_ITEMS = 12;
+const loadLightbox = () => import("@/components/sections/gallery/Lightbox");
+const DynamicLightbox = dynamic(
+  () => loadLightbox().then((module) => module.Lightbox),
+  { ssr: false },
+);
+
+interface SelectedGalleryItem {
+  id: string;
+  trigger: HTMLButtonElement;
+}
 
 export function GallerySection() {
   const grid = useRef<HTMLDivElement>(null);
   const pendingFlip = useRef<ReturnType<typeof Flip.getState> | null>(null);
   const [activeFilter, setActiveFilter] = useState<GalleryFilter>("All");
   const [showAll, setShowAll] = useState(false);
+  const [selected, setSelected] = useState<SelectedGalleryItem | null>(null);
 
   const matchingItems = useMemo(
     () =>
@@ -109,7 +121,13 @@ export function GallerySection() {
       </header>
 
       <div ref={grid} className="mx-auto mt-16 max-w-7xl md:mt-24">
-        <MasonryGrid items={visibleItems} />
+        <MasonryGrid
+          items={visibleItems}
+          onIntent={() => {
+            void loadLightbox();
+          }}
+          onSelect={(item, trigger) => setSelected({ id: item.id, trigger })}
+        />
       </div>
 
       {activeFilter === "All" && !showAll ? (
@@ -118,6 +136,15 @@ export function GallerySection() {
             View more pieces
           </Button>
         </div>
+      ) : null}
+
+      {selected ? (
+        <DynamicLightbox
+          initialItemId={selected.id}
+          items={visibleItems}
+          onClose={() => setSelected(null)}
+          origin={selected.trigger}
+        />
       ) : null}
     </section>
   );
