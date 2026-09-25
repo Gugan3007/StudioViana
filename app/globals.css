@@ -148,6 +148,15 @@ html.lenis body {
   }
 }
 
+@keyframes flower-draw {
+  from {
+    stroke-dashoffset: 120;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 /* Phase 1 cinematic intro */
 
 .intro-grain {
