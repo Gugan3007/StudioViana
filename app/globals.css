@@ -157,6 +157,21 @@ html.lenis body {
   }
 }
 
+@keyframes contact-ring-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes contact-image-reveal {
+  from {
+    clip-path: circle(0% at 50% 50%);
+  }
+  to {
+    clip-path: circle(75% at 50% 50%);
+  }
+}
+
 /* Phase 1 cinematic intro */
 
 .intro-grain {
