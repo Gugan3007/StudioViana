@@ -61,8 +61,8 @@ The concept and all five production renders were inspected together at original 
 
 ## Runtime and responsive evidence
 
-- 105/105 unit tests passed with clean formatting, ESLint, TypeScript and optimized Next.js build.
-- 29/29 production Chromium tests passed serially across all Phase 1–3 files.
+- 110/110 unit tests passed with clean formatting, ESLint, TypeScript and optimized Next.js build.
+- 34/34 production Chromium tests passed serially across all Phase 1–3 files.
 - Responsive coverage includes 360, 390, 768, 1024, 1440 and 1920px, active-gallery resize and direct product URLs.
 - Asset traversal produced no failed same-origin response; removing below-fold priority eliminated unused-preload warnings on mobile.
 - Production Chrome traces for the intro, Home/About/Craft and Collection contained no main-thread task at or above 50ms.
@@ -70,3 +70,17 @@ The concept and all five production renders were inspected together at original 
 ## Remaining production-art dependency
 
 The 19 Phase 3 filenames are present, but several intentionally duplicate generated Phase 2 photographs and do not yet match their final target crops. This is not a runtime placeholder or missing route; it is the remaining photography/retouching dependency. The exact current and target dimensions are recorded in `docs/phase-3-collection.md`.
+
+## Final review disposition
+
+- Final: fixed related-product switching now preserves one dialog, one scroll-lock owner and the original opener until the experience closes — product-detail lifecycle tests and production focus restoration RED→GREEN; complete suites 110/110 unit and 34/34 browser.
+- Final: fixed clipped tablet controls by reserving the pinned exhibition layout for viewports at least 1200px wide and 800px tall, with the complete vertical catalogue elsewhere — 1024×768 action-reachability test RED→GREEN; complete suites 110/110 unit and 34/34 browser.
+- Final: fixed first-visit and reduced-motion scroll leakage with a shared reference-counted native/Lenis lock used by the preloader, detail and mobile menu — direct-load and wheel-chain tests RED→GREEN; complete suites 110/110 unit and 34/34 browser.
+- Final: fixed desktop no-JavaScript access by making the vertical catalogue the default and enhancing to horizontal only after client initialization — no-JavaScript reachability test RED→GREEN; complete suites 110/110 unit and 34/34 browser.
+- Final: fixed normal-motion mobile sticky context with observer plus reading-line scroll sampling — mobile Medium Bouquets context test RED→GREEN; complete suites 110/110 unit and 34/34 browser.
+- Final: fixed the lens so its background dimensions and crop offsets derive from the rendered object-cover image at 2.2× zoom — rendered-dimension magnification test RED→GREEN; complete suites 110/110 unit and 34/34 browser.
+- Final: fixed touch showcase zoom by limiting the Grand Bouquet scrub timeline to fine pointers — coarse-pointer animation test RED→GREEN; complete suites 110/110 unit and 34/34 browser.
+- Final: fixed keyboard visibility for size and palette radios with focus-visible rings on their represented controls — radio focus-style test RED→GREEN; complete suites 110/110 unit and 34/34 browser.
+- Final: minor (deferred): staged first/next image loading is not yet implemented in the horizontal product panels; all panel media remains lazy because changing the loading policy is a performance-tuning follow-up, not a correctness blocker.
+- Final: minor (deferred): the desktop hint still says “Drag or scroll →” although direct pointer dragging is not implemented; wheel, trackpad, index and keyboard navigation remain available.
+- Final: Ruling: final photography uniqueness and target crop fidelity remain an art-production dependency, consistent with the approved 19-file placeholder inventory — cost if wrong: the catalogue remains visually repetitive and its crops are not final until the supplied photography is replaced.

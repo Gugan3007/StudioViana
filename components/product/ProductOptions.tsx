@@ -120,24 +120,25 @@ export function ProductOptions({
           </legend>
           <div className="mt-3 flex gap-3">
             {product.sizes.map((size) => (
-              <label
-                key={size.label}
-                className={cn(
-                  "cursor-pointer border px-4 py-3 text-sm",
-                  configuration.size === size.label
-                    ? "border-gold text-charcoal"
-                    : "border-gold/25 text-muted",
-                )}
-              >
+              <label key={size.label} className="cursor-pointer text-sm">
                 <input
                   aria-label={size.label}
                   checked={configuration.size === size.label}
-                  className="sr-only"
+                  className="peer sr-only"
                   name="bouquet-size"
                   onChange={() => update({ size: size.label })}
                   type="radio"
                 />
-                {size.label} · ₹{size.price}
+                <span
+                  className={cn(
+                    "block border px-4 py-3 peer-focus-visible:ring-2 peer-focus-visible:ring-gold peer-focus-visible:ring-offset-4 peer-focus-visible:ring-offset-cream",
+                    configuration.size === size.label
+                      ? "border-gold text-charcoal"
+                      : "border-gold/25 text-muted",
+                  )}
+                >
+                  {size.label} · ₹{size.price}
+                </span>
               </label>
             ))}
           </div>
@@ -160,7 +161,7 @@ export function ProductOptions({
               />
               <span
                 aria-hidden="true"
-                className="mx-auto block h-9 w-9 rounded-full border border-charcoal/10 ring-gold ring-offset-2 ring-offset-cream peer-checked:ring-2"
+                className="mx-auto block h-9 w-9 rounded-full border border-charcoal/10 ring-gold ring-offset-2 ring-offset-cream peer-checked:ring-2 peer-focus-visible:ring-2 peer-focus-visible:ring-gold peer-focus-visible:ring-offset-4 peer-focus-visible:ring-offset-cream"
                 style={{ background: palette.color }}
               />
               <span className="mt-2 block max-w-16 text-[0.48rem] uppercase leading-3 tracking-[0.1em] text-muted">

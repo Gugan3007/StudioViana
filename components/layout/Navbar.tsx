@@ -94,21 +94,22 @@ export function Navbar() {
       setActiveSection(href.slice(1));
       setMenuOpen(false);
 
-      if (lenis && !shouldReduceMotion) {
-        // The mobile overlay stops Lenis. Restart before requesting the
-        // destination because stopped Lenis instances ignore scrollTo calls.
-        lenis.start();
-        // Passing the numeric document position prevents CSS scroll-margin
-        // from being added to Lenis's explicit fixed-header offset twice.
-        lenis.scrollTo(target.offsetTop, { duration: 1.4, offset: -84 });
-      } else {
-        target.scrollIntoView({
-          behavior: shouldReduceMotion ? "auto" : "smooth",
-          block: "start",
-        });
-      }
+      const scroll = () => {
+        if (lenis && !shouldReduceMotion) {
+          // Passing the numeric document position prevents CSS scroll-margin
+          // from being added to Lenis's explicit fixed-header offset twice.
+          lenis.scrollTo(target.offsetTop, { duration: 1.4, offset: -84 });
+        } else {
+          target.scrollIntoView({
+            behavior: shouldReduceMotion ? "auto" : "smooth",
+            block: "start",
+          });
+        }
+      };
+      if (menuOpen) window.requestAnimationFrame(scroll);
+      else scroll();
     },
-    [lenis, shouldReduceMotion],
+    [lenis, menuOpen, shouldReduceMotion],
   );
 
   const hidden = scrolled && direction === "down" && !menuOpen && !focusWithin;

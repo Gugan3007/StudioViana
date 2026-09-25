@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ImgHTMLAttributes } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -8,6 +8,8 @@ import { ProductPanel } from "@/components/sections/collection/ProductPanel";
 import { catalogueProducts } from "@/lib/data/products";
 
 const galleryMocks = vi.hoisted(() => ({
+  intersectionCallback: null as IntersectionObserverCallback | null,
+  observe: vi.fn(),
   reduceMotion: false,
   revert: vi.fn(),
   scrollTo: vi.fn(),
@@ -86,6 +88,18 @@ describe("collection gallery content", () => {
   beforeEach(() => {
     galleryMocks.reduceMotion = false;
     galleryMocks.scrollTo.mockClear();
+    galleryMocks.intersectionCallback = null;
+    galleryMocks.observe.mockClear();
+    class MockIntersectionObserver {
+      constructor(callback: IntersectionObserverCallback) {
+        galleryMocks.intersectionCallback = callback;
+      }
+      disconnect = vi.fn();
+      observe = galleryMocks.observe;
+      takeRecords = vi.fn(() => []);
+      unobserve = vi.fn();
+    }
+    vi.stubGlobal("IntersectionObserver", MockIntersectionObserver);
     Object.defineProperty(HTMLElement.prototype, "scrollIntoView", {
       configurable: true,
       value: vi.fn(),
@@ -159,6 +173,34 @@ describe("collection gallery content", () => {
     const firstCard = container.querySelector("[data-mobile-card]")!;
     expect(
       within(firstCard as HTMLElement).getByText("Flower Cards"),
+    ).toBeVisible();
+  });
+
+  it("tracks the visible vertical card even when motion is allowed", () => {
+    const { container } = render(<HorizontalGallery onOpenDetail={vi.fn()} />);
+    const medium = container.querySelector<HTMLElement>(
+      '[data-gallery-mode="vertical"] [data-product-slug="medium-bouquets"]',
+    )!;
+
+    expect(galleryMocks.observe).toHaveBeenCalled();
+    act(() => {
+      galleryMocks.intersectionCallback?.(
+        [
+          {
+            boundingClientRect: medium.getBoundingClientRect(),
+            intersectionRect: medium.getBoundingClientRect(),
+            intersectionRatio: 0.8,
+            isIntersecting: true,
+            rootBounds: null,
+            target: medium,
+            time: 0,
+          },
+        ],
+        {} as IntersectionObserver,
+      );
+    });
+    expect(
+      screen.getByText("Medium Bouquets", { selector: "span" }),
     ).toBeVisible();
   });
 });

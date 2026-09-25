@@ -9,6 +9,7 @@ import {
   preloadImages,
   type PreloadResult,
 } from "@/lib/animations/preloadImages";
+import { useScrollLock } from "@/lib/animations/useScrollLock";
 
 const introSeenKey = "studio-viana:intro-seen";
 
@@ -27,24 +28,11 @@ export function Preloader({
 }: PreloaderProps) {
   const root = useRef<HTMLDivElement>(null);
   const exitContext = useRef<ReturnType<typeof gsap.context> | null>(null);
-  const stoppedLenis = useRef<Lenis | null>(null);
-  const previousOverflow = useRef<{ body: string; html: string } | null>(null);
   const finalizing = useRef(false);
   const [percent, setPercent] = useState(0);
   const [phase, setPhase] = useState<"loading" | "exiting">("loading");
   const urlSignature = urls.join("\u001f");
-
-  const restoreNativeScroll = useCallback(() => {
-    if (!previousOverflow.current) return;
-    document.documentElement.style.overflow = previousOverflow.current.html;
-    document.body.style.overflow = previousOverflow.current.body;
-    previousOverflow.current = null;
-  }, []);
-
-  const releaseLenis = useCallback(() => {
-    stoppedLenis.current?.start();
-    stoppedLenis.current = null;
-  }, []);
+  const releaseScrollLock = useScrollLock(lenis);
 
   const finish = useCallback(
     (result: PreloadResult) => {
@@ -59,8 +47,7 @@ export function Preloader({
         } catch {
           // Privacy modes can disable session storage; the intro still completes.
         }
-        restoreNativeScroll();
-        releaseLenis();
+        releaseScrollLock();
         onComplete(result);
       };
 
@@ -85,31 +72,15 @@ export function Preloader({
           .to(root.current, { autoAlpha: 0, duration: 0.7 });
       }, root);
     },
-    [onComplete, reducedMotion, releaseLenis, restoreNativeScroll],
+    [onComplete, reducedMotion, releaseScrollLock],
   );
 
   useEffect(() => {
-    previousOverflow.current = {
-      html: document.documentElement.style.overflow,
-      body: document.body.style.overflow,
-    };
-    document.documentElement.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
-
     return () => {
       exitContext.current?.revert();
       exitContext.current = null;
-      restoreNativeScroll();
-      releaseLenis();
     };
-  }, [releaseLenis, restoreNativeScroll]);
-
-  useEffect(() => {
-    if (!lenis || finalizing.current || stoppedLenis.current === lenis) return;
-    stoppedLenis.current?.start();
-    lenis.stop();
-    stoppedLenis.current = lenis;
-  }, [lenis]);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;

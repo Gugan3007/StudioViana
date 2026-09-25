@@ -159,9 +159,11 @@ describe("Navbar", () => {
     await waitFor(() =>
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument(),
     );
-    expect(navigationMocks.lenis.scrollTo).toHaveBeenCalledWith(
-      document.getElementById("pricing")!.offsetTop,
-      { duration: 1.4, offset: -84 },
+    await waitFor(() =>
+      expect(navigationMocks.lenis.scrollTo).toHaveBeenCalledWith(
+        document.getElementById("pricing")!.offsetTop,
+        { duration: 1.4, offset: -84 },
+      ),
     );
     expect(
       navigationMocks.lenis.start.mock.invocationCallOrder[0],

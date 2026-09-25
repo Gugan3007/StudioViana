@@ -203,11 +203,49 @@ test("product detail owns URL, configuration, related switching, history, and fo
   await expect(
     page.getByRole("dialog", { name: "Single Stem Florals details" }),
   ).toBeVisible();
-
-  await page.goBack();
+  await expect(page.locator("[data-product-detail]")).toHaveCount(1);
+  await expect(page.locator("html")).toHaveCSS("overflow", "hidden");
+  await page.getByRole("button", { name: "Close details" }).click();
   await expect(page.locator("[data-product-detail]")).toHaveCount(0);
   await expect(page).not.toHaveURL(/product=/);
+  await expect(trigger).toBeFocused();
   expect(errors).toEqual([]);
+});
+
+test("direct details remain scroll-locked after the first-visit preloader", async ({
+  page,
+}) => {
+  const errors = monitorRuntime(page);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/?product=medium-bouquets", { waitUntil: "networkidle" });
+  await waitForPage(page);
+
+  await expect(
+    page.getByRole("dialog", { name: "Medium Bouquets details" }),
+  ).toBeVisible();
+  await expect(page.locator("html")).toHaveCSS("overflow", "hidden");
+  await expect(page.locator("body")).toHaveCSS("overflow", "hidden");
+  await expect(page.locator("html")).toHaveClass(/lenis-stopped/);
+  expect(errors).toEqual([]);
+});
+
+test("reduced-motion details prevent wheel chaining into the document", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openPage(page, true, "/?product=medium-bouquets");
+  const dialog = page.getByRole("dialog", { name: "Medium Bouquets details" });
+  await dialog.evaluate((element) => {
+    element.scrollTop = element.scrollHeight;
+  });
+  const before = await page.evaluate(() => window.scrollY);
+  await dialog.hover({ position: { x: 200, y: 800 } });
+  await page.mouse.wheel(0, 900);
+  await page.waitForTimeout(150);
+
+  expect(await page.evaluate(() => window.scrollY)).toBe(before);
+  await expect(page.locator("html")).toHaveCSS("overflow", "hidden");
 });
 
 test("detail supports Escape, backdrop close, direct URLs, and focus restoration", async ({
@@ -322,6 +360,64 @@ test("responsive collection layouts survive mobile, tablet, desktop, and resize"
       .evaluate((element) => getComputedStyle(element).transform),
   ).not.toContain("NaN");
   expect(errors).toEqual([]);
+});
+
+test("normal-motion mobile updates the sticky product context", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openPage(page);
+  const vertical = page.locator('[data-gallery-mode="vertical"]');
+  const medium = vertical.locator('[data-product-slug="medium-bouquets"]');
+  await medium.scrollIntoViewIfNeeded();
+
+  await expect
+    .poll(() => vertical.locator(":scope > div").first().textContent())
+    .toContain("Medium Bouquets");
+});
+
+test("short tablet viewports use the complete vertical product layout", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1024, height: 768 });
+  await openPage(page);
+  const gallery = page.locator("[data-collection-gallery]");
+  const vertical = gallery.locator('[data-gallery-mode="vertical"]');
+  await expect(vertical).toBeVisible();
+  await expect(
+    gallery.locator('[data-gallery-mode="horizontal"]'),
+  ).toBeHidden();
+
+  const single = vertical.locator('[data-product-slug="single-stem-florals"]');
+  await single.scrollIntoViewIfNeeded();
+  await expect(single.getByText("₹120")).toBeVisible();
+  await expect(
+    single.getByRole("button", { exact: true, name: "View Details" }),
+  ).toBeVisible();
+});
+
+test("desktop without JavaScript keeps the full collection reachable", async ({
+  browser,
+}) => {
+  const context = await browser.newContext({
+    javaScriptEnabled: false,
+    viewport: { width: 1440, height: 900 },
+  });
+  const page = await context.newPage();
+  await page.goto("/", { waitUntil: "load" });
+  const gallery = page.locator("[data-collection-gallery]");
+  const vertical = gallery.locator('[data-gallery-mode="vertical"]');
+  await expect(
+    gallery.locator('[data-gallery-mode="horizontal"]'),
+  ).toBeHidden();
+  await expect(vertical).toBeVisible();
+  await expect(vertical.locator("[data-mobile-card]")).toHaveCount(9);
+  const finalProduct = vertical.locator('[data-product-slug="grand-bouquet"]');
+  await finalProduct.scrollIntoViewIfNeeded();
+  await expect(
+    finalProduct.getByRole("button", { exact: true, name: "View Details" }),
+  ).toBeVisible();
+  await context.close();
 });
 
 test("captures the mobile collection, product detail, and dark finale", async ({

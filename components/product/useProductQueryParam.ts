@@ -22,9 +22,9 @@ function writeProductParam(slug: string | null, mode: "push" | "replace") {
 }
 
 export function useProductQueryParam() {
-  const [productSlug, setProductSlug] = useState<string | null>(
-    readProductParam,
-  );
+  // Keep the server and first client render identical. The location is synced
+  // immediately after hydration so direct product URLs still open in place.
+  const [productSlug, setProductSlug] = useState<string | null>(null);
 
   useEffect(() => {
     const syncFromLocation = () => {

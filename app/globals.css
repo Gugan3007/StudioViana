@@ -347,6 +347,22 @@ html[data-js="true"]
   animation-play-state: paused;
 }
 
+/* The complete vertical catalogue is the resilient default. JavaScript only
+   promotes the cinematic track when both viewport axes can contain it. */
+.collection-gallery-vertical {
+  display: block;
+}
+
+@media (min-width: 1200px) and (min-height: 800px) {
+  [data-gallery-enhanced="true"] .collection-gallery-horizontal {
+    display: block;
+  }
+
+  [data-gallery-enhanced="true"] .collection-gallery-vertical {
+    display: none;
+  }
+}
+
 @keyframes pearl-rise {
   0% {
     opacity: 0;

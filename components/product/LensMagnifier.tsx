@@ -42,16 +42,34 @@ export function LensMagnifier({ children, image }: LensMagnifierProps) {
       const bounds = root.current.getBoundingClientRect();
       const x = event.clientX - bounds.left;
       const y = event.clientY - bounds.top;
-      const xPercent = Math.max(0, Math.min(100, (x / bounds.width) * 100));
-      const yPercent = Math.max(0, Math.min(100, (y / bounds.height) * 100));
+      const renderedImage = root.current.querySelector("img");
+      const sourceWidth =
+        typeof image === "string"
+          ? renderedImage?.naturalWidth || bounds.width
+          : image.width;
+      const sourceHeight =
+        typeof image === "string"
+          ? renderedImage?.naturalHeight || bounds.height
+          : image.height;
+      const coverScale = Math.max(
+        bounds.width / sourceWidth,
+        bounds.height / sourceHeight,
+      );
+      const renderedWidth = sourceWidth * coverScale;
+      const renderedHeight = sourceHeight * coverScale;
+      const cropX = (renderedWidth - bounds.width) / 2;
+      const cropY = (renderedHeight - bounds.height) / 2;
+      const zoom = 2.2;
+      const lensRadius = lens.current.offsetWidth / 2 || 88;
       moveX(x - 88);
       moveY(y - 88);
-      lens.current.style.backgroundPosition = `${xPercent}% ${yPercent}%`;
+      lens.current.style.backgroundSize = `${renderedWidth * zoom}px ${renderedHeight * zoom}px`;
+      lens.current.style.backgroundPosition = `${lensRadius - (x + cropX) * zoom}px ${lensRadius - (y + cropY) * zoom}px`;
     };
     const element = root.current;
     element?.addEventListener("pointermove", handleMove);
     return () => element?.removeEventListener("pointermove", handleMove);
-  }, [hasFinePointer, shouldReduceMotion]);
+  }, [hasFinePointer, image, shouldReduceMotion]);
 
   return (
     <div
@@ -90,7 +108,6 @@ export function LensMagnifier({ children, image }: LensMagnifierProps) {
           style={{
             backgroundImage: `url("${source}")`,
             backgroundRepeat: "no-repeat",
-            backgroundSize: "220%",
             opacity: visible ? 1 : 0,
           }}
         />

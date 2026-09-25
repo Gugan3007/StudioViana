@@ -7,6 +7,7 @@ import { useEffect, useRef } from "react";
 import { MandalaMark } from "@/components/decor/MandalaMark";
 import { gsap } from "@/lib/animations/gsap";
 import { useReducedMotion } from "@/lib/animations/useReducedMotion";
+import { useScrollLock } from "@/lib/animations/useScrollLock";
 import { site } from "@/lib/data/site";
 
 export interface NavigationItem {
@@ -41,13 +42,13 @@ export function MobileMenu({
   const root = useRef<HTMLDivElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
   const shouldReduceMotion = useReducedMotion();
+  useScrollLock(lenis, open);
 
   useEffect(() => {
     if (!open || !root.current) return;
     const menu = root.current;
     const previousFocus = document.activeElement as HTMLElement | null;
     const trigger = triggerRef.current;
-    lenis?.stop();
     if (shouldReduceMotion) closeButton.current?.focus();
     else menu.focus();
 
@@ -83,10 +84,9 @@ export function MobileMenu({
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
-      lenis?.start();
       (trigger ?? previousFocus)?.focus();
     };
-  }, [lenis, onClose, open, shouldReduceMotion, triggerRef]);
+  }, [onClose, open, shouldReduceMotion, triggerRef]);
 
   useEffect(() => {
     if (!open || !root.current || shouldReduceMotion) return;

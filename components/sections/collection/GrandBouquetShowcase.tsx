@@ -10,6 +10,7 @@ import { PriceTag } from "@/components/ui/PriceTag";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { gsap } from "@/lib/animations/gsap";
 import { useIsomorphicLayoutEffect } from "@/lib/animations/useIsomorphicLayoutEffect";
+import { useFinePointer } from "@/lib/animations/useFinePointer";
 import { useReducedMotion } from "@/lib/animations/useReducedMotion";
 import { getProductBySlug, type Product } from "@/lib/data/products";
 import { whatsappLink } from "@/lib/utils";
@@ -29,9 +30,10 @@ export function GrandBouquetShowcase({
   const image = useRef<HTMLDivElement>(null);
   const veil = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
+  const hasFinePointer = useFinePointer();
 
   useIsomorphicLayoutEffect(() => {
-    if (shouldReduceMotion || !root.current) return;
+    if (shouldReduceMotion || !hasFinePointer || !root.current) return;
 
     const context = gsap.context(() => {
       gsap.fromTo(
@@ -65,7 +67,7 @@ export function GrandBouquetShowcase({
     }, root);
 
     return () => context.revert();
-  }, [shouldReduceMotion]);
+  }, [hasFinePointer, shouldReduceMotion]);
 
   return (
     <section
@@ -75,7 +77,11 @@ export function GrandBouquetShowcase({
       data-grand-bouquet
       data-theme="dark"
     >
-      <div ref={image} className="absolute inset-0 will-change-transform">
+      <div
+        ref={image}
+        className="absolute inset-0 will-change-transform"
+        data-grand-image
+      >
         <Image
           fill
           alt={grandBouquet.heroAlt}

@@ -97,4 +97,16 @@ describe("GrandBouquetShowcase", () => {
     expect(container.querySelectorAll("[data-pearl]")).toHaveLength(0);
     expect(showcaseMocks.fromTo).not.toHaveBeenCalled();
   });
+
+  it("does not attach scrubbed image zoom for coarse pointers", () => {
+    showcaseMocks.finePointer = false;
+    const { container } = render(
+      <GrandBouquetShowcase onOpenDetail={vi.fn()} />,
+    );
+    const image = container.querySelector("[data-grand-image]");
+
+    expect(
+      showcaseMocks.fromTo.mock.calls.some(([target]) => target === image),
+    ).toBe(false);
+  });
 });

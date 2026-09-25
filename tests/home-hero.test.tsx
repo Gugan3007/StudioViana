@@ -129,12 +129,9 @@ describe("HomeHero", () => {
     ).toHaveAttribute("href", expect.stringMatching(/^https:\/\/wa\.me\//));
     expect(screen.getAllByRole("img")).toHaveLength(4);
     const images = screen.getAllByRole("img");
-    expect(images[0]).toHaveAttribute("data-priority", "true");
     for (const image of images) {
       expect(image).toHaveAttribute("data-placeholder", "blur");
       expect(image).not.toHaveAttribute("alt", "");
-    }
-    for (const image of images.slice(1)) {
       expect(image).not.toHaveAttribute("data-priority");
     }
   });

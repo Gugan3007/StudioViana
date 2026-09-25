@@ -89,7 +89,6 @@ export function CollectionSection({
       <AnimatePresence>
         {selectedProduct ? (
           <DynamicProductDetail
-            key={selectedProduct.slug}
             onClose={closeProduct}
             onSelectProduct={(product) => replaceProduct(product.slug)}
             product={selectedProduct}

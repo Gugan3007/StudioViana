@@ -1,13 +1,23 @@
-import { render, screen, waitFor, within } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ImgHTMLAttributes } from "react";
 import { useState } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ProductDetail } from "@/components/product/ProductDetail";
+import { LensMagnifier } from "@/components/product/LensMagnifier";
 import { catalogueProducts, type Product } from "@/lib/data/products";
 
 const detailMocks = vi.hoisted(() => ({
+  finePointer: false,
+  moveX: vi.fn(),
+  moveY: vi.fn(),
   refresh: vi.fn(),
   start: vi.fn(),
   stop: vi.fn(),
@@ -22,11 +32,16 @@ vi.mock("@/lib/animations/useReducedMotion", () => ({
 }));
 
 vi.mock("@/lib/animations/useFinePointer", () => ({
-  useFinePointer: () => false,
+  useFinePointer: () => detailMocks.finePointer,
 }));
 
 vi.mock("@/lib/animations/gsap", () => ({
-  gsap: { quickTo: vi.fn(() => vi.fn()) },
+  gsap: {
+    quickTo: vi
+      .fn()
+      .mockReturnValueOnce(detailMocks.moveX)
+      .mockReturnValueOnce(detailMocks.moveY),
+  },
   refreshScrollTrigger: detailMocks.refresh,
 }));
 
@@ -77,6 +92,7 @@ function DetailHarness({ initialProduct }: { initialProduct: Product }) {
 
 describe("ProductDetail", () => {
   beforeEach(() => {
+    detailMocks.finePointer = false;
     detailMocks.refresh.mockClear();
     detailMocks.start.mockClear();
     detailMocks.stop.mockClear();
@@ -84,6 +100,8 @@ describe("ProductDetail", () => {
       configurable: true,
       value: vi.fn(),
     });
+    document.documentElement.style.overflow = "";
+    document.body.style.overflow = "";
   });
 
   it("traps focus, closes with Escape, restarts Lenis, and restores focus", async () => {
@@ -193,5 +211,61 @@ describe("ProductDetail", () => {
     expect(screen.getByRole("dialog")).toHaveAccessibleName(
       /Single Stem Florals/,
     );
+  });
+
+  it("locks native scrolling for the complete detail lifetime", async () => {
+    const user = userEvent.setup();
+    render(<DetailHarness initialProduct={catalogueProducts[2]} />);
+    await user.click(screen.getByRole("button", { name: "Original trigger" }));
+
+    expect(document.documentElement.style.overflow).toBe("hidden");
+    expect(document.body.style.overflow).toBe("hidden");
+    await user.keyboard("{Escape}");
+    expect(document.documentElement.style.overflow).toBe("");
+    expect(document.body.style.overflow).toBe("");
+  });
+
+  it("gives the visually represented radio choices visible keyboard focus styles", async () => {
+    const user = userEvent.setup();
+    render(<DetailHarness initialProduct={catalogueProducts[2]} />);
+    await user.click(screen.getByRole("button", { name: "Original trigger" }));
+    const dialog = screen.getByRole("dialog");
+
+    const size = within(dialog).getByRole("radio", { name: "1 bloom" });
+    const palette = within(dialog).getByRole("radio", { name: "Blush Pink" });
+    expect(size.nextElementSibling).toHaveClass("peer-focus-visible:ring-2");
+    expect(palette.nextElementSibling).toHaveClass("peer-focus-visible:ring-2");
+  });
+
+  it("sizes the pointer lens from the rendered image so it truly magnifies", () => {
+    detailMocks.finePointer = true;
+    const image = catalogueProducts[3].heroImage;
+    const { container } = render(
+      <LensMagnifier image={image}>
+        <span>Test bloom</span>
+      </LensMagnifier>,
+    );
+    const surface = container.firstElementChild as HTMLDivElement;
+    Object.defineProperty(surface, "getBoundingClientRect", {
+      configurable: true,
+      value: () => ({
+        bottom: 750,
+        height: 750,
+        left: 0,
+        right: 600,
+        top: 0,
+        width: 600,
+        x: 0,
+        y: 0,
+        toJSON: () => ({}),
+      }),
+    });
+
+    fireEvent.pointerMove(surface, { clientX: 300, clientY: 375 });
+    const lens = container.querySelector<HTMLElement>("[data-lens]")!;
+    expect(lens.style.backgroundSize).toMatch(
+      /^\d+(?:\.\d+)?px \d+(?:\.\d+)?px$/,
+    );
+    expect(Number.parseFloat(lens.style.backgroundSize)).toBeGreaterThan(600);
   });
 });

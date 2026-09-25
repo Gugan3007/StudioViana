@@ -10,6 +10,7 @@ import { RelatedProducts } from "@/components/product/RelatedProducts";
 import { PillTag } from "@/components/ui/PillTag";
 import { refreshScrollTrigger } from "@/lib/animations/gsap";
 import { useLenis } from "@/lib/animations/useLenis";
+import { useScrollLock } from "@/lib/animations/useScrollLock";
 import type { Product } from "@/lib/data/products";
 import type { OrderConfiguration } from "@/lib/utils/whatsapp";
 
@@ -37,6 +38,7 @@ export function ProductDetail({
   const closeButton = useRef<HTMLButtonElement>(null);
   const onCloseRef = useRef(onClose);
   const { lenis } = useLenis();
+  useScrollLock(lenis);
   const [configurationState, setConfigurationState] = useState(() => ({
     configuration: initialConfiguration(product),
     slug: product.slug,
@@ -56,10 +58,13 @@ export function ProductDetail({
   }, [onClose]);
 
   useEffect(() => {
+    if (root.current) root.current.scrollTop = 0;
+  }, [product.slug]);
+
+  useEffect(() => {
     const dialog = root.current;
     if (!dialog) return;
     const previousFocus = document.activeElement as HTMLElement | null;
-    lenis?.stop();
     closeButton.current?.focus();
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -93,11 +98,10 @@ export function ProductDetail({
     document.addEventListener("keydown", handleKeyDown);
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
-      lenis?.start();
       previousFocus?.focus();
       refreshScrollTrigger();
     };
-  }, [lenis]);
+  }, []);
 
   return (
     <motion.div
@@ -105,7 +109,7 @@ export function ProductDetail({
       aria-label={`${product.name} details`}
       aria-modal="true"
       animate={{ opacity: 1 }}
-      className="fixed inset-0 z-[120] overflow-y-auto bg-charcoal/70 p-0 text-charcoal lg:p-5"
+      className="fixed inset-0 z-[120] overflow-y-auto overscroll-contain bg-charcoal/70 p-0 text-charcoal lg:p-5"
       data-lenis-prevent
       data-product-detail
       exit={{ opacity: 0 }}

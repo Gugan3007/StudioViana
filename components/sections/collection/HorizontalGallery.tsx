@@ -72,9 +72,18 @@ export const HorizontalGallery = forwardRef<
   useImperativeHandle(forwardedRef, () => ({ scrollToProduct }));
 
   useIsomorphicLayoutEffect(() => {
+    const gallery = root.current;
+    if (!gallery || shouldReduceMotion) return;
+    gallery.dataset.galleryEnhanced = "true";
+    return () => {
+      delete gallery.dataset.galleryEnhanced;
+    };
+  }, [shouldReduceMotion]);
+
+  useIsomorphicLayoutEffect(() => {
     if (shouldReduceMotion || !root.current || !track.current) return;
     const media = gsap.matchMedia();
-    media.add("(min-width: 768px)", () => {
+    media.add("(min-width: 1200px) and (min-height: 800px)", () => {
       const panels = Array.from(
         track.current!.querySelectorAll<HTMLElement>("[data-horizontal-panel]"),
       );
@@ -185,30 +194,52 @@ export const HorizontalGallery = forwardRef<
   }, [shouldReduceMotion]);
 
   useEffect(() => {
-    if (!shouldReduceMotion || typeof IntersectionObserver === "undefined")
-      return;
-    const cards = Array.from(
-      document.querySelectorAll<HTMLElement>(
-        '[data-gallery-mode="vertical"] [data-product-slug]',
-      ),
+    if (typeof IntersectionObserver === "undefined") return;
+    const vertical = root.current?.querySelector<HTMLElement>(
+      '[data-gallery-mode="vertical"]',
     );
+    const cards = Array.from(
+      vertical?.querySelectorAll<HTMLElement>("[data-product-slug]") ?? [],
+    );
+    const selectCard = (card: Element | undefined) => {
+      const slug = (card as HTMLElement | undefined)?.dataset.productSlug;
+      const index = catalogueProducts.findIndex(
+        (product) => product.slug === slug,
+      );
+      if (index >= 0) setActiveIndex(index);
+    };
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries
           .filter((entry) => entry.isIntersecting)
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        const slug = (visible?.target as HTMLElement | undefined)?.dataset
-          .productSlug;
-        const index = catalogueProducts.findIndex(
-          (product) => product.slug === slug,
-        );
-        if (index >= 0) setActiveIndex(index);
+        selectCard(visible?.target);
       },
       { rootMargin: "-20% 0px -55%", threshold: [0.2, 0.6] },
     );
+    let frame = 0;
+    const sampleReadingLine = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        if (!vertical || getComputedStyle(vertical).display === "none") return;
+        const readingLine = window.innerHeight * 0.4;
+        selectCard(
+          cards.find((card) => {
+            const bounds = card.getBoundingClientRect();
+            return bounds.top <= readingLine && bounds.bottom >= readingLine;
+          }),
+        );
+      });
+    };
     cards.forEach((card) => observer.observe(card));
-    return () => observer.disconnect();
-  }, [shouldReduceMotion]);
+    window.addEventListener("scroll", sampleReadingLine, { passive: true });
+    sampleReadingLine();
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+      window.removeEventListener("scroll", sampleReadingLine);
+    };
+  }, []);
 
   const moveBy = (direction: -1 | 1) => {
     const next = Math.max(
@@ -239,8 +270,8 @@ export const HorizontalGallery = forwardRef<
       <div
         aria-hidden={shouldReduceMotion || undefined}
         className={cn(
-          "relative hidden h-[100svh] overflow-hidden md:block",
-          shouldReduceMotion && "md:hidden",
+          "collection-gallery-horizontal relative hidden h-[100svh] overflow-hidden",
+          shouldReduceMotion && "hidden",
         )}
         data-cursor="drag"
         data-gallery-mode="horizontal"
@@ -277,7 +308,7 @@ export const HorizontalGallery = forwardRef<
       </div>
 
       <div
-        className={cn("relative md:hidden", shouldReduceMotion && "md:block")}
+        className="collection-gallery-vertical relative"
         data-gallery-mode="vertical"
       >
         <div className="sticky top-[72px] z-40 flex items-center justify-between border-y border-gold/25 bg-cream/95 px-gutter py-3 backdrop-blur-lg md:top-[84px]">
