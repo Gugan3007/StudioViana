@@ -1,7 +1,7 @@
 export type IntroMode = "layers" | "sequence";
 export type IntroBreakpoint = "desktop" | "tablet" | "mobile";
 
-interface BreakpointSettings {
+export interface BreakpointSettings {
   diveScale: number;
   particles: number;
   petalLayers: 1 | 2;
@@ -95,6 +95,37 @@ export const introConfig: IntroConfig = {
     },
   },
 };
+
+export interface CanvasDprSignals {
+  devicePixelRatio: number;
+  lowPower: boolean;
+  mobile: boolean;
+}
+
+export function getCanvasDpr({
+  devicePixelRatio,
+  lowPower,
+  mobile,
+}: CanvasDprSignals) {
+  if (lowPower) return 1;
+  return Math.min(devicePixelRatio || 1, mobile ? 1.5 : 2);
+}
+
+export function getIntroRuntimeSettings(
+  breakpoint: IntroBreakpoint,
+  lowPower: boolean,
+): BreakpointSettings {
+  const settings = introConfig.breakpoints[breakpoint];
+  if (!lowPower) return settings;
+  return {
+    ...settings,
+    diveScale: Math.min(settings.diveScale, 1.55),
+    particles: 0,
+    petalLayers: 1,
+    pinVh: Math.min(settings.pinVh, breakpoint === "mobile" ? 160 : 180),
+    showMiddleLayer: false,
+  };
+}
 
 export function getSequenceFrameUrl(index: number): string {
   const { directory, extension, padding, prefix } = introConfig.sequence;

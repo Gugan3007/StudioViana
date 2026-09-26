@@ -10,6 +10,7 @@ import {
 } from "react";
 
 import {
+  getCanvasDpr,
   getSequenceLoadOrder,
   introConfig,
 } from "@/components/intro/intro.config";
@@ -31,13 +32,15 @@ export interface FlowerSequenceProps {
   frameUrls: readonly string[];
   preloadResult?: PreloadResult;
   focalPoint: { x: number; y: number };
+  lowPower?: boolean;
+  mobile?: boolean;
 }
 
 export const FlowerSequence = forwardRef<
   FlowerSequenceHandle,
   FlowerSequenceProps
 >(function FlowerSequence(
-  { focalPoint, frameUrls, preloadResult },
+  { focalPoint, frameUrls, lowPower = false, mobile = false, preloadResult },
   forwardedRef,
 ) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -82,12 +85,16 @@ export const FlowerSequence = forwardRef<
     const context = canvas?.getContext("2d");
     if (!canvas || !context) return;
 
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = getCanvasDpr({
+      devicePixelRatio: window.devicePixelRatio || 1,
+      lowPower,
+      mobile,
+    });
     canvas.width = Math.round(window.innerWidth * dpr);
     canvas.height = Math.round(window.innerHeight * dpr);
     context.setTransform(dpr, 0, 0, dpr, 0, 0);
     scheduleDraw();
-  }, [scheduleDraw]);
+  }, [lowPower, mobile, scheduleDraw]);
 
   useImperativeHandle(
     forwardedRef,
@@ -176,7 +183,12 @@ export const FlowerSequence = forwardRef<
       }
     }
 
-    for (let index = 0; index < Math.min(6, availableUrls.length); index += 1) {
+    const workers = lowPower ? 2 : 6;
+    for (
+      let index = 0;
+      index < Math.min(workers, availableUrls.length);
+      index += 1
+    ) {
       void worker();
     }
 
@@ -184,7 +196,7 @@ export const FlowerSequence = forwardRef<
       cancelled = true;
       frames.clear();
     };
-  }, [frameUrls, preloadResult, scheduleDraw]);
+  }, [frameUrls, lowPower, preloadResult, scheduleDraw]);
 
   return (
     <div className="absolute inset-0 overflow-hidden" data-intro-sequence>

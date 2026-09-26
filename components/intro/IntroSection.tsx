@@ -11,6 +11,7 @@ import {
 import {
   getSequenceFrameUrls,
   getSequenceLoadOrder,
+  getIntroRuntimeSettings,
   introConfig,
   type IntroBreakpoint,
   type IntroMode,
@@ -31,6 +32,7 @@ import { useIsomorphicLayoutEffect } from "@/lib/animations/useIsomorphicLayoutE
 import { useLenis } from "@/lib/animations/useLenis";
 import { useReducedMotion } from "@/lib/animations/useReducedMotion";
 import { useIntro } from "@/lib/context/IntroContext";
+import { useOptionalMotionPreferences } from "@/lib/context/MotionContext";
 
 type BreakpointSettings =
   (typeof introConfig.breakpoints)[keyof typeof introConfig.breakpoints];
@@ -68,9 +70,13 @@ export function IntroSection() {
   const { lenis } = useLenis();
   const { markIntroActive, markIntroComplete } = useIntro();
   const reducedMotion = useReducedMotion();
+  const lowPower = useOptionalMotionPreferences()?.lowPower ?? false;
   const breakpoint = useIntroBreakpoint();
   const mode: IntroMode = introConfig.mode;
-  const settings = introConfig.breakpoints[breakpoint];
+  const settings = useMemo(
+    () => getIntroRuntimeSettings(breakpoint, lowPower),
+    [breakpoint, lowPower],
+  );
   const [preloadComplete, setPreloadComplete] = useState(false);
   const [preloadResult, setPreloadResult] = useState<PreloadResult>();
   const [atHome, setAtHome] = useState(false);
@@ -85,8 +91,11 @@ export function IntroSection() {
             introConfig.assets.mobileFlower,
             ...getSequenceLoadOrder(sequenceFrames),
           ]
-        : [introConfig.assets.logo, ...introConfig.assets.petals],
-    [mode, sequenceFrames],
+        : [
+            introConfig.assets.logo,
+            ...introConfig.assets.petals.slice(0, settings.petalLayers),
+          ],
+    [mode, sequenceFrames, settings.petalLayers],
   );
 
   const handlePreloadComplete = useCallback(
@@ -527,6 +536,8 @@ export function IntroSection() {
           ref={sequence}
           focalPoint={introConfig.focalPoint}
           frameUrls={sequenceFrames}
+          lowPower={lowPower}
+          mobile={breakpoint === "mobile"}
           preloadResult={preloadResult}
         />
       ) : null}
