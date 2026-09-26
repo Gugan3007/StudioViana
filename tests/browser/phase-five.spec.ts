@@ -25,7 +25,7 @@ function monitorRuntime(page: Page) {
   page.on("pageerror", (error) => errors.push(`pageerror:${error.message}`));
   page.on("response", (response) => {
     if (
-      response.url().startsWith("http://localhost:3000") &&
+      ["localhost", "127.0.0.1"].includes(new URL(response.url()).hostname) &&
       response.status() >= 400
     ) {
       errors.push(`response:${response.status()}:${response.url()}`);

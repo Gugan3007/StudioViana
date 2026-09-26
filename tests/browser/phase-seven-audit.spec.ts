@@ -269,6 +269,38 @@ for (const inApp of inAppContexts) {
   });
 }
 
+test("unknown routes return the branded 404 and recover through the home route", async ({
+  page,
+}) => {
+  await page.setViewportSize({ height: 844, width: 390 });
+  await prepareRepeatVisit(page);
+  const response = await page.goto("/this-bloom-does-not-exist", {
+    waitUntil: "networkidle",
+  });
+
+  expect(response?.status()).toBe(404);
+  await expect(
+    page.getByRole("heading", { name: "This bloom wandered away." }),
+  ).toBeVisible();
+  await expect(page.locator("#main-content")).toBeVisible();
+  expect(
+    await page.evaluate(
+      () =>
+        document.documentElement.scrollWidth -
+        document.documentElement.clientWidth,
+    ),
+  ).toBeLessThanOrEqual(1);
+
+  const errors = monitorRuntime(page);
+  await page.getByRole("link", { name: "Return home" }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await waitForHome(page);
+  expect(
+    await page.locator("html").evaluate((element) => element.style.overflow),
+  ).toBe("");
+  expect(errors).toEqual([]);
+});
+
 async function captureHome(
   browser: Browser,
   viewport: { height: number; width: number },
