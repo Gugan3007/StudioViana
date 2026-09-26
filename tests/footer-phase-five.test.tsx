@@ -39,6 +39,7 @@ describe("Phase 5 footer", () => {
     expect(within(footer).getAllByText("Connect").length).toBeGreaterThan(0);
     expect(screen.getByText("Thank you for visiting")).toBeVisible();
     expect(screen.getByText(/© 2026 Studio Viana/)).toBeVisible();
+    expect(within(footer).getByText("-gS")).toBeVisible();
     expect(
       within(footer).queryByRole("link", { name: "Download Catalogue" }),
     ).not.toBeInTheDocument();

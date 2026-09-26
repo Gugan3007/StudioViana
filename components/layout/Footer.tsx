@@ -197,6 +197,13 @@ export function Footer() {
           <MotionPreferenceToggle />
           <BackToTop />
         </div>
+
+        <p
+          aria-label="Signed by gS"
+          className="mt-5 pr-20 text-right font-display text-xl font-medium italic tracking-[0.04em] text-gold-light/75 sm:pr-24"
+        >
+          -gS
+        </p>
       </div>
     </footer>
   );
