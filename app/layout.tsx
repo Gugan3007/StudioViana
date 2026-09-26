@@ -1,7 +1,11 @@
+import { existsSync } from "node:fs";
+import { join } from "node:path";
+
 import type { Metadata, Viewport } from "next";
 import { Lora, Poppins } from "next/font/google";
 import type { ReactNode } from "react";
 
+import { Atmosphere } from "@/components/atmosphere/Atmosphere";
 import { GlobalOrderTouchpoints } from "@/components/layout/GlobalOrderTouchpoints";
 import { Navbar } from "@/components/layout/Navbar";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
@@ -40,6 +44,9 @@ export const viewport: Viewport = { themeColor: "#1F3326" };
 export default function RootLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
+  const audioAvailable = existsSync(
+    join(process.cwd(), "public", "audio", "ambient.mp3"),
+  );
   return (
     <html lang="en-IN" suppressHydrationWarning>
       <head>
@@ -55,10 +62,12 @@ export default function RootLayout({
           <SmoothScrollProvider>
             <IntroProvider>
               <OverlayManager>
-                <Navbar />
-                {children}
-                <GlobalOrderTouchpoints />
-                <CustomCursor />
+                <Atmosphere audioAvailable={audioAvailable}>
+                  <Navbar />
+                  {children}
+                  <GlobalOrderTouchpoints />
+                  <CustomCursor />
+                </Atmosphere>
               </OverlayManager>
             </IntroProvider>
           </SmoothScrollProvider>

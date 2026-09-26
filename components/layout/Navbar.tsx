@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { SoundToggle } from "@/components/atmosphere/SoundToggle";
 import { MandalaMark } from "@/components/decor/MandalaMark";
 import { Magnetic } from "@/components/interaction/Magnetic";
 import { OrderBagButton } from "@/components/layout/OrderBagButton";
@@ -148,6 +149,7 @@ export function Navbar() {
         }}
         onFocusCapture={() => setFocusWithin(true)}
       >
+        <SoundToggle className="absolute right-[6.5rem] top-3 z-[2] lg:right-[19.5rem] lg:top-5" />
         <div className="mx-auto grid h-full max-w-content grid-cols-[1fr_auto] items-center px-gutter lg:grid-cols-[1fr_auto_1fr]">
           <Magnetic strength={0.2}>
             <a
