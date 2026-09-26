@@ -9,6 +9,24 @@ interface ContactRowProps {
   value: string;
 }
 
+function copyWithLegacySelection(value: string) {
+  const textarea = document.createElement("textarea");
+  textarea.value = value;
+  textarea.setAttribute("readonly", "");
+  textarea.style.position = "fixed";
+  textarea.style.opacity = "0";
+  textarea.style.pointerEvents = "none";
+  document.body.append(textarea);
+  textarea.focus({ preventScroll: true });
+  textarea.select();
+
+  try {
+    return document.execCommand?.("copy") ?? false;
+  } finally {
+    textarea.remove();
+  }
+}
+
 export function ContactRow({ copyLabel, href, label, value }: ContactRowProps) {
   const [copied, setCopied] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -19,7 +37,19 @@ export function ContactRow({ copyLabel, href, label, value }: ContactRowProps) {
     [],
   );
   const copy = async () => {
-    await navigator.clipboard?.writeText(value);
+    let didCopy = false;
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(value);
+        didCopy = true;
+      }
+    } catch {
+      didCopy = false;
+    }
+
+    if (!didCopy) didCopy = copyWithLegacySelection(value);
+    if (!didCopy) return;
+
     setCopied(true);
     if (timer.current) clearTimeout(timer.current);
     timer.current = setTimeout(() => setCopied(false), 1800);

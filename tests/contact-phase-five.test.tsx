@@ -88,4 +88,22 @@ describe("Phase 5 contact finale", () => {
     expect(writeText).toHaveBeenCalledWith(site.email);
     expect(screen.getByText("Copied ✓")).toBeVisible();
   });
+
+  it("falls back when an in-app browser rejects the Clipboard API", async () => {
+    const user = userEvent.setup();
+    vi.spyOn(navigator.clipboard, "writeText").mockRejectedValue(
+      new DOMException("Clipboard access denied", "NotAllowedError"),
+    );
+    const execCommand = vi.fn().mockReturnValue(true);
+    Object.defineProperty(document, "execCommand", {
+      configurable: true,
+      value: execCommand,
+    });
+
+    render(<ContactSection />);
+    await user.click(screen.getByRole("button", { name: "Copy email" }));
+
+    expect(execCommand).toHaveBeenCalledWith("copy");
+    expect(screen.getByText("Copied ✓")).toBeVisible();
+  });
 });

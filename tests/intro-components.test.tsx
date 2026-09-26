@@ -109,9 +109,9 @@ describe("cinematic intro scenes", () => {
       "loading",
       "eager",
     );
-    expect(screen.getByRole("img", { name: "Studio Viana" })).not.toHaveAttribute(
-      "data-priority",
-    );
+    expect(
+      screen.getByRole("img", { name: "Studio Viana" }),
+    ).not.toHaveAttribute("data-priority");
     expect(document.querySelector("[data-intro-frame]")).toBeInTheDocument();
   });
 

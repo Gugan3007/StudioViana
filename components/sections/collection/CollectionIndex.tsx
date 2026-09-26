@@ -145,8 +145,8 @@ export function CollectionIndex({
               </span>
               <span className="sr-only">
                 {product.number} {product.name}{" "}
-                <span className="hidden sm:inline">{product.priceLabel}</span>{" "}
-                → View in collection
+                <span className="hidden sm:inline">{product.priceLabel}</span> →
+                View in collection
               </span>
             </button>
           </div>

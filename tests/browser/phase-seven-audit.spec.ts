@@ -119,7 +119,9 @@ test("serves hardened production headers", async ({ request }) => {
   expect(headers["referrer-policy"]).toBe("strict-origin-when-cross-origin");
 });
 
-test("low-power devices receive the simplified motion path", async ({ browser }) => {
+test("low-power devices receive the simplified motion path", async ({
+  browser,
+}) => {
   const context = await browser.newContext({
     hasTouch: true,
     isMobile: true,

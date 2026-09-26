@@ -112,7 +112,9 @@ describe("Phase 6 performance tooling", () => {
       "max-age=63072000",
     );
     expect(byName.get("x-content-type-options")).toBe("nosniff");
-    expect(byName.get("referrer-policy")).toBe("strict-origin-when-cross-origin");
+    expect(byName.get("referrer-policy")).toBe(
+      "strict-origin-when-cross-origin",
+    );
     expect(byName.get("permissions-policy")).toContain("camera=()");
   });
 });

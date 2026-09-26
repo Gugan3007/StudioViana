@@ -72,9 +72,7 @@ describe("Collection introduction", () => {
   });
 
   it("renders eight selectable rows with prices and mobile thumbnails", () => {
-    const { container } = render(
-      <CollectionIndex onSelectProduct={vi.fn()} />,
-    );
+    const { container } = render(<CollectionIndex onSelectProduct={vi.fn()} />);
 
     expect(
       screen.getAllByRole("button", { name: /View in collection$/ }),
