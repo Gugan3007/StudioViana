@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ImgHTMLAttributes } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -72,17 +72,38 @@ describe("Collection introduction", () => {
   });
 
   it("renders eight selectable rows with prices and mobile thumbnails", () => {
-    render(<CollectionIndex onSelectProduct={vi.fn()} />);
+    const { container } = render(
+      <CollectionIndex onSelectProduct={vi.fn()} />,
+    );
 
     expect(
-      screen.getAllByRole("button", { name: /View .* in collection/ }),
+      screen.getAllByRole("button", { name: /View in collection$/ }),
     ).toHaveLength(8);
-    expect(screen.getByText("₹120 per stem")).toBeVisible();
-    expect(screen.getByText("₹150 – ₹250")).toBeVisible();
-    expect(screen.getAllByRole("img")).toHaveLength(8);
+    expect(
+      screen
+        .getAllByText("₹120 per stem")
+        .some((element) => element.getAttribute("aria-hidden") === "true"),
+    ).toBe(true);
+    expect(
+      screen
+        .getAllByText("₹150 – ₹250")
+        .some((element) => element.getAttribute("aria-hidden") === "true"),
+    ).toBe(true);
+    expect(container.querySelectorAll("img")).toHaveLength(8);
     for (const product of catalogueProducts) {
-      expect(screen.getByText(product.number)).toBeVisible();
+      const row = screen.getByRole("button", {
+        name: `${product.number} ${product.name} ${product.priceLabel} → View in collection`,
+      });
+      expect(within(row).getByText(product.number)).toHaveAttribute(
+        "aria-hidden",
+        "true",
+      );
       expect(screen.getByText(product.name)).toBeVisible();
+      expect(
+        within(row)
+          .getAllByText(product.priceLabel)
+          .some((element) => element.getAttribute("aria-hidden") === "true"),
+      ).toBe(true);
     }
   });
 
@@ -91,7 +112,7 @@ describe("Collection introduction", () => {
     const onSelectProduct = vi.fn();
     render(<CollectionIndex onSelectProduct={onSelectProduct} />);
     const medium = screen.getByRole("button", {
-      name: "View Medium Bouquets in collection",
+      name: /04 Medium Bouquets ₹550 → View in collection/,
     });
 
     fireEvent.pointerEnter(medium);

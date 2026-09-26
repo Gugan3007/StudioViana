@@ -80,7 +80,7 @@ export function ValuesStrip() {
             <span className="absolute left-0 top-1/2 hidden h-14 w-px -translate-y-1/2 bg-gold/45 lg:block" />
           ) : null}
           <p
-            className="font-display text-[clamp(2rem,3vw,3rem)] leading-none text-gold"
+            className="font-display text-[clamp(2rem,3vw,3rem)] leading-none text-gold-ink"
             data-count={index === 0 || undefined}
           >
             {item.value}

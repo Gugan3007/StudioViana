@@ -185,7 +185,7 @@ export function Footer() {
           <p className="font-display text-3xl italic text-cream/90">
             Thank you for visiting
           </p>
-          <p className="mt-3 text-[0.58rem] uppercase tracking-[0.2em] text-cream/45">
+          <p className="mt-3 text-[0.58rem] uppercase tracking-[0.2em] text-cream/55">
             {site.secondaryLine}
           </p>
         </div>

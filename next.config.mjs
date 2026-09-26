@@ -11,12 +11,56 @@ export const phaseSixCachePolicy = {
   sequence: "public, max-age=86400, stale-while-revalidate=604800",
 };
 
+const scriptSources = ["'self'", "'unsafe-inline'"];
+if (process.env.NODE_ENV === "development") scriptSources.push("'unsafe-eval'");
+
+export const phaseSevenSecurityHeaders = [
+  {
+    key: "Content-Security-Policy",
+    value: [
+      "base-uri 'self'",
+      "connect-src 'self'",
+      "default-src 'self'",
+      "font-src 'self' data:",
+      "form-action 'self' mailto:",
+      "frame-ancestors 'none'",
+      "img-src 'self' data: blob:",
+      "manifest-src 'self'",
+      "media-src 'self'",
+      "object-src 'none'",
+      `script-src ${scriptSources.join(" ")}`,
+      "style-src 'self' 'unsafe-inline'",
+      "worker-src 'self' blob:",
+    ].join("; "),
+  },
+  {
+    key: "Permissions-Policy",
+    value: "camera=(), microphone=(), geolocation=(), browsing-topics=()",
+  },
+  {
+    key: "Referrer-Policy",
+    value: "strict-origin-when-cross-origin",
+  },
+  {
+    key: "Strict-Transport-Security",
+    value: "max-age=63072000; includeSubDomains; preload",
+  },
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "X-Frame-Options", value: "DENY" },
+];
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  compress: true,
   devIndicators: false,
+  poweredByHeader: false,
   reactStrictMode: true,
   async headers() {
     return [
+      {
+        headers: phaseSevenSecurityHeaders,
+        source: "/:path*",
+      },
       {
         headers: [
           {

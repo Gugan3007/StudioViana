@@ -21,10 +21,10 @@ export function WordScrubText({ children, className }: WordScrubTextProps) {
     if (shouldReduceMotion || !root.current) return;
     const context = gsap.context(() => {
       // Scrub maps the passage from top 82% to bottom 58%, increasing each
-      // word from ghosted to fully readable in natural reading order.
+      // word from softly muted to fully readable in natural reading order.
       gsap.fromTo(
         root.current!.querySelectorAll("[data-scrub-word]"),
-        { opacity: 0.15 },
+        { opacity: 0.95 },
         {
           ease: "none",
           opacity: 1,

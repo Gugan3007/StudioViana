@@ -59,7 +59,7 @@ export function ServiceColumn({ image, service }: ServiceColumnProps) {
     >
       <p
         ref={number}
-        className="font-display text-[2.75rem] leading-none text-gold"
+        className="font-display text-[2.75rem] leading-none text-gold-ink"
       >
         {service.number}
       </p>
@@ -71,7 +71,7 @@ export function ServiceColumn({ image, service }: ServiceColumnProps) {
         {service.description}
       </p>
       <a
-        className="mt-auto w-fit border-b border-gold/50 pb-1 text-[0.68rem] font-medium uppercase tracking-[0.22em] text-charcoal transition-colors hover:border-gold hover:text-gold"
+        className="mt-auto w-fit border-b border-gold/50 pb-1 text-[0.68rem] font-medium uppercase tracking-[0.22em] text-charcoal transition-colors hover:border-gold hover:text-gold-ink"
         href="#collection"
       >
         Discover{" "}

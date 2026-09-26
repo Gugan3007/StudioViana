@@ -101,7 +101,17 @@ describe("cinematic intro scenes", () => {
     expect(screen.getByText("TAMIL NADU · INDIA")).toBeVisible();
     expect(screen.getByText("2026–27 COLLECTION")).toBeVisible();
     expect(screen.getByText("Scroll to explore")).toBeVisible();
-    expect(screen.getByRole("img", { name: "Studio Viana" })).toBeVisible();
+    expect(screen.getByRole("img", { name: "Studio Viana" })).toHaveAttribute(
+      "fetchpriority",
+      "high",
+    );
+    expect(screen.getByRole("img", { name: "Studio Viana" })).toHaveAttribute(
+      "loading",
+      "eager",
+    );
+    expect(screen.getByRole("img", { name: "Studio Viana" })).not.toHaveAttribute(
+      "data-priority",
+    );
     expect(document.querySelector("[data-intro-frame]")).toBeInTheDocument();
   });
 
@@ -123,7 +133,10 @@ describe("cinematic intro scenes", () => {
     );
     expect(
       screen.getByRole("img", { name: /macro handcrafted/i }),
-    ).toHaveAttribute("data-preload", "true");
+    ).not.toHaveAttribute("data-preload");
+    expect(
+      screen.getByRole("img", { name: /macro handcrafted/i }),
+    ).toHaveAttribute("loading", "eager");
     expect(
       screen.getByRole("img", { name: /macro handcrafted/i }),
     ).toHaveAttribute("sizes", "220vw");

@@ -138,7 +138,7 @@ export function ProductDetail({
           <h2 className="mt-4 text-balance font-display text-[clamp(3.4rem,6vw,6.5rem)] leading-[0.92] tracking-[-0.05em]">
             {product.name}
           </h2>
-          <p className="mt-5 font-display text-2xl italic leading-8 text-gold">
+          <p className="mt-5 font-display text-2xl italic leading-8 text-gold-ink">
             {product.tagline}
           </p>
           <p className="mt-6 max-w-xl font-light leading-8 text-muted">

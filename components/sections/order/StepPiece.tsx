@@ -86,7 +86,7 @@ export function StepPiece() {
           }
           type="button"
         >
-          <span className="grid aspect-[4/3] place-items-center border border-dashed border-gold/40 font-display text-4xl text-gold">
+          <span className="grid aspect-[4/3] place-items-center border border-dashed border-gold/40 font-display text-4xl text-gold-ink">
             +
           </span>
           <span className="mt-3 block font-display text-lg">

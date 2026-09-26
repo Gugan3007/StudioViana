@@ -52,10 +52,10 @@ export function TrustStats({ active }: { active: boolean }) {
               className="absolute bottom-5 left-0 top-5 hidden w-px bg-gold/35 md:block"
             />
           ) : null}
-          <strong className="block font-display text-4xl font-normal text-gold md:text-5xl">
+          <strong className="block font-display text-4xl font-normal text-gold-ink md:text-5xl">
             <CountedValue active={active} stat={stat} />
           </strong>
-          <span className="mt-2 block font-body text-[0.56rem] uppercase tracking-[0.17em] text-charcoal/55">
+          <span className="mt-2 block font-body text-[0.56rem] uppercase tracking-[0.17em] text-muted">
             {stat.label}
           </span>
         </li>

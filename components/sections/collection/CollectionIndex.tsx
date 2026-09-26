@@ -93,7 +93,6 @@ export function CollectionIndex({
               data-index-line
             />
             <button
-              aria-label={`View ${product.name} in collection`}
               className="group grid min-h-24 w-full grid-cols-[3rem_4.5rem_1fr_auto] items-center gap-3 py-5 text-left sm:grid-cols-[4rem_1fr_auto_auto] sm:gap-6 md:min-h-28"
               data-cursor="view"
               onClick={(event) => onSelectProduct(product, event.currentTarget)}
@@ -107,23 +106,35 @@ export function CollectionIndex({
               }}
               type="button"
             >
-              <span className="text-[0.65rem] tracking-[0.24em] text-[#765b34]">
+              <span
+                aria-hidden="true"
+                className="text-[0.65rem] tracking-[0.24em] text-[#765b34]"
+              >
                 {product.number}
               </span>
-              <span className="relative aspect-[4/5] overflow-hidden bg-cream-soft md:hidden">
+              <span
+                aria-hidden="true"
+                className="relative aspect-[4/5] overflow-hidden bg-cream-soft md:hidden"
+              >
                 <Image
                   fill
-                  alt={product.heroAlt}
+                  alt=""
                   className="object-cover"
                   placeholder="blur"
                   sizes="72px"
                   src={product.heroImage}
                 />
               </span>
-              <span className="font-display text-[clamp(1.55rem,3vw,2.15rem)] leading-tight text-charcoal transition-transform duration-500 ease-out group-hover:translate-x-3 group-focus-visible:translate-x-3">
+              <span
+                aria-hidden="true"
+                className="font-display text-[clamp(1.55rem,3vw,2.15rem)] leading-tight text-charcoal transition-transform duration-500 ease-out group-hover:translate-x-3 group-focus-visible:translate-x-3"
+              >
                 {product.name}
               </span>
-              <span className="hidden text-[0.65rem] uppercase tracking-[0.18em] text-muted sm:block">
+              <span
+                aria-hidden="true"
+                className="hidden text-[0.65rem] uppercase tracking-[0.18em] text-muted sm:block"
+              >
                 {product.priceLabel}
               </span>
               <span
@@ -131,6 +142,11 @@ export function CollectionIndex({
                 className="text-xl text-gold transition-transform duration-500 group-hover:translate-x-2 group-focus-visible:translate-x-2"
               >
                 →
+              </span>
+              <span className="sr-only">
+                {product.number} {product.name}{" "}
+                <span className="hidden sm:inline">{product.priceLabel}</span>{" "}
+                → View in collection
               </span>
             </button>
           </div>

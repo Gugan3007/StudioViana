@@ -80,7 +80,7 @@ describe("Phase 5 pricing guide", () => {
     );
 
     fireEvent.click(
-      screen.getByRole("button", { name: "View corporate and bulk orders" }),
+      screen.getByRole("button", { name: "View Corporate & Bulk Orders" }),
     );
     expect(scrollIntoView).toHaveBeenCalledWith({
       behavior: "smooth",

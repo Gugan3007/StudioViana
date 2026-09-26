@@ -76,6 +76,11 @@ describe("WordScrubText", () => {
       "aria-hidden",
       "true",
     );
+    expect(aboutMocks.fromTo).toHaveBeenCalledWith(
+      expect.anything(),
+      { opacity: 0.95 },
+      expect.objectContaining({ opacity: 1 }),
+    );
   });
 
   it("renders all words at full opacity for reduced motion", () => {

@@ -90,7 +90,7 @@ test("the index navigates the horizontal gallery forward and backward", async ({
   await openPage(page);
   const index = page.locator("[data-collection-index]");
   const mediumIndexRow = index.getByRole("button", {
-    name: "View Medium Bouquets in collection",
+    name: "04 Medium Bouquets ₹550 → View in collection",
   });
   await mediumIndexRow.scrollIntoViewIfNeeded();
   await expect(mediumIndexRow).toBeVisible();

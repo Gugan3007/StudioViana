@@ -51,8 +51,9 @@ export function BrandMoment({ particleCount }: BrandMomentProps) {
           <Image
             alt="Studio Viana"
             className="object-contain"
+            fetchPriority="high"
             fill
-            priority
+            loading="eager"
             sizes="(max-width: 767px) 85vw, 560px"
             src={introConfig.assets.logo}
           />

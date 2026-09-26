@@ -114,7 +114,7 @@ export function PricingRow({
       <button
         aria-label={
           corporate
-            ? "View corporate and bulk orders"
+            ? "View Corporate & Bulk Orders"
             : `View ${product.name} details`
         }
         className="flex min-h-20 items-center gap-4 px-4 py-5 text-left md:min-h-24 md:px-5"

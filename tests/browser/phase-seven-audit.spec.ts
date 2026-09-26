@@ -26,6 +26,18 @@ const inAppContexts = [
     viewport: { height: 844, width: 390 },
   },
   {
+    label: "Instagram Android",
+    userAgent:
+      "Mozilla/5.0 (Linux; Android 14; Pixel 7 Build/UQ1A.240205.004; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/123.0.0.0 Mobile Safari/537.36 Instagram 347.0.0.35.103 Android",
+    viewport: { height: 915, width: 412 },
+  },
+  {
+    label: "WhatsApp iPhone",
+    userAgent:
+      "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 WhatsApp/24.18.80",
+    viewport: { height: 844, width: 390 },
+  },
+  {
     label: "WhatsApp Android",
     userAgent:
       "Mozilla/5.0 (Linux; Android 14; Pixel 7 Build/UQ1A.240205.004; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/123.0.0.0 Mobile Safari/537.36 WhatsApp/2.24.18.80",
@@ -92,6 +104,46 @@ test("declares edge-to-edge safe-area support", async ({ page }) => {
   const viewport = page.locator('meta[name="viewport"]');
 
   await expect(viewport).toHaveAttribute("content", /viewport-fit=cover/);
+});
+
+test("serves hardened production headers", async ({ request }) => {
+  const response = await request.get("/");
+  const headers = response.headers();
+
+  expect(headers["x-powered-by"]).toBeUndefined();
+  expect(headers["content-security-policy"]).toContain(
+    "frame-ancestors 'none'",
+  );
+  expect(headers["strict-transport-security"]).toContain("max-age=63072000");
+  expect(headers["x-content-type-options"]).toBe("nosniff");
+  expect(headers["referrer-policy"]).toBe("strict-origin-when-cross-origin");
+});
+
+test("low-power devices receive the simplified motion path", async ({ browser }) => {
+  const context = await browser.newContext({
+    hasTouch: true,
+    isMobile: true,
+    viewport: { height: 844, width: 390 },
+  });
+  await context.addInitScript(() => {
+    Object.defineProperty(navigator, "hardwareConcurrency", {
+      configurable: true,
+      value: 2,
+    });
+    Object.defineProperty(navigator, "deviceMemory", {
+      configurable: true,
+      value: 2,
+    });
+    sessionStorage.setItem("studio-viana:intro-seen", "true");
+  });
+  const page = await context.newPage();
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await waitForHome(page);
+
+  await expect(page.locator("html")).toHaveAttribute("data-low-power", "true");
+  await expect(page.getByTestId("film-grain")).toHaveCount(0);
+  await expect(page.getByTestId("petal-layer")).toHaveCount(1);
+  await context.close();
 });
 
 for (const viewport of responsiveMatrix) {

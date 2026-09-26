@@ -13,6 +13,7 @@ const config: Config = {
         cream: "rgb(var(--cream-rgb) / <alpha-value>)",
         "cream-soft": "rgb(var(--cream-soft-rgb) / <alpha-value>)",
         gold: "rgb(var(--gold-rgb) / <alpha-value>)",
+        "gold-ink": "rgb(var(--gold-ink-rgb) / <alpha-value>)",
         "gold-light": "rgb(var(--gold-light-rgb) / <alpha-value>)",
         charcoal: "rgb(var(--charcoal-rgb) / <alpha-value>)",
         muted: "rgb(var(--muted-rgb) / <alpha-value>)",

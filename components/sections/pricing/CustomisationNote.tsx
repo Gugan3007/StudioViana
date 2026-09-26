@@ -14,7 +14,7 @@ export function CustomisationNote() {
       <MandalaMark className="h-12 w-12 text-gold" />
       <div>
         <p className="font-display text-xl leading-8 text-charcoal sm:text-2xl">
-          <span className="text-gold">A note on customisation</span> — every
+          <span className="text-gold-ink">A note on customisation</span> — every
           piece in this collection can be re-imagined in your preferred colour
           palette and flower selection.
         </p>

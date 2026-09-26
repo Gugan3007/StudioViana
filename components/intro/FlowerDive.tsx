@@ -36,8 +36,8 @@ export function FlowerDive({
           className="object-cover"
           data-intro-flower
           fill
+          loading="eager"
           placeholder="blur"
-          preload
           sizes={flowerSizes}
           src={flowerSource}
           style={{

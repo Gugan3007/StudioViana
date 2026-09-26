@@ -15,6 +15,7 @@ export function CorporateCTAPanel({ mobile = false }: { mobile?: boolean }) {
       data-corporate-panel
       data-horizontal-panel={mobile ? undefined : true}
       data-mobile-card={mobile || undefined}
+      data-theme="dark"
     >
       <div className="absolute inset-6 border border-gold/45" />
       <div className="relative z-10 max-w-3xl">

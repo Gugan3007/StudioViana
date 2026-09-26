@@ -143,7 +143,7 @@ export function OrderBuilder() {
             className="mt-5 font-display text-[clamp(3.4rem,7vw,7rem)] leading-[0.94] tracking-[-0.05em]"
             id="order-heading"
           >
-            Design <em className="font-normal text-gold">your</em> bouquet
+            Design <em className="font-normal text-gold-ink">your</em> bouquet
           </h2>
           <p className="mx-auto mt-6 max-w-2xl font-light leading-8 text-muted">
             Tell us what you have in mind — we&apos;ll craft it by hand and

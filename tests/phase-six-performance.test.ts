@@ -87,4 +87,32 @@ describe("Phase 6 performance tooling", () => {
     expect(editableImages?.headers[0].value).not.toContain("immutable");
     expect(phaseSixCachePolicy.nextStatic).toContain("immutable");
   });
+
+  it("hardens every production response without disabling compression", async () => {
+    expect(nextConfig.poweredByHeader).toBe(false);
+    expect(nextConfig.compress).not.toBe(false);
+
+    const headers = (await nextConfig.headers?.()) as
+      | Array<{
+          headers: Array<{ key: string; value: string }>;
+          source: string;
+        }>
+      | undefined;
+    const globalHeaders = headers?.find(
+      (entry) => entry.source === "/:path*",
+    )?.headers;
+    const byName = new Map(
+      globalHeaders?.map(({ key, value }) => [key.toLowerCase(), value]),
+    );
+
+    expect(byName.get("content-security-policy")).toContain(
+      "frame-ancestors 'none'",
+    );
+    expect(byName.get("strict-transport-security")).toContain(
+      "max-age=63072000",
+    );
+    expect(byName.get("x-content-type-options")).toBe("nosniff");
+    expect(byName.get("referrer-policy")).toBe("strict-origin-when-cross-origin");
+    expect(byName.get("permissions-policy")).toContain("camera=()");
+  });
 });

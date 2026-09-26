@@ -71,7 +71,7 @@ export function MobileProductCard({
           {product.name}
         </h3>
         <PillTag className="mt-5">Handmade · Made to Order</PillTag>
-        <p className="mt-5 font-display text-xl italic text-gold">
+        <p className="mt-5 font-display text-xl italic text-gold-ink">
           {product.tagline}
         </p>
         <p className="mt-4 text-sm font-light leading-7 text-muted">

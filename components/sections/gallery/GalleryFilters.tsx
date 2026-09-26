@@ -42,7 +42,7 @@ export function GalleryFilters({
       </div>
       <p
         aria-live="polite"
-        className="mt-5 font-body text-[0.62rem] uppercase tracking-[0.18em] text-charcoal/55"
+        className="mt-5 font-body text-[0.62rem] uppercase tracking-[0.18em] text-muted"
       >
         Showing {count} {count === 1 ? "piece" : "pieces"}
       </p>

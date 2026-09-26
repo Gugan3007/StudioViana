@@ -95,7 +95,7 @@ export function ProductPanel({ onOpenDetail, product }: ProductPanelProps) {
           {product.name}
         </h3>
         <PillTag className="mt-6">Handmade · Made to Order</PillTag>
-        <p className="mt-6 font-display text-[1.35rem] italic leading-7 text-gold">
+        <p className="mt-6 font-display text-[1.35rem] italic leading-7 text-gold-ink">
           {product.tagline}
         </p>
         <p className="mt-5 text-sm font-light leading-7 text-muted lg:text-[0.95rem]">
