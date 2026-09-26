@@ -48,7 +48,10 @@ export const metadata: Metadata = {
   },
 };
 
-export const viewport: Viewport = { themeColor: "#1F3326" };
+export const viewport: Viewport = {
+  themeColor: "#1F3326",
+  viewportFit: "cover",
+};
 
 const ambientAudioAvailable = existsSync(
   join(process.cwd(), "public", "audio", "ambient.mp3"),

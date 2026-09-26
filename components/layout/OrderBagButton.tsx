@@ -9,7 +9,7 @@ export function OrderBagButton({ className }: { className?: string }) {
     <button
       aria-label={`Open order bag, ${count} ${count === 1 ? "item" : "items"}`}
       className={cn(
-        "border-current/35 relative grid h-11 w-11 place-items-center rounded-full border text-current transition-colors hover:border-gold hover:text-gold",
+        "border-current/35 relative grid h-11 w-11 shrink-0 place-items-center rounded-full border text-current transition-colors hover:border-gold hover:text-gold",
         className,
       )}
       data-cursor="link"

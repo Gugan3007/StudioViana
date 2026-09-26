@@ -17,11 +17,11 @@ export function FloatingWhatsApp() {
   const shouldReduceMotion = useReducedMotion();
   if (!introComplete || overlayOpen) return null;
   return (
-    <Magnetic className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] right-4 z-[70] sm:bottom-6 sm:right-6">
+    <Magnetic className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] right-[max(1rem,env(safe-area-inset-right))] z-[70] sm:bottom-6 sm:right-[max(1.5rem,env(safe-area-inset-right))]">
       <motion.a
         aria-label="Chat with us on WhatsApp"
         animate={{ opacity: 1, scale: 1 }}
-        className="group flex h-14 items-center justify-end overflow-hidden rounded-full border border-gold/55 bg-forest text-gold shadow-soft transition-[width] duration-500 hover:w-44"
+        className="group flex h-14 min-w-14 items-center justify-end overflow-hidden rounded-full border border-gold/55 bg-forest text-gold shadow-soft transition-[width] duration-500 hover:w-44"
         data-cursor="link"
         href={whatsappLink(message)}
         initial={

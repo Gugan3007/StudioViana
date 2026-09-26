@@ -357,6 +357,10 @@ html[data-js="true"]
 }
 
 @media (prefers-reduced-motion: reduce) {
+  [data-reduced-motion="true"] [data-intro-frame-meta] {
+    display: none;
+  }
+
   [data-reduced-motion="true"] {
     height: 100svh;
     min-height: 42rem;

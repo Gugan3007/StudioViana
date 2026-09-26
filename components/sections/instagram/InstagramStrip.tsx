@@ -165,7 +165,7 @@ export function InstagramStrip() {
         <SectionLabel>Follow the Bloom</SectionLabel>
         <h2
           id="instagram-heading"
-          className="mt-5 font-display text-[clamp(2.8rem,6vw,5.5rem)] leading-none tracking-[-0.045em] text-forest"
+          className="mt-5 font-display text-[clamp(2.15rem,6vw,5.5rem)] leading-none tracking-[-0.045em] text-forest"
         >
           <a
             className="focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold"

@@ -103,7 +103,7 @@ export function PricingRow({
 
   return (
     <article
-      className="group relative grid overflow-hidden border-b border-gold/35 transition-colors duration-500 hover:bg-cream-soft md:grid-cols-[minmax(13rem,1.1fr)_minmax(16rem,1.35fr)_minmax(7rem,.55fr)_minmax(5.5rem,.35fr)] md:items-center [&.pricing-visible_[data-row-line]]:scale-x-100"
+      className="group relative grid overflow-hidden border-b border-gold/35 transition-colors duration-500 hover:bg-cream-soft md:grid-cols-[minmax(13rem,1.1fr)_minmax(13rem,1.2fr)_minmax(10rem,.65fr)_minmax(5.5rem,.35fr)] md:items-center [&.pricing-visible_[data-row-line]]:scale-x-100"
       data-pricing-row
     >
       <span
@@ -138,7 +138,7 @@ export function PricingRow({
       <p className="px-4 pb-4 text-sm font-light leading-6 text-muted md:px-5 md:pb-0">
         {details}
       </p>
-      <p className="absolute right-4 top-6 font-display text-xl md:static md:px-5 md:text-right md:text-2xl">
+      <p className="absolute right-4 top-6 font-display text-xl md:static md:px-5 md:text-right lg:text-2xl">
         <AnimatedPrice highPrice={highPrice} lowPrice={lowPrice} />
       </p>
       <a

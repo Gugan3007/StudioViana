@@ -25,12 +25,14 @@ export function BrandMoment({ particleCount }: BrandMomentProps) {
       <p
         className="absolute left-10 top-9 font-body text-[0.55rem] font-medium uppercase tracking-[0.28em] text-gold-light max-sm:left-6 max-sm:top-6 max-sm:max-w-24 max-sm:leading-relaxed"
         data-intro-brand-copy
+        data-intro-frame-meta
       >
         TAMIL NADU · INDIA
       </p>
       <p
         className="absolute right-10 top-9 text-right font-body text-[0.55rem] font-medium uppercase tracking-[0.28em] text-gold-light max-sm:right-6 max-sm:top-6 max-sm:max-w-28 max-sm:leading-relaxed"
         data-intro-brand-copy
+        data-intro-frame-meta
       >
         2026–27 COLLECTION
       </p>

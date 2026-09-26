@@ -528,6 +528,7 @@ export function IntroSection() {
       data-intro-mode={mode}
       data-intro-ready={preloadComplete || undefined}
       data-reduced-motion={reducedMotion || undefined}
+      data-theme="dark"
       data-testid="intro-section"
     >
       <BrandMoment particleCount={settings.particles} />

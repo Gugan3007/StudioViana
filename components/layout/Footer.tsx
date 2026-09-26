@@ -190,7 +190,7 @@ export function Footer() {
           </p>
         </div>
 
-        <div className="flex flex-col items-center justify-between gap-6 border-t border-gold/20 pt-7 text-center sm:flex-row sm:text-left">
+        <div className="flex flex-col items-center justify-between gap-6 border-t border-gold/20 pt-7 text-center sm:flex-row sm:pr-20 sm:text-left xl:pr-0">
           <p className="text-[0.58rem] leading-5 tracking-[0.08em] text-cream/50">
             © 2026 Studio Viana · Handcrafted chenille florals · {site.location}
           </p>
