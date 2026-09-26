@@ -53,11 +53,20 @@ No manual assistive-technology result is claimed until it is actually executed a
 | Evidence                  | Phase 5 build |                         Phase 6 build |
 | ------------------------- | ------------: | ------------------------------------: |
 | `.next/static` disk size  |      31.48 MB |                              31.62 MB |
-| JavaScript chunks on disk |       1.59 MB |                               1.72 MB |
+| JavaScript chunks on disk |       1.59 MB |                               1.62 MB |
 | Planned image derivatives |             — |   388 (dry-run, no originals changed) |
 | Analyzer reports          |             — | client, Node.js and edge HTML reports |
 
-The bundle increase includes the cursor, overlay manager, atmosphere, route transition and generated route clients. Final Lighthouse and long-task measurements belong to production-browser QA and are recorded separately rather than inferred from bundle size.
+The bundle increase includes the cursor, overlay manager, atmosphere, route transition and generated route clients. Production long-task gates pass. Lighthouse is not installed in the local release environment, so no synthetic score is claimed; it remains a deployment-environment launch check. Exact production-browser evidence is recorded in `docs/superpowers/phase-6-fidelity-ledger.md`.
+
+## Production QA result
+
+- `npm run check`: passed—formatting, ESLint, TypeScript, 51 files / 202 unit tests and the optimized 20-route build.
+- Focused Phase 6 production browser suite: 11/11 passed.
+- Complete production system-Chrome suite: 63/63 passed in 3.2 minutes.
+- Responsive browser checks: no overflow at 360, 768, 1440 or 2560 px; the wider legacy matrix also passes at 390, 1024 and 1920 px.
+- Direct product routes, cross-route hash navigation, browser Back, metadata endpoints, no-JavaScript content, motion override, skip focus and overlay focus/scroll behavior all pass.
+- Browser plugin, Firefox, WebKit, real-device Safari/Samsung Internet and screen-reader checks were unavailable and are not claimed.
 
 ## Maintenance
 

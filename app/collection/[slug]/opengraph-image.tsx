@@ -54,8 +54,15 @@ export default async function ProductOpenGraphImage({
           padding: "64px 84px",
         }}
       >
-        <div style={{ color: "#7A5D33", fontSize: 22, letterSpacing: ".22em" }}>
-          STUDIO VIANA · COLLECTION {product?.number ?? ""}
+        <div
+          style={{
+            color: "#7A5D33",
+            display: "flex",
+            fontSize: 22,
+            letterSpacing: ".22em",
+          }}
+        >
+          {`STUDIO VIANA · COLLECTION ${product?.number ?? ""}`}
         </div>
         <div
           style={{

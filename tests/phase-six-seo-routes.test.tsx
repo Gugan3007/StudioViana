@@ -102,6 +102,22 @@ describe("Phase 6 routes and SEO", () => {
         current,
       ),
     ).toBe(false);
+
+    anchor.href = "https://studioviana.com/#collection";
+    expect(
+      shouldInterceptNavigation(
+        {
+          button: 0,
+          defaultPrevented: false,
+          metaKey: false,
+          ctrlKey: false,
+          shiftKey: false,
+          altKey: false,
+        },
+        anchor,
+        current,
+      ),
+    ).toBe(true);
     anchor.href = "https://example.com/terms";
     expect(
       shouldInterceptNavigation(

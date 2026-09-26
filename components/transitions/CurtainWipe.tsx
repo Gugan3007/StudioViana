@@ -18,6 +18,8 @@ export function CurtainWipe({ phase }: { phase: CurtainPhase }) {
       animate={{ x }}
       className="pointer-events-none fixed inset-0 z-[220] grid place-items-center bg-forest text-gold"
       data-curtain-phase={phase}
+      data-route-curtain
+      data-transition-state={phase}
       initial={false}
       transition={{
         duration:

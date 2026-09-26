@@ -50,12 +50,13 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = { themeColor: "#1F3326" };
 
+const ambientAudioAvailable = existsSync(
+  join(process.cwd(), "public", "audio", "ambient.mp3"),
+);
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
-  const audioAvailable = existsSync(
-    join(process.cwd(), "public", "audio", "ambient.mp3"),
-  );
   return (
     <html lang="en-IN" suppressHydrationWarning>
       <head>
@@ -71,7 +72,7 @@ export default function RootLayout({
           <SmoothScrollProvider>
             <IntroProvider>
               <OverlayManager>
-                <Atmosphere audioAvailable={audioAvailable}>
+                <Atmosphere audioAvailable={ambientAudioAvailable}>
                   <Navbar />
                   {children}
                   <GlobalOrderTouchpoints />

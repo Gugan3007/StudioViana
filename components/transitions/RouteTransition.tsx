@@ -44,7 +44,6 @@ export function shouldInterceptNavigation(
   return (
     destination.protocol.startsWith("http") &&
     destination.origin === current.origin &&
-    !destination.hash &&
     destination.pathname !== current.pathname
   );
 }
@@ -75,7 +74,7 @@ export function RouteTransition({ children }: { children: ReactNode }) {
 
       event.preventDefault();
       const destination = new URL(anchor.href, current);
-      const href = `${destination.pathname}${destination.search}`;
+      const href = `${destination.pathname}${destination.search}${destination.hash}`;
       sessionStorage.setItem("studio-viana:route-transition", "pending");
       if (shouldReduceMotion) {
         router.push(href);
