@@ -1,4 +1,8 @@
 import withBundleAnalyzerFactory from "@next/bundle-analyzer";
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const projectRoot = dirname(fileURLToPath(import.meta.url));
 
 const withBundleAnalyzer = withBundleAnalyzerFactory({
   enabled: process.env.ANALYZE === "true",
@@ -55,6 +59,9 @@ const nextConfig = {
   devIndicators: false,
   poweredByHeader: false,
   reactStrictMode: true,
+  turbopack: {
+    root: projectRoot,
+  },
   async headers() {
     return [
       {
