@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import { catalogueProducts } from "@/lib/data/products";
-import { site } from "@/lib/data/site";
+import { whatsappLink } from "@/lib/data/site";
 import { useOrderStore } from "@/lib/store/orderStore";
 import { estimateOrder, formatINR } from "@/lib/utils/formatINR";
 import { buildOrderMessage, mailtoLink } from "@/lib/utils/whatsapp";
@@ -11,7 +11,7 @@ export function StepReview() {
     (candidate) => candidate.slug === order.pieceSlug,
   );
   const message = buildOrderMessage(order);
-  const whatsapp = `https://wa.me/${site.whatsappNumber}?text=${encodeURIComponent(message)}`;
+  const whatsapp = whatsappLink(message);
   const groups = [
     {
       label: "Piece",

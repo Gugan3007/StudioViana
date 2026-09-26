@@ -9,7 +9,7 @@ import { motionTokens } from "@/lib/animations/tokens";
 import { useReducedMotion } from "@/lib/animations/useReducedMotion";
 import { useManagedOverlay } from "@/lib/context/OverlayContext";
 import { getProductBySlug, type Product } from "@/lib/data/products";
-import { site } from "@/lib/data/site";
+import { whatsappLink } from "@/lib/data/site";
 import { hydrateBagStore, useBagStore } from "@/lib/store/bagStore";
 import { useOrderStore } from "@/lib/store/orderStore";
 import { formatINR } from "@/lib/utils/formatINR";
@@ -217,7 +217,7 @@ export function OrderBagDrawer() {
                 </p>
                 <div className="mt-5 grid gap-3">
                   <Button
-                    href={`https://wa.me/${site.whatsappNumber}?text=${encodeURIComponent(buildBagMessage(items))}`}
+                    href={whatsappLink(buildBagMessage(items))}
                     rel="noreferrer"
                     target="_blank"
                     variant="solid-forest"

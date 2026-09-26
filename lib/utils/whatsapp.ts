@@ -1,6 +1,6 @@
 import type { Product } from "@/lib/data/products";
 import { getProductBySlug } from "@/lib/data/products";
-import { site } from "@/lib/data/site";
+import { site, whatsappLink } from "@/lib/data/site";
 import type { BagItem } from "@/lib/store/bagStore";
 import type { OrderState } from "@/lib/store/orderStore";
 import type { BulkEnquiry } from "@/lib/validation/orderSchema";
@@ -170,7 +170,7 @@ export function mailtoLink(subject: string, body: string) {
 
 /** Current submission seam; a later backend can replace this implementation. */
 export function submitOrder(order: Partial<OrderState>) {
-  const href = `https://wa.me/${site.whatsappNumber}?text=${encodeURIComponent(buildOrderMessage(order))}`;
+  const href = whatsappLink(buildOrderMessage(order));
   if (typeof window !== "undefined")
     window.open(href, "_blank", "noopener,noreferrer");
   return href;
