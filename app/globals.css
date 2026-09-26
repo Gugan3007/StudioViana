@@ -572,3 +572,12 @@ html[data-js="true"]
     transform: translate3d(-1%, 1%, 0);
   }
 }
+
+@keyframes draw {
+  from {
+    stroke-dashoffset: 240;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}

@@ -18,6 +18,8 @@ const groups = [
       ["Gallery", "#gallery"],
       ["Testimonials", "#testimonials"],
       ["FAQ", "#faq"],
+      ["Privacy", "/privacy"],
+      ["Terms", "/terms"],
     ],
   },
   {

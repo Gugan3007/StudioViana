@@ -6,6 +6,7 @@ import { Lora, Poppins } from "next/font/google";
 import type { ReactNode } from "react";
 
 import { Atmosphere } from "@/components/atmosphere/Atmosphere";
+import { AnalyticsHooks } from "@/components/analytics/AnalyticsHooks";
 import { GlobalOrderTouchpoints } from "@/components/layout/GlobalOrderTouchpoints";
 import { Navbar } from "@/components/layout/Navbar";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
@@ -14,6 +15,7 @@ import { CustomCursor } from "@/components/cursor/CustomCursor";
 import { IntroProvider } from "@/lib/context/IntroContext";
 import { MotionProvider } from "@/lib/context/MotionContext";
 import { OverlayManager } from "@/components/overlay/OverlayManager";
+import { createPageMetadata, SITE_URL } from "@/lib/seo/metadata";
 
 import "./globals.css";
 
@@ -34,9 +36,16 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Studio Viana — Handcrafted Chenille Florals",
-  description: "Flowers that never fade, feelings that never end.",
-  icons: { icon: "/brand/logo-placeholder.svg" },
+  ...createPageMetadata({
+    description: "Flowers that never fade, feelings that never end.",
+    path: "/",
+    title: "Studio Viana — Handcrafted Chenille Florals",
+  }),
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Studio Viana — Handcrafted Chenille Florals",
+    template: "%s — Studio Viana",
+  },
 };
 
 export const viewport: Viewport = { themeColor: "#1F3326" };
@@ -67,6 +76,7 @@ export default function RootLayout({
                   {children}
                   <GlobalOrderTouchpoints />
                   <CustomCursor />
+                  <AnalyticsHooks />
                 </Atmosphere>
               </OverlayManager>
             </IntroProvider>

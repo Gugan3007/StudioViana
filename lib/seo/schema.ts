@@ -25,9 +25,51 @@ const offerFor = (product: Product): SchemaEntry => {
     availability: "https://schema.org/PreOrder",
     price: product.priceFrom,
     priceCurrency: "INR",
-    url: `${site.url}/?product=${product.slug}`,
+    url: `${site.url}/collection/${product.slug}`,
   };
 };
+
+export function createProductStructuredData(product: Product): SchemaEntry {
+  const productUrl = `${site.url}/collection/${product.slug}`;
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Product",
+        brand: { "@type": "Brand", name: site.name },
+        description: product.description,
+        image: product.gallery.map((item) => imageUrl(item.image)),
+        name: product.name,
+        offers: offerFor(product),
+        sku: product.slug,
+        url: productUrl,
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            item: site.url,
+            name: "Home",
+            position: 1,
+          },
+          {
+            "@type": "ListItem",
+            item: `${site.url}/#collection`,
+            name: "Collection",
+            position: 2,
+          },
+          {
+            "@type": "ListItem",
+            item: productUrl,
+            name: product.name,
+            position: 3,
+          },
+        ],
+      },
+    ],
+  };
+}
 
 export function createStructuredData(
   products: readonly Product[],
