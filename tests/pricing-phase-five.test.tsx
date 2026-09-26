@@ -102,8 +102,8 @@ describe("Phase 5 pricing guide", () => {
     expect(screen.getByText(/A note on customisation/)).toBeVisible();
     expect(screen.getByText(phaseFiveConfig.leadTimeLabel)).toBeVisible();
     expect(
-      screen.getByRole("link", { name: /Download Catalogue/ }),
-    ).toHaveAttribute("href", phaseFiveConfig.cataloguePath);
+      screen.queryByRole("link", { name: /Download Catalogue/ }),
+    ).not.toBeInTheDocument();
     expect(catalogueProducts).toHaveLength(8);
   });
 });

@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 import { BackToTop } from "@/components/layout/BackToTop";
 import { Footer } from "@/components/layout/Footer";
 import { catalogueProducts } from "@/lib/data/products";
-import { phaseFiveConfig, site } from "@/lib/data/site";
+import { site } from "@/lib/data/site";
 import { MotionProvider } from "@/lib/context/MotionContext";
 
 const footerMocks = vi.hoisted(() => ({
@@ -40,8 +40,8 @@ describe("Phase 5 footer", () => {
     expect(screen.getByText("Thank you for visiting")).toBeVisible();
     expect(screen.getByText(/© 2026 Studio Viana/)).toBeVisible();
     expect(
-      within(footer).getAllByRole("link", { name: "Download Catalogue" })[0],
-    ).toHaveAttribute("href", phaseFiveConfig.cataloguePath);
+      within(footer).queryByRole("link", { name: "Download Catalogue" }),
+    ).not.toBeInTheDocument();
 
     await user.type(
       screen.getByLabelText("Email for Stay in bloom"),

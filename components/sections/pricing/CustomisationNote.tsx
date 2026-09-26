@@ -33,20 +33,22 @@ export function CustomisationNote() {
           ))}
         </div>
       </div>
-      <Button
-        className="group min-h-12 justify-self-start lg:justify-self-end"
-        download
-        href={phaseFiveConfig.cataloguePath}
-        variant="outline-gold"
-      >
-        Download Catalogue (PDF)
-        <span
-          aria-hidden="true"
-          className="ml-2 inline-block transition-transform duration-300 group-hover:translate-y-1"
+      {phaseFiveConfig.cataloguePath ? (
+        <Button
+          className="group min-h-12 justify-self-start lg:justify-self-end"
+          download
+          href={phaseFiveConfig.cataloguePath}
+          variant="outline-gold"
         >
-          ↓
-        </span>
-      </Button>
+          Download Catalogue (PDF)
+          <span
+            aria-hidden="true"
+            className="ml-2 inline-block transition-transform duration-300 group-hover:translate-y-1"
+          >
+            ↓
+          </span>
+        </Button>
+      ) : null}
     </div>
   );
 }

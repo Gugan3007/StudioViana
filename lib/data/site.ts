@@ -1,4 +1,7 @@
-import { whatsappLink } from "@/lib/utils";
+const DEFAULT_WHATSAPP_NUMBER = "919488713438";
+
+const whatsappNumber =
+  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.trim() || DEFAULT_WHATSAPP_NUMBER;
 
 export const site = {
   name: "Studio Viana",
@@ -10,7 +13,7 @@ export const site = {
   email: "studioviana30@gmail.com",
   instagramHandle: "@studio_viana.in",
   instagramUrl: "https://www.instagram.com/studio_viana.in",
-  whatsappNumber: "919488713438",
+  whatsappNumber,
   whatsappDisplay: "+91 94887 13438",
   businessHours: "Orders open Mon–Sat, 10 AM – 7 PM",
   deliveryRegions: ["Tamil Nadu", "Kerala", "across India"],
@@ -23,10 +26,15 @@ export const ORDER_MODE: OrderMode = "builder";
 
 export const phaseFiveConfig = {
   bulkThreshold: 20,
-  cataloguePath: "/catalogue/studio-viana-catalogue.pdf",
+  cataloguePath: null,
   leadTimeDays: 3,
   leadTimeLabel: "Lead time: 3–7 days*",
 } as const;
+
+export function whatsappLink(message = ""): string {
+  const base = `https://wa.me/${site.whatsappNumber}`;
+  return message ? `${base}?text=${encodeURIComponent(message)}` : base;
+}
 
 export const builderOptions = {
   flowers: [
@@ -82,5 +90,3 @@ export const builderOptions = {
     "Other",
   ],
 } as const;
-
-export { whatsappLink };

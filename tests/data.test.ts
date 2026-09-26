@@ -1,7 +1,12 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { products, services } from "@/lib/data/products";
 import { site, whatsappLink } from "@/lib/data/site";
+
+afterEach(() => {
+  vi.unstubAllEnvs();
+  vi.resetModules();
+});
 
 describe("Studio Viana catalogue data", () => {
   it("preserves the approved product order and prices", () => {
@@ -70,5 +75,17 @@ describe("Studio Viana site data", () => {
 
   it("re-exports the canonical WhatsApp helper", () => {
     expect(whatsappLink("Hello")).toBe("https://wa.me/919488713438?text=Hello");
+  });
+
+  it("uses the configured WhatsApp number for both site data and links", async () => {
+    vi.stubEnv("NEXT_PUBLIC_WHATSAPP_NUMBER", "911234567890");
+    vi.resetModules();
+
+    const configured = await import("@/lib/data/site");
+
+    expect(configured.site.whatsappNumber).toBe("911234567890");
+    expect(configured.whatsappLink("Hello 🌸")).toBe(
+      "https://wa.me/911234567890?text=Hello%20%F0%9F%8C%B8",
+    );
   });
 });

@@ -10,7 +10,21 @@ import { catalogueProducts } from "@/lib/data/products";
 import { phaseFiveConfig, site } from "@/lib/data/site";
 import { openProductDetail } from "@/lib/utils/orderEntry";
 
-const groups = [
+type FooterLink = readonly [label: string, href: string];
+
+const orderLinks: readonly FooterLink[] = [
+  ["Custom Order", "#order"],
+  ["Pricing", "#pricing"],
+  ["Corporate & Bulk", "#corporate"],
+  ...(phaseFiveConfig.cataloguePath
+    ? ([["Download Catalogue", phaseFiveConfig.cataloguePath]] as const)
+    : []),
+];
+
+const groups: readonly {
+  label: string;
+  links: readonly FooterLink[];
+}[] = [
   {
     label: "Studio",
     links: [
@@ -25,12 +39,7 @@ const groups = [
   },
   {
     label: "Order",
-    links: [
-      ["Custom Order", "#order"],
-      ["Pricing", "#pricing"],
-      ["Corporate & Bulk", "#corporate"],
-      ["Download Catalogue", phaseFiveConfig.cataloguePath],
-    ],
+    links: orderLinks,
   },
   {
     label: "Connect",
@@ -40,7 +49,7 @@ const groups = [
       ["Email", `mailto:${site.email}`],
     ],
   },
-] as const;
+];
 
 function ProductLinks() {
   return (
