@@ -50,7 +50,9 @@ describe("Phase 5 pricing guide", () => {
     const rows = container.querySelectorAll("[data-pricing-row]");
 
     expect(rows).toHaveLength(9);
-    expect(screen.getByRole("heading", { name: "Pricing Guide" })).toBeVisible();
+    expect(
+      screen.getByRole("heading", { name: "Pricing Guide" }),
+    ).toBeVisible();
     expect(screen.getByText("₹120", { selector: "span" })).toBeVisible();
     expect(screen.getByText("₹150 – ₹250", { selector: "span" })).toBeVisible();
     expect(screen.getByText("On request", { selector: "span" })).toBeVisible();
@@ -73,9 +75,9 @@ describe("Phase 5 pricing guide", () => {
       screen.getByRole("button", { name: "View Medium Bouquets details" }),
     );
     expect(productListener).toHaveBeenCalledOnce();
-    expect(
-      (productListener.mock.calls[0][0] as CustomEvent).detail.slug,
-    ).toBe("medium-bouquets");
+    expect((productListener.mock.calls[0][0] as CustomEvent).detail.slug).toBe(
+      "medium-bouquets",
+    );
 
     fireEvent.click(
       screen.getByRole("button", { name: "View corporate and bulk orders" }),

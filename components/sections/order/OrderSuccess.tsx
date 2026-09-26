@@ -15,12 +15,15 @@ export function OrderSuccess() {
             {Array.from({ length: 8 }, (_, index) => (
               <ellipse
                 key={index}
-                className="[stroke-dasharray:120] [stroke-dashoffset:0] animate-[flower_draw_1.4s_ease-out_both] motion-reduce:animate-none"
+                className="animate-[flower_draw_1.4s_ease-out_both] [stroke-dasharray:120] [stroke-dashoffset:0] motion-reduce:animate-none"
                 cx="50"
                 cy="28"
                 rx="12"
                 ry="24"
-                style={{ transform: `rotate(${index * 45}deg)`, transformOrigin: "50px 50px" }}
+                style={{
+                  transform: `rotate(${index * 45}deg)`,
+                  transformOrigin: "50px 50px",
+                }}
               />
             ))}
             <circle cx="50" cy="50" r="10" />

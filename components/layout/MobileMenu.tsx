@@ -45,6 +45,23 @@ export function MobileMenu({
   useScrollLock(lenis, open);
 
   useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent("studio-viana:overlay-change", {
+        detail: { open, source: "mobile-menu" },
+      }),
+    );
+    return () => {
+      if (open) {
+        window.dispatchEvent(
+          new CustomEvent("studio-viana:overlay-change", {
+            detail: { open: false, source: "mobile-menu" },
+          }),
+        );
+      }
+    };
+  }, [open]);
+
+  useEffect(() => {
     if (!open || !root.current) return;
     const menu = root.current;
     const previousFocus = document.activeElement as HTMLElement | null;

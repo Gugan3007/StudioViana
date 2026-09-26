@@ -171,6 +171,7 @@ export function mailtoLink(subject: string, body: string) {
 /** Current submission seam; a later backend can replace this implementation. */
 export function submitOrder(order: Partial<OrderState>) {
   const href = `https://wa.me/${site.whatsappNumber}?text=${encodeURIComponent(buildOrderMessage(order))}`;
-  if (typeof window !== "undefined") window.open(href, "_blank", "noopener,noreferrer");
+  if (typeof window !== "undefined")
+    window.open(href, "_blank", "noopener,noreferrer");
   return href;
 }

@@ -404,7 +404,7 @@ test("desktop without JavaScript keeps the full collection reachable", async ({
     viewport: { width: 1440, height: 900 },
   });
   const page = await context.newPage();
-  await page.goto("/", { waitUntil: "load" });
+  await page.goto("/", { waitUntil: "domcontentloaded", timeout: 30_000 });
   const gallery = page.locator("[data-collection-gallery]");
   const vertical = gallery.locator('[data-gallery-mode="vertical"]');
   await expect(

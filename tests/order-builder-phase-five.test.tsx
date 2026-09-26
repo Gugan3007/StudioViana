@@ -57,18 +57,26 @@ describe("Phase 5 order builder", () => {
     render(<OrderBuilder />);
 
     await user.click(screen.getByRole("button", { name: /Medium Bouquets/ }));
-    await user.click(screen.getByRole("button", { name: "Continue to Flowers" }));
-    expect(screen.getByRole("heading", { name: "Choose your flowers" })).toBeVisible();
+    await user.click(
+      screen.getByRole("button", { name: "Continue to Flowers" }),
+    );
+    expect(
+      screen.getByRole("heading", { name: "Choose your flowers" }),
+    ).toBeVisible();
 
     await user.click(screen.getByRole("button", { name: "Lily" }));
     await user.click(screen.getByRole("button", { name: "Tulip" }));
     await user.click(screen.getByRole("button", { name: "Violet Edit" }));
-    await user.click(screen.getByRole("button", { name: "Continue to Palette" }));
+    await user.click(
+      screen.getByRole("button", { name: "Continue to Palette" }),
+    );
 
     await user.click(screen.getByRole("button", { name: "Lilac" }));
     await user.click(screen.getByRole("button", { name: "Ivory White" }));
     await user.click(screen.getByRole("radio", { name: "Sheer white" }));
-    await user.click(screen.getByRole("button", { name: "Continue to Details" }));
+    await user.click(
+      screen.getByRole("button", { name: "Continue to Details" }),
+    );
 
     await user.click(screen.getByRole("button", { name: "Anniversary" }));
     await user.type(
@@ -88,21 +96,29 @@ describe("Phase 5 order builder", () => {
     );
     await user.click(screen.getByRole("button", { name: "Review your order" }));
 
-    expect(screen.getByRole("heading", { name: "Review your order" })).toBeVisible();
+    expect(
+      screen.getByRole("heading", { name: "Review your order" }),
+    ).toBeVisible();
     expect(screen.getAllByText("₹550").length).toBeGreaterThan(0);
     const whatsapp = screen.getByRole("link", {
       name: "Send order on WhatsApp",
     });
-    const decodedWhatsApp = decodeURIComponent(whatsapp.getAttribute("href") ?? "");
+    const decodedWhatsApp = decodeURIComponent(
+      whatsapp.getAttribute("href") ?? "",
+    );
     expect(decodedWhatsApp).toContain("Medium Bouquet (Violet Edit)");
     expect(decodedWhatsApp).toContain("Palette: Lilac, Ivory White");
-    expect(screen.getByRole("link", { name: "Send by email instead" })).toHaveAttribute(
+    expect(
+      screen.getByRole("link", { name: "Send by email instead" }),
+    ).toHaveAttribute(
       "href",
       expect.stringContaining("mailto:studioviana30@gmail.com"),
     );
 
     await user.click(screen.getByRole("button", { name: "Edit palette" }));
-    expect(screen.getByRole("heading", { name: "Choose a palette" })).toBeVisible();
+    expect(
+      screen.getByRole("heading", { name: "Choose a palette" }),
+    ).toBeVisible();
   });
 
   it("prefills a product at step two and exposes quantity and size controls", async () => {
@@ -115,7 +131,9 @@ describe("Phase 5 order builder", () => {
         },
       }),
     );
-    expect(await screen.findByRole("heading", { name: "Choose your flowers" })).toBeVisible();
+    expect(
+      await screen.findByRole("heading", { name: "Choose your flowers" }),
+    ).toBeVisible();
     expect(screen.getByText("3", { selector: "output" })).toBeVisible();
     expect(screen.getByRole("button", { name: "Rose" })).toHaveAttribute(
       "aria-pressed",
@@ -127,7 +145,9 @@ describe("Phase 5 order builder", () => {
       quantity: 1,
       size: "2 blooms",
     });
-    expect(await screen.findByRole("radio", { name: "2 blooms" })).toBeChecked();
+    expect(
+      await screen.findByRole("radio", { name: "2 blooms" }),
+    ).toBeChecked();
     expect(screen.getAllByText("₹250").length).toBeGreaterThan(0);
   });
 
@@ -155,8 +175,12 @@ describe("Phase 5 order builder", () => {
     await user.click(screen.getByRole("button", { name: /View summary/ }));
     const dialog = screen.getByRole("dialog", { name: "Order summary" });
     expect(dialog).toBeVisible();
-    await user.click(within(dialog).getByRole("button", { name: "Close summary" }));
-    expect(screen.queryByRole("dialog", { name: "Order summary" })).not.toBeInTheDocument();
+    await user.click(
+      within(dialog).getByRole("button", { name: "Close summary" }),
+    );
+    expect(
+      screen.queryByRole("dialog", { name: "Order summary" }),
+    ).not.toBeInTheDocument();
   });
 
   it("shows the floral success state and can start another order", async () => {
@@ -176,9 +200,15 @@ describe("Phase 5 order builder", () => {
     });
     render(<OrderBuilder />);
 
-    fireEvent.click(screen.getByRole("link", { name: "Send order on WhatsApp" }));
+    fireEvent.click(
+      screen.getByRole("link", { name: "Send order on WhatsApp" }),
+    );
     expect(screen.getByRole("heading", { name: "Thank you!" })).toBeVisible();
-    await user.click(screen.getByRole("button", { name: "Start another order" }));
-    expect(screen.getByRole("heading", { name: "Choose your piece" })).toBeVisible();
+    await user.click(
+      screen.getByRole("button", { name: "Start another order" }),
+    );
+    expect(
+      screen.getByRole("heading", { name: "Choose your piece" }),
+    ).toBeVisible();
   });
 });

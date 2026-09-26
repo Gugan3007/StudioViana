@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { PriceTag } from "@/components/ui/PriceTag";
 import type { Product, ProductVariant } from "@/lib/data/products";
 import { ORDER_MODE } from "@/lib/data/site";
+import { useBagStore } from "@/lib/store/bagStore";
 import { whatsappLink } from "@/lib/utils";
 import { openProductOrder } from "@/lib/utils/orderEntry";
 import {
@@ -41,6 +42,7 @@ export function ProductOptions({
   onChange,
   product,
 }: ProductOptionsProps) {
+  const addItem = useBagStore((state) => state.addItem);
   const occasionId = useId();
   const messageId = useId();
   const selectedVariant = product.variants.find(
@@ -230,6 +232,25 @@ export function ProductOptions({
           variant="solid-forest"
         >
           Order on WhatsApp
+        </Button>
+        <Button
+          onClick={() =>
+            addItem({
+              flower: configuration.flower,
+              palette: configuration.palette,
+              productSlug: product.slug,
+              quantity: configuration.quantity ?? 1,
+              size: configuration.size,
+              unitPrice:
+                product.slug === "single-stem-florals"
+                  ? product.priceFrom
+                  : orderTotal(product, { ...configuration, quantity: 1 }),
+              variant: configuration.variant,
+            })
+          }
+          variant="outline-gold"
+        >
+          Add to order
         </Button>
         <Button
           href={whatsappLink(enquiryMessage(product))}

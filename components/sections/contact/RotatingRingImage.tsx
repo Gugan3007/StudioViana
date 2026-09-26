@@ -14,16 +14,36 @@ export function RotatingRingImage() {
       <svg
         aria-hidden="true"
         className="absolute inset-0 h-full w-full text-gold-light"
-        style={{ animation: shouldReduceMotion ? "none" : "contact-ring-spin 28s linear infinite" }}
+        style={{
+          animation: shouldReduceMotion
+            ? "none"
+            : "contact-ring-spin 28s linear infinite",
+        }}
         viewBox="0 0 340 340"
       >
         <defs>
-          <path id={pathId} d="M170,170 m-145,0 a145,145 0 1,1 290,0 a145,145 0 1,1 -290,0" />
+          <path
+            id={pathId}
+            d="M170,170 m-145,0 a145,145 0 1,1 290,0 a145,145 0 1,1 -290,0"
+          />
         </defs>
-        <circle cx="170" cy="170" fill="none" r="146" stroke="currentColor" strokeOpacity=".65" />
-        <text fill="currentColor" fontFamily="var(--font-poppins)" fontSize="10" letterSpacing="4">
+        <circle
+          cx="170"
+          cy="170"
+          fill="none"
+          r="146"
+          stroke="currentColor"
+          strokeOpacity=".65"
+        />
+        <text
+          fill="currentColor"
+          fontFamily="var(--font-poppins)"
+          fontSize="10"
+          letterSpacing="4"
+        >
           <textPath href={`#${pathId}`} startOffset="1%">
-            CURATED WITH LOVE • STUDIO VIANA • CURATED WITH LOVE • STUDIO VIANA •
+            CURATED WITH LOVE • STUDIO VIANA • CURATED WITH LOVE • STUDIO VIANA
+            •
           </textPath>
         </text>
       </svg>

@@ -55,6 +55,21 @@ export function Lightbox({
   const [zoomed, setZoomed] = useState(false);
   const current = items[navigation.index] ?? items[0];
 
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent("studio-viana:overlay-change", {
+        detail: { open: true, source: "lightbox" },
+      }),
+    );
+    return () => {
+      window.dispatchEvent(
+        new CustomEvent("studio-viana:overlay-change", {
+          detail: { open: false, source: "lightbox" },
+        }),
+      );
+    };
+  }, []);
+
   const navigate = useCallback(
     (direction: -1 | 1) => {
       setZoomed(false);

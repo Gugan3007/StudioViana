@@ -1,10 +1,7 @@
 import type { Product } from "@/lib/data/products";
 import { ORDER_MODE, type OrderMode } from "@/lib/data/site";
 import { whatsappLink } from "@/lib/utils";
-import {
-  type OrderConfiguration,
-  orderMessage,
-} from "@/lib/utils/whatsapp";
+import { type OrderConfiguration, orderMessage } from "@/lib/utils/whatsapp";
 
 export interface OrderBuilderEventDetail {
   configuration?: OrderConfiguration;
@@ -39,9 +36,12 @@ export function openProductOrder(
   }
 
   window.dispatchEvent(
-    new CustomEvent<OrderBuilderEventDetail>("studio-viana:open-order-builder", {
-      detail: { configuration, productSlug: product.slug },
-    }),
+    new CustomEvent<OrderBuilderEventDetail>(
+      "studio-viana:open-order-builder",
+      {
+        detail: { configuration, productSlug: product.slug },
+      },
+    ),
   );
   document.querySelector("#order")?.scrollIntoView({
     behavior: "smooth",

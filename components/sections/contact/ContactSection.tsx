@@ -25,7 +25,9 @@ export function ContactSection() {
       <AmbientParticles className="opacity-50 motion-reduce:hidden" count={6} />
       <Container className="relative text-center">
         <RotatingRingImage />
-        <SectionLabel className="mt-9 text-gold-light">G E T &nbsp; I N &nbsp; T O U C H</SectionLabel>
+        <SectionLabel className="mt-9 text-gold-light">
+          G E T &nbsp; I N &nbsp; T O U C H
+        </SectionLabel>
         <SplitTextReveal
           as="h2"
           className="mx-auto mt-5 max-w-5xl text-balance font-display text-[clamp(3.3rem,7vw,7.3rem)] leading-[0.94] tracking-[-0.05em] text-cream"
@@ -36,9 +38,24 @@ export function ContactSection() {
         </SplitTextReveal>
 
         <div className="mx-auto mt-12 grid max-w-6xl gap-x-10 text-left md:grid-cols-3">
-          <ContactRow copyLabel="Copy email" href={`mailto:${site.email}`} label="Email" value={site.email} />
-          <ContactRow copyLabel="Copy Instagram" href={site.instagramUrl} label="Instagram" value={site.instagramHandle} />
-          <ContactRow copyLabel="Copy WhatsApp" href={whatsappLink()} label="WhatsApp" value={site.whatsappDisplay} />
+          <ContactRow
+            copyLabel="Copy email"
+            href={`mailto:${site.email}`}
+            label="Email"
+            value={site.email}
+          />
+          <ContactRow
+            copyLabel="Copy Instagram"
+            href={site.instagramUrl}
+            label="Instagram"
+            value={site.instagramHandle}
+          />
+          <ContactRow
+            copyLabel="Copy WhatsApp"
+            href={whatsappLink()}
+            label="WhatsApp"
+            value={site.whatsappDisplay}
+          />
         </div>
 
         <div className="mx-auto mt-10 grid max-w-3xl gap-3 sm:grid-cols-2">
@@ -51,14 +68,24 @@ export function ContactSection() {
           >
             Chat on WhatsApp
           </Button>
-          <Button className="border-cream text-cream" href={`mailto:${site.email}`} variant="outline-gold">
+          <Button
+            className="border-cream text-cream"
+            href={`mailto:${site.email}`}
+            variant="outline-gold"
+          >
             Send an Email
           </Button>
         </div>
 
         <div className="mx-auto mt-10 flex max-w-4xl flex-col items-center justify-center gap-3 text-xs tracking-[0.08em] text-cream/70 sm:flex-row sm:gap-8">
-          <p>Handcrafted in {site.location} · Delivering across {site.deliveryRegions.join(", ")}</p>
-          <span aria-hidden="true" className="hidden h-4 w-px bg-gold/45 sm:block" />
+          <p>
+            Handcrafted in {site.location} · Delivering across{" "}
+            {site.deliveryRegions.join(", ")}
+          </p>
+          <span
+            aria-hidden="true"
+            className="hidden h-4 w-px bg-gold/45 sm:block"
+          />
           <p>{site.businessHours}</p>
         </div>
       </Container>

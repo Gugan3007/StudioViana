@@ -12,11 +12,29 @@ import { estimateOrder, formatINR } from "@/lib/utils/formatINR";
 
 export function MobileSummarySheet() {
   const [open, setOpen] = useState(false);
+  const [inOrderView, setInOrderView] = useState(false);
   const close = useRef<HTMLButtonElement>(null);
   const order = useOrderStore();
   const { lenis } = useLenis();
   const shouldReduceMotion = useReducedMotion();
   useScrollLock(lenis, open);
+
+  useEffect(() => {
+    const orderSection = document.querySelector("#order");
+    if (!orderSection || typeof IntersectionObserver === "undefined") {
+      const frame = requestAnimationFrame(() => setInOrderView(true));
+      return () => cancelAnimationFrame(frame);
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setInOrderView(entry.isIntersecting);
+        if (!entry.isIntersecting) setOpen(false);
+      },
+      { threshold: 0.05 },
+    );
+    observer.observe(orderSection);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     window.dispatchEvent(
@@ -36,15 +54,21 @@ export function MobileSummarySheet() {
     };
   }, [open]);
 
+  if (!inOrderView) return null;
+
   return (
     <div className="lg:hidden">
       <button
-        className="fixed inset-x-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-[65] flex min-h-14 items-center justify-between rounded-full border border-gold/40 bg-forest px-5 text-cream shadow-soft"
+        className="fixed inset-x-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-[80] flex min-h-14 items-center justify-between rounded-full border border-gold/40 bg-forest px-5 text-cream shadow-soft"
         onClick={() => setOpen(true)}
         type="button"
       >
-        <span className="font-display text-lg">Est. {formatINR(estimateOrder(order))}</span>
-        <span className="text-[0.58rem] uppercase tracking-[0.14em]">View summary ↑</span>
+        <span className="font-display text-lg">
+          Est. {formatINR(estimateOrder(order))}
+        </span>
+        <span className="text-[0.58rem] uppercase tracking-[0.14em]">
+          View summary ↑
+        </span>
       </button>
       <AnimatePresence>
         {open ? (

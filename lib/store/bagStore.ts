@@ -96,10 +96,11 @@ useBagStore.subscribe((state) => schedulePersistence(state.items));
 export function hydrateBagStore() {
   if (typeof window === "undefined") return;
   try {
-    const saved = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "null") as
-      | { items?: BagItem[] }
-      | null;
-    if (Array.isArray(saved?.items)) useBagStore.setState({ items: saved.items });
+    const saved = JSON.parse(
+      window.localStorage.getItem(STORAGE_KEY) ?? "null",
+    ) as { items?: BagItem[] } | null;
+    if (Array.isArray(saved?.items))
+      useBagStore.setState({ items: saved.items });
   } catch {
     window.localStorage.removeItem(STORAGE_KEY);
   }

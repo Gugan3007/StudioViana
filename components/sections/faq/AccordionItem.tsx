@@ -57,7 +57,9 @@ export function AccordionItem({ item, onToggle, open }: AccordionItemProps) {
         </button>
       </h3>
       {shouldReduceMotion ? (
-        open ? panel : null
+        open ? (
+          panel
+        ) : null
       ) : (
         <AnimatePresence initial={false}>
           {open ? (

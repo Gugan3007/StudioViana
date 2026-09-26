@@ -13,6 +13,7 @@
 ## Task 1: Configuration, validation, stores, and message foundations
 
 **Files:**
+
 - Modify: `package.json`, `package-lock.json`, `lib/data/site.ts`, `lib/utils/whatsapp.ts`
 - Create: `lib/utils/formatINR.ts`, `lib/validation/orderSchema.ts`, `lib/store/orderStore.ts`, `lib/store/bagStore.ts`, `lib/data/faq.ts`, `lib/seo/schema.ts`
 - Test: `tests/phase-five-foundations.test.ts`, `tests/phase-five-stores.test.ts`
@@ -28,6 +29,7 @@
 ## Task 2: Pricing guide and product-detail/order routing
 
 **Files:**
+
 - Create: `components/sections/pricing/PricingSection.tsx`, `components/sections/pricing/PricingRow.tsx`, `components/sections/pricing/CustomisationNote.tsx`, `lib/utils/orderEntry.ts`
 - Modify: `components/sections/collection/CollectionSection.tsx`, `components/sections/collection/ProductPanel.tsx`, `components/product/ProductOptions.tsx`
 - Test: `tests/pricing-phase-five.test.tsx`, `tests/order-entry-phase-five.test.tsx`
@@ -42,6 +44,7 @@
 ## Task 3: Five-step custom order builder
 
 **Files:**
+
 - Create: `components/sections/order/OrderBuilder.tsx`, `components/sections/order/StepProgress.tsx`, `components/sections/order/StepPiece.tsx`, `components/sections/order/StepFlowers.tsx`, `components/sections/order/StepPalette.tsx`, `components/sections/order/StepDetails.tsx`, `components/sections/order/StepReview.tsx`, `components/sections/order/OrderSummary.tsx`, `components/sections/order/MobileSummarySheet.tsx`, `components/sections/order/MessageCardPreview.tsx`, `components/sections/order/OrderSuccess.tsx`
 - Test: `tests/order-builder-phase-five.test.tsx`, `tests/order-builder-validation.test.tsx`
 
@@ -55,6 +58,7 @@
 ## Task 4: Corporate enquiry and FAQ
 
 **Files:**
+
 - Create: `components/sections/corporate/CorporateSection.tsx`, `components/sections/corporate/BulkEnquiryForm.tsx`, `components/sections/corporate/ClientLogos.tsx`, `components/sections/faq/FAQSection.tsx`, `components/sections/faq/AccordionItem.tsx`
 - Test: `tests/corporate-phase-five.test.tsx`, `tests/faq-phase-five.test.tsx`
 
@@ -68,6 +72,7 @@
 ## Task 5: Contact and footer
 
 **Files:**
+
 - Create: `components/sections/contact/ContactSection.tsx`, `components/sections/contact/ContactRow.tsx`, `components/sections/contact/RotatingRingImage.tsx`, `components/layout/Footer.tsx`, `components/layout/BigWordmark.tsx`, `components/layout/BackToTop.tsx`
 - Test: `tests/contact-phase-five.test.tsx`, `tests/footer-phase-five.test.tsx`
 
@@ -81,6 +86,7 @@
 ## Task 6: Global bag, floating WhatsApp, and navigation
 
 **Files:**
+
 - Create: `components/layout/FloatingWhatsApp.tsx`, `components/layout/OrderBagButton.tsx`, `components/layout/OrderBagDrawer.tsx`, `lib/context/OverlayContext.tsx`
 - Modify: `components/layout/Navbar.tsx`, `components/layout/MobileMenu.tsx`, `components/product/ProductDetail.tsx`, `components/product/ProductOptions.tsx`, `app/layout.tsx`
 - Test: `tests/order-bag-phase-five.test.tsx`, `tests/global-touchpoints-phase-five.test.tsx`, `tests/navigation.test.tsx`, `tests/product-detail.test.tsx`
@@ -95,6 +101,7 @@
 ## Task 7: Page composition, lazy boundaries, and SEO
 
 **Files:**
+
 - Modify: `app/page.tsx`, `app/layout.tsx`, `app/globals.css`
 - Create: `components/sections/phase-five/PhaseFiveSections.tsx`
 - Test: `tests/home-page.test.tsx`, `tests/phase-five-page.test.tsx`
@@ -109,6 +116,7 @@
 ## Task 8: Browser verification, fidelity, and handoff documentation
 
 **Files:**
+
 - Create: `tests/browser/phase-five.spec.ts`, `docs/phase-5-conversion.md`, `docs/superpowers/phase-5-fidelity-ledger.md`
 - Modify: any Phase 5 file only where verification exposes a defect
 

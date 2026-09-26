@@ -9,29 +9,25 @@ import { HomeHero } from "@/components/sections/home/HomeHero";
 import { WhatWeDo } from "@/components/sections/home/WhatWeDo";
 import { InstagramStrip } from "@/components/sections/instagram/InstagramStrip";
 import { VelocityMarquee } from "@/components/sections/instagram/VelocityMarquee";
+import { PhaseFiveSections } from "@/components/sections/phase-five/PhaseFiveSections";
 import { Testimonials } from "@/components/sections/testimonials/Testimonials";
-import { Container } from "@/components/ui/Container";
-import { Section } from "@/components/ui/Section";
-import { SectionLabel } from "@/components/ui/SectionLabel";
-
-const shells = [
-  {
-    id: "pricing",
-    label: "Phase 5",
-    heading: "Made for your moment",
-    tone: "soft" as const,
-  },
-  {
-    id: "contact",
-    label: "Phase 5",
-    heading: "Begin a conversation",
-    tone: "light" as const,
-  },
-] as const;
+import { faqItems } from "@/lib/data/faq";
+import { catalogueProducts } from "@/lib/data/products";
+import { createStructuredData } from "@/lib/seo/schema";
 
 export default function Home() {
+  const structuredData = createStructuredData(catalogueProducts, faqItems);
   return (
     <main className="overflow-clip">
+      {structuredData.map((entry, index) => (
+        <script
+          key={`${String(entry["@type"])}-${index}`}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(entry).replace(/</g, "\\u003c"),
+          }}
+          type="application/ld+json"
+        />
+      ))}
       <IntroSection />
       <HomeHero />
       <AboutStudio />
@@ -44,31 +40,7 @@ export default function Home() {
       <Testimonials />
       <InstagramStrip />
       <VelocityMarquee />
-
-      {shells.map((shell) => {
-        const headingId = `${shell.id}-heading`;
-        return (
-          <Section
-            key={shell.id}
-            id={shell.id}
-            aria-labelledby={headingId}
-            className="flex min-h-[62svh] items-center"
-            tone={shell.tone}
-          >
-            <Container>
-              <div className="border-t border-gold/30 pt-8">
-                <SectionLabel>{shell.label}</SectionLabel>
-                <h2
-                  className="mt-5 max-w-4xl font-display text-[clamp(2.7rem,6vw,5.8rem)] leading-[1.02] tracking-[-0.04em] text-charcoal"
-                  id={headingId}
-                >
-                  {shell.heading}
-                </h2>
-              </div>
-            </Container>
-          </Section>
-        );
-      })}
+      <PhaseFiveSections />
     </main>
   );
 }

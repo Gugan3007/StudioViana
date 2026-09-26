@@ -20,7 +20,10 @@ export interface PricingRowData {
   readonly product: Product;
 }
 
-function AnimatedPrice({ highPrice, lowPrice }: Omit<PricingRowData, "details" | "product">) {
+function AnimatedPrice({
+  highPrice,
+  lowPrice,
+}: Omit<PricingRowData, "details" | "product">) {
   const finalLow = lowPrice ?? 0;
   const finalHigh = highPrice;
   const [values, setValues] = useState({ high: finalHigh ?? 0, low: finalLow });
@@ -78,7 +81,12 @@ function AnimatedPrice({ highPrice, lowPrice }: Omit<PricingRowData, "details" |
   );
 }
 
-export function PricingRow({ details, highPrice, lowPrice, product }: PricingRowData) {
+export function PricingRow({
+  details,
+  highPrice,
+  lowPrice,
+  product,
+}: PricingRowData) {
   const corporate = product.slug === "corporate-bulk-orders";
   const revealCorporate = () =>
     document.querySelector("#corporate")?.scrollIntoView({
@@ -95,7 +103,7 @@ export function PricingRow({ details, highPrice, lowPrice, product }: PricingRow
 
   return (
     <article
-      className="group relative grid overflow-hidden border-b border-gold/35 transition-colors duration-500 hover:bg-cream-soft [&.pricing-visible_[data-row-line]]:scale-x-100 md:grid-cols-[minmax(13rem,1.1fr)_minmax(16rem,1.35fr)_minmax(7rem,.55fr)_minmax(5.5rem,.35fr)] md:items-center"
+      className="group relative grid overflow-hidden border-b border-gold/35 transition-colors duration-500 hover:bg-cream-soft md:grid-cols-[minmax(13rem,1.1fr)_minmax(16rem,1.35fr)_minmax(7rem,.55fr)_minmax(5.5rem,.35fr)] md:items-center [&.pricing-visible_[data-row-line]]:scale-x-100"
       data-pricing-row
     >
       <span
@@ -105,7 +113,9 @@ export function PricingRow({ details, highPrice, lowPrice, product }: PricingRow
       />
       <button
         aria-label={
-          corporate ? "View corporate and bulk orders" : `View ${product.name} details`
+          corporate
+            ? "View corporate and bulk orders"
+            : `View ${product.name} details`
         }
         className="flex min-h-20 items-center gap-4 px-4 py-5 text-left md:min-h-24 md:px-5"
         onClick={viewDetails}
@@ -145,7 +155,10 @@ export function PricingRow({ details, highPrice, lowPrice, product }: PricingRow
           }
         }}
       >
-        Order <span aria-hidden="true" className="ml-2">→</span>
+        Order{" "}
+        <span aria-hidden="true" className="ml-2">
+          →
+        </span>
       </a>
     </article>
   );

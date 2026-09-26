@@ -27,26 +27,31 @@ export function ContactRow({ copyLabel, href, label, value }: ContactRowProps) {
 
   return (
     <div
-      className="group relative grid min-h-24 grid-cols-[1fr_auto] items-end gap-4 border-b border-gold/35 pb-4 transition-colors data-[copied=true]:bg-gold/10"
+      className="group relative grid min-h-24 min-w-0 grid-cols-[minmax(0,1fr)_auto] items-end gap-4 border-b border-gold/35 pb-4 transition-colors data-[copied=true]:bg-gold/10"
       data-copied={copied}
     >
-      <div>
+      <div className="min-w-0">
         <p className="text-[0.55rem] uppercase tracking-[0.2em] text-gold-light">
           {label}
         </p>
         <a
-          className="mt-2 inline-flex items-center font-display text-[clamp(1.15rem,2.1vw,1.7rem)] leading-tight text-cream"
+          className="mt-2 inline-flex max-w-full items-center break-words font-display text-[clamp(0.95rem,1.25vw,1.25rem)] leading-tight text-cream [overflow-wrap:anywhere]"
           href={href}
           rel={href.startsWith("http") ? "noreferrer" : undefined}
           target={href.startsWith("http") ? "_blank" : undefined}
         >
           {value}
-          <span aria-hidden="true" className="ml-3 transition-transform duration-300 group-hover:translate-x-1">↗</span>
+          <span
+            aria-hidden="true"
+            className="ml-3 transition-transform duration-300 group-hover:translate-x-1"
+          >
+            ↗
+          </span>
         </a>
       </div>
       <button
         aria-label={copyLabel}
-        className="relative grid h-11 w-11 place-items-center rounded-full border border-gold/40 text-gold-light"
+        className="relative z-10 grid h-11 w-11 shrink-0 place-items-center rounded-full border border-gold/40 text-gold-light"
         onClick={copy}
         type="button"
       >
@@ -57,7 +62,10 @@ export function ContactRow({ copyLabel, href, label, value }: ContactRowProps) {
           </span>
         ) : null}
       </button>
-      <span aria-hidden="true" className="absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 bg-gold transition-transform duration-500 group-hover:scale-x-100" />
+      <span
+        aria-hidden="true"
+        className="absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 bg-gold transition-transform duration-500 group-hover:scale-x-100"
+      />
     </div>
   );
 }

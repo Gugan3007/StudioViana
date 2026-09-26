@@ -26,7 +26,11 @@ export function StepFlowers() {
         Pick one or more favourites, or leave the composition to the studio.
       </p>
 
-      <div className="mt-7 flex flex-wrap gap-2" role="group" aria-label="Flowers">
+      <div
+        className="mt-7 flex flex-wrap gap-2"
+        role="group"
+        aria-label="Flowers"
+      >
         {builderOptions.flowers.map((flower) => (
           <button
             key={flower}
@@ -96,13 +100,18 @@ export function StepFlowers() {
           >
             −
           </button>
-          <output aria-live="polite" className="w-8 text-center font-display text-xl">
+          <output
+            aria-live="polite"
+            className="w-8 text-center font-display text-xl"
+          >
             {order.quantity}
           </output>
           <button
             aria-label="Increase quantity"
             className="grid h-11 w-11 place-items-center border border-gold/40"
-            onClick={() => order.update({ quantity: Math.min(500, order.quantity + 1) })}
+            onClick={() =>
+              order.update({ quantity: Math.min(500, order.quantity + 1) })
+            }
             type="button"
           >
             +

@@ -111,16 +111,18 @@ useOrderStore.subscribe(schedulePersistence);
 export function hydrateOrderStore() {
   if (typeof window === "undefined") return;
   try {
-    const saved = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "null") as
-      | Partial<OrderState>
-      | null;
+    const saved = JSON.parse(
+      window.localStorage.getItem(STORAGE_KEY) ?? "null",
+    ) as Partial<OrderState> | null;
     if (saved && typeof saved === "object") {
       useOrderStore.setState({
         ...initialOrderState,
         ...saved,
         bagItems: Array.isArray(saved.bagItems) ? saved.bagItems : [],
         flowers: Array.isArray(saved.flowers) ? saved.flowers : [],
-        palettes: Array.isArray(saved.palettes) ? saved.palettes.slice(0, 3) : [],
+        palettes: Array.isArray(saved.palettes)
+          ? saved.palettes.slice(0, 3)
+          : [],
       });
     }
   } catch {

@@ -231,7 +231,12 @@ test("tablet and 320px mobile use their reduced layer contracts without overflow
     "data-pin-vh",
     "220",
   );
-  expect(await page.locator("[data-intro-particle]").count()).toBe(6);
+  expect(
+    await page
+      .getByTestId("intro-section")
+      .locator("[data-intro-particle]")
+      .count(),
+  ).toBe(6);
   await expectHealthyDocument(page);
 
   await page.setViewportSize({ width: 320, height: 760 });
@@ -387,10 +392,9 @@ test("reduced motion uses a static unpinned flow", async ({ page }) => {
   await expect(
     page.getByRole("img", { name: /macro handcrafted/i }),
   ).toBeVisible();
-  await expect(page.locator("[data-intro-particles]")).toHaveCSS(
-    "display",
-    "none",
-  );
+  await expect(
+    page.getByTestId("intro-section").locator("[data-intro-particles]"),
+  ).toHaveCSS("display", "none");
   for (const token of await page.locator("#home [data-split-token]").all()) {
     await expect(token).toBeVisible();
   }

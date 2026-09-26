@@ -47,7 +47,11 @@ export function OrderSummary({ compact = false }: { compact?: boolean }) {
   ].filter(Boolean);
 
   return (
-    <div className={compact ? "p-5" : "border border-gold/35 bg-cream-soft p-6 shadow-soft"}>
+    <div
+      className={
+        compact ? "p-5" : "border border-gold/35 bg-cream-soft p-6 shadow-soft"
+      }
+    >
       <div className="flex items-start justify-between gap-4 border-b border-gold/30 pb-4">
         <div>
           <p className="font-display text-2xl">Order Summary</p>
@@ -68,15 +72,26 @@ export function OrderSummary({ compact = false }: { compact?: boolean }) {
           initial={{ opacity: 0 }}
         >
           <div className="relative aspect-square overflow-hidden bg-cream">
-            <Image fill alt="" className="object-cover" sizes="96px" src={image} />
+            <Image
+              fill
+              alt=""
+              className="object-cover"
+              sizes="96px"
+              src={image}
+            />
           </div>
           <div>
             <p className="font-display text-xl">
-              {product?.name ?? (order.pieceSlug ? "Something custom" : "Your piece")}
+              {product?.name ??
+                (order.pieceSlug ? "Something custom" : "Your piece")}
             </p>
-            {order.variant ? <p className="text-xs text-muted">{order.variant}</p> : null}
+            {order.variant ? (
+              <p className="text-xs text-muted">{order.variant}</p>
+            ) : null}
             {order.quantity > 1 ? (
-              <p className="mt-2 text-xs text-muted">Quantity · {order.quantity}</p>
+              <p className="mt-2 text-xs text-muted">
+                Quantity · {order.quantity}
+              </p>
             ) : null}
           </div>
         </motion.div>
@@ -84,7 +99,11 @@ export function OrderSummary({ compact = false }: { compact?: boolean }) {
       {selections.length ? (
         <ul className="mt-5 space-y-2 border-t border-gold/25 pt-4 text-xs text-muted">
           {selections.map((selection) => (
-            <motion.li key={selection} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <motion.li
+              key={selection}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
               {selection}
             </motion.li>
           ))}
@@ -95,9 +114,14 @@ export function OrderSummary({ compact = false }: { compact?: boolean }) {
           <p className="text-[0.55rem] uppercase tracking-[0.14em] text-muted">
             Estimated total
           </p>
-          <p className="mt-1 text-[0.58rem] text-muted">Final price confirmed with you</p>
+          <p className="mt-1 text-[0.58rem] text-muted">
+            Final price confirmed with you
+          </p>
         </div>
-        <p className="font-display text-3xl tabular-nums" data-testid="order-estimate">
+        <p
+          className="font-display text-3xl tabular-nums"
+          data-testid="order-estimate"
+        >
           <AnimatedTotal value={estimateOrder(order)} />
         </p>
       </div>

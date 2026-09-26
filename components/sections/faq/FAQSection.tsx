@@ -37,7 +37,9 @@ export function FAQSection() {
               <AccordionItem
                 key={item.id}
                 item={item}
-                onToggle={() => setOpenId((current) => (current === item.id ? null : item.id))}
+                onToggle={() =>
+                  setOpenId((current) => (current === item.id ? null : item.id))
+                }
                 open={openId === item.id}
               />
             ))}

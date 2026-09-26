@@ -172,6 +172,34 @@ html.lenis body {
   }
 }
 
+@keyframes whatsapp-pulse {
+  0%,
+  78% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  84% {
+    opacity: 0.55;
+  }
+  96%,
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+
+@keyframes bag-bounce {
+  0% {
+    transform: scale(0.55);
+  }
+  60% {
+    transform: scale(1.18);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 /* Phase 1 cinematic intro */
 
 .intro-grain {

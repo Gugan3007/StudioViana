@@ -74,6 +74,7 @@ function renderNavigation() {
         <section id="collection" />
         <section id="gallery" />
         <section id="pricing" />
+        <section id="order" />
         <section id="contact" />
       </main>
     </IntroProvider>,
@@ -117,6 +118,13 @@ describe("Navbar", () => {
       "href",
       "#gallery",
     );
+    expect(screen.getByRole("link", { name: "Order" })).toHaveAttribute(
+      "href",
+      "#order",
+    );
+    expect(
+      screen.getAllByRole("button", { name: "Open order bag, 0 items" }).length,
+    ).toBeGreaterThan(0);
   });
 
   it("smooth-scrolls to anchors with the fixed-header offset", async () => {
@@ -144,6 +152,7 @@ describe("Navbar", () => {
     expect(navigationMocks.lenis.stop).toHaveBeenCalledOnce();
     expect(within(dialog).getByText("01")).toBeVisible();
     expect(within(dialog).getByText("06")).toBeVisible();
+    expect(within(dialog).getByText("07")).toBeVisible();
     expect(within(dialog).getByText("studioviana30@gmail.com")).toBeVisible();
     expect(within(dialog).getByText("@studio_viana.in")).toBeVisible();
 

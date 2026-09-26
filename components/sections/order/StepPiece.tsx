@@ -89,7 +89,9 @@ export function StepPiece() {
           <span className="grid aspect-[4/3] place-items-center border border-dashed border-gold/40 font-display text-4xl text-gold">
             +
           </span>
-          <span className="mt-3 block font-display text-lg">Something custom</span>
+          <span className="mt-3 block font-display text-lg">
+            Something custom
+          </span>
           <span className="mt-1 block text-[0.55rem] uppercase tracking-[0.12em] text-muted">
             Tailored quote
           </span>

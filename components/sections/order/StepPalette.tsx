@@ -28,7 +28,11 @@ export function StepPalette() {
       <p className="mt-3 text-sm font-light text-muted">
         Select up to three colours, then choose how the piece should be wrapped.
       </p>
-      <div className="mt-7 grid grid-cols-3 gap-4 sm:grid-cols-5" role="group" aria-label="Colour palette">
+      <div
+        className="mt-7 grid grid-cols-3 gap-4 sm:grid-cols-5"
+        role="group"
+        aria-label="Colour palette"
+      >
         {builderOptions.palettes.map((palette) => {
           const active = order.palettes.includes(palette);
           const capped = order.palettes.length >= 3 && !active;
@@ -62,7 +66,9 @@ export function StepPalette() {
           <input
             aria-label="Describe your colours"
             className="min-h-12 border-b border-gold/50 bg-transparent px-1 text-charcoal"
-            onChange={(event) => order.update({ customPalette: event.target.value })}
+            onChange={(event) =>
+              order.update({ customPalette: event.target.value })
+            }
             placeholder="e.g. dusty rose with sage green"
             value={order.customPalette ?? ""}
           />

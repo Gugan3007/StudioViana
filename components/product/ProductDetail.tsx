@@ -57,6 +57,21 @@ export function ProductDetail({
   );
 
   useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent("studio-viana:overlay-change", {
+        detail: { open: true, source: "product-detail" },
+      }),
+    );
+    return () => {
+      window.dispatchEvent(
+        new CustomEvent("studio-viana:overlay-change", {
+          detail: { open: false, source: "product-detail" },
+        }),
+      );
+    };
+  }, []);
+
+  useEffect(() => {
     onCloseRef.current = onClose;
   }, [onClose]);
 

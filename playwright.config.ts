@@ -1,6 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
 const useProductionServer = process.env.PLAYWRIGHT_PRODUCTION === "true";
+const useSystemChrome = process.env.PLAYWRIGHT_SYSTEM_CHROME === "true";
 
 export default defineConfig({
   testDir: "./tests/browser",
@@ -22,7 +23,10 @@ export default defineConfig({
   projects: [
     {
       name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      use: {
+        ...devices["Desktop Chrome"],
+        channel: useSystemChrome ? "chrome" : undefined,
+      },
     },
   ],
 });

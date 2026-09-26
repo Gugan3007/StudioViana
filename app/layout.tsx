@@ -2,9 +2,11 @@ import type { Metadata, Viewport } from "next";
 import { Lora, Poppins } from "next/font/google";
 import type { ReactNode } from "react";
 
+import { GlobalOrderTouchpoints } from "@/components/layout/GlobalOrderTouchpoints";
 import { Navbar } from "@/components/layout/Navbar";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
 import { IntroProvider } from "@/lib/context/IntroContext";
+import { OverlayProvider } from "@/lib/context/OverlayContext";
 
 import "./globals.css";
 
@@ -47,8 +49,11 @@ export default function RootLayout({
       <body className={`${lora.variable} ${poppins.variable}`}>
         <SmoothScrollProvider>
           <IntroProvider>
-            <Navbar />
-            {children}
+            <OverlayProvider>
+              <Navbar />
+              {children}
+              <GlobalOrderTouchpoints />
+            </OverlayProvider>
           </IntroProvider>
         </SmoothScrollProvider>
       </body>

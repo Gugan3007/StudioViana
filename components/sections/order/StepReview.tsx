@@ -3,10 +3,7 @@ import { catalogueProducts } from "@/lib/data/products";
 import { site } from "@/lib/data/site";
 import { useOrderStore } from "@/lib/store/orderStore";
 import { estimateOrder, formatINR } from "@/lib/utils/formatINR";
-import {
-  buildOrderMessage,
-  mailtoLink,
-} from "@/lib/utils/whatsapp";
+import { buildOrderMessage, mailtoLink } from "@/lib/utils/whatsapp";
 
 export function StepReview() {
   const order = useOrderStore();
@@ -24,7 +21,9 @@ export function StepReview() {
     {
       label: "Flowers",
       step: 2,
-      value: order.flowers.length ? order.flowers.join(", ") : "Studio's choice",
+      value: order.flowers.length
+        ? order.flowers.join(", ")
+        : "Studio's choice",
     },
     {
       label: "Palette",
@@ -48,7 +47,10 @@ export function StepReview() {
       </h3>
       <div className="mt-7 divide-y divide-gold/30 border-y border-gold/30">
         {groups.map((group) => (
-          <div key={group.label} className="grid grid-cols-[1fr_auto] gap-5 py-5">
+          <div
+            key={group.label}
+            className="grid grid-cols-[1fr_auto] gap-5 py-5"
+          >
             <div>
               <p className="text-[0.55rem] uppercase tracking-[0.16em] text-muted">
                 {group.label}

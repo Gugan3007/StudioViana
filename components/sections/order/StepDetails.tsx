@@ -36,7 +36,8 @@ function FieldError({ id, message }: { id: string; message?: string }) {
 export function StepDetails({ errors }: StepDetailsProps) {
   const order = useOrderStore();
   const prefix = useId();
-  const describedBy = (field: string) => (errors[field] ? `${prefix}-${field}` : undefined);
+  const describedBy = (field: string) =>
+    errors[field] ? `${prefix}-${field}` : undefined;
   const inputClass =
     "min-h-12 border-b border-gold/45 bg-transparent px-1 text-sm text-charcoal placeholder:text-muted/65";
 
@@ -84,7 +85,9 @@ export function StepDetails({ errors }: StepDetailsProps) {
             aria-label="Message card text"
             className="min-h-32 resize-y border border-gold/35 bg-transparent p-4 text-charcoal"
             maxLength={150}
-            onChange={(event) => order.update({ messageCard: event.target.value })}
+            onChange={(event) =>
+              order.update({ messageCard: event.target.value })
+            }
             placeholder="Optional — write something from the heart"
             value={order.messageCard ?? ""}
           />
@@ -110,8 +113,8 @@ export function StepDetails({ errors }: StepDetailsProps) {
           <FieldError id={`${prefix}-neededBy`} message={errors.neededBy} />
           {order.neededBy && isUrgentOrderDate(order.neededBy) ? (
             <span className="text-xs text-[#765b34]">
-              This is close to our usual lead time. We&apos;ll confirm availability
-              with you personally.
+              This is close to our usual lead time. We&apos;ll confirm
+              availability with you personally.
             </span>
           ) : null}
         </label>
@@ -145,11 +148,16 @@ export function StepDetails({ errors }: StepDetailsProps) {
             aria-describedby={describedBy("deliveryArea")}
             aria-label="City or area"
             className={inputClass}
-            onChange={(event) => order.update({ deliveryArea: event.target.value })}
+            onChange={(event) =>
+              order.update({ deliveryArea: event.target.value })
+            }
             placeholder="e.g. Kochi"
             value={order.deliveryArea ?? ""}
           />
-          <FieldError id={`${prefix}-deliveryArea`} message={errors.deliveryArea} />
+          <FieldError
+            id={`${prefix}-deliveryArea`}
+            message={errors.deliveryArea}
+          />
         </label>
       ) : null}
 
@@ -161,10 +169,15 @@ export function StepDetails({ errors }: StepDetailsProps) {
             aria-label="Your name"
             autoComplete="name"
             className={inputClass}
-            onChange={(event) => order.update({ customerName: event.target.value })}
+            onChange={(event) =>
+              order.update({ customerName: event.target.value })
+            }
             value={order.customerName ?? ""}
           />
-          <FieldError id={`${prefix}-customerName`} message={errors.customerName} />
+          <FieldError
+            id={`${prefix}-customerName`}
+            message={errors.customerName}
+          />
         </label>
         <label className="grid gap-2 text-xs text-muted">
           Phone number

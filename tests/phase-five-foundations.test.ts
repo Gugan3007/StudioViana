@@ -14,7 +14,11 @@ import {
   customerDetailsSchema,
   orderSchema,
 } from "@/lib/validation/orderSchema";
-import { estimateOrder, formatINR, formatINRValue } from "@/lib/utils/formatINR";
+import {
+  estimateOrder,
+  formatINR,
+  formatINRValue,
+} from "@/lib/utils/formatINR";
 import {
   buildBagMessage,
   buildBulkMessage,
@@ -79,9 +83,9 @@ describe("Phase 5 currency and estimation", () => {
     expect(
       estimateOrder({ pieceSlug: "single-stem-florals", quantity: 24 }),
     ).toBe(2880);
-    expect(
-      estimateOrder({ pieceSlug: "flower-cards", quantity: 20 }),
-    ).toBe(3000);
+    expect(estimateOrder({ pieceSlug: "flower-cards", quantity: 20 })).toBe(
+      3000,
+    );
     expect(
       estimateOrder({ pieceSlug: "small-bouquets", size: "2 blooms" }),
     ).toBe(250);

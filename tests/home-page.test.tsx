@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import type { ImgHTMLAttributes } from "react";
 import { createElement } from "react";
 import { describe, expect, it, vi } from "vitest";
@@ -56,9 +56,17 @@ vi.mock("next/image", () => ({
 }));
 /* eslint-enable @next/next/no-img-element, jsx-a11y/alt-text */
 
-describe("Phase 4 home page", () => {
-  it("composes the five Phase 4 chapters before the Phase 5 shells", () => {
+describe("Studio Viana home page", () => {
+  it("composes the complete Phase 5 one-page journey in the approved order", async () => {
     render(<Home />);
+    await screen.findByRole(
+      "heading",
+      {
+        level: 2,
+        name: "Design your bouquet",
+      },
+      { timeout: 5_000 },
+    );
     const main = screen.getByRole("main");
     const intro = within(main).getByTestId("intro-section");
     const hero = document.querySelector("#home");
@@ -77,6 +85,9 @@ describe("Phase 4 home page", () => {
       "testimonials",
       "instagram",
       "pricing",
+      "order",
+      "corporate",
+      "faq",
       "contact",
     ]);
     expect(hero).toBeInTheDocument();
@@ -103,11 +114,29 @@ describe("Phase 4 home page", () => {
       within(main).getAllByText("Corporate & Bulk Orders").length,
     ).toBeGreaterThan(0);
     expect(screen.queryByText("Phase 3")).not.toBeInTheDocument();
-    expect(screen.getAllByText("Phase 5")).toHaveLength(2);
+    expect(screen.queryByText("Phase 5")).not.toBeInTheDocument();
+    expect(
+      within(main).getByRole("heading", { level: 2, name: "Pricing Guide" }),
+    ).toBeVisible();
+    expect(
+      within(main).getByRole("heading", {
+        level: 2,
+        name: "Design your bouquet",
+      }),
+    ).toBeVisible();
   });
 
-  it("keeps all navigation targets labelled and includes the exact Home copy", () => {
+  it("keeps all navigation targets labelled and includes the exact Home copy", async () => {
     render(<Home />);
+
+    await waitFor(
+      () => {
+        expect(
+          document.querySelector("[data-phase-five-loading]"),
+        ).not.toBeInTheDocument();
+      },
+      { timeout: 5_000 },
+    );
 
     expect(
       screen.getByText(
@@ -126,6 +155,9 @@ describe("Phase 4 home page", () => {
       "testimonials",
       "instagram",
       "pricing",
+      "order",
+      "corporate",
+      "faq",
       "contact",
     ]) {
       const section = document.getElementById(id);

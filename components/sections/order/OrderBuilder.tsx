@@ -57,7 +57,8 @@ export function OrderBuilder() {
       setErrors({});
     };
     window.addEventListener("studio-viana:open-order-builder", prefill);
-    return () => window.removeEventListener("studio-viana:open-order-builder", prefill);
+    return () =>
+      window.removeEventListener("studio-viana:open-order-builder", prefill);
   }, []);
 
   useEffect(() => {
@@ -94,8 +95,10 @@ export function OrderBuilder() {
       });
       const nextErrors: Record<string, string> = {};
       if (!order.occasion) nextErrors.occasion = "Please choose an occasion.";
-      if (!order.neededBy) nextErrors.neededBy = "Please choose when you need your order.";
-      if (!order.deliveryMethod) nextErrors.deliveryMethod = "Please choose pick up or delivery.";
+      if (!order.neededBy)
+        nextErrors.neededBy = "Please choose when you need your order.";
+      if (!order.deliveryMethod)
+        nextErrors.deliveryMethod = "Please choose pick up or delivery.";
       if (!result.success) {
         result.error.issues.forEach((issue) => {
           const field = String(issue.path[0] ?? "details");
@@ -143,8 +146,8 @@ export function OrderBuilder() {
             Design <em className="font-normal text-gold">your</em> bouquet
           </h2>
           <p className="mx-auto mt-6 max-w-2xl font-light leading-8 text-muted">
-            Tell us what you have in mind — we&apos;ll craft it by hand and confirm
-            everything on WhatsApp.
+            Tell us what you have in mind — we&apos;ll craft it by hand and
+            confirm everything on WhatsApp.
           </p>
         </div>
 
@@ -175,7 +178,11 @@ export function OrderBuilder() {
                   {shouldReduceMotion ? (
                     <div key={order.step}>{stepContent}</div>
                   ) : (
-                    <AnimatePresence initial={false} mode="wait" custom={direction}>
+                    <AnimatePresence
+                      initial={false}
+                      mode="wait"
+                      custom={direction}
+                    >
                       <motion.div
                         key={order.step}
                         animate={{ opacity: 1, x: 0 }}
@@ -205,7 +212,11 @@ export function OrderBuilder() {
                     >
                       ← Previous
                     </Button>
-                    <Button disabled={nextDisabled} onClick={next} variant="solid-forest">
+                    <Button
+                      disabled={nextDisabled}
+                      onClick={next}
+                      variant="solid-forest"
+                    >
                       {order.step === 4
                         ? "Review your order"
                         : `Continue to ${stepLabels[order.step]}`}
@@ -213,7 +224,7 @@ export function OrderBuilder() {
                   </div>
                 ) : null}
                 <button
-                  className="mt-6 text-[0.55rem] uppercase tracking-[0.14em] text-muted underline"
+                  className="mt-4 inline-flex min-h-11 items-center px-1 text-[0.55rem] uppercase tracking-[0.14em] text-muted underline"
                   onClick={() => resetOrderStore()}
                   type="button"
                 >

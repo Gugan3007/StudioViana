@@ -52,7 +52,11 @@ export function BulkEnquiryForm() {
       channel === "whatsapp"
         ? whatsappLink(message)
         : mailtoLink("Bulk order enquiry — Studio Viana", message);
-    window.open(href, channel === "whatsapp" ? "_blank" : "_self", "noopener,noreferrer");
+    window.open(
+      href,
+      channel === "whatsapp" ? "_blank" : "_self",
+      "noopener,noreferrer",
+    );
     setSent(true);
   };
 
@@ -67,7 +71,7 @@ export function BulkEnquiryForm() {
             viewBox="0 0 100 100"
           >
             <path
-              className="[stroke-dasharray:260] animate-[flower_draw_1.2s_ease-out_both] motion-reduce:animate-none"
+              className="animate-[flower_draw_1.2s_ease-out_both] [stroke-dasharray:260] motion-reduce:animate-none"
               d="M50 86V48m0 0C22 42 21 18 43 26c8 3 9 13 7 22Zm0 0c28-6 29-30 7-22-8 3-9 13-7 22Zm0 14c-17-2-24-14-14-20 7-4 13 3 14 20Zm0 0c17-2 24-14 14-20-7-4-13 3-14 20Z"
               stroke="currentColor"
               strokeWidth="1.5"
@@ -103,7 +107,11 @@ export function BulkEnquiryForm() {
       {label}
       {control}
       {errors[name] ? (
-        <span id={`${prefix}-${name}`} aria-live="polite" className="normal-case tracking-normal text-[#e6a2a8]">
+        <span
+          id={`${prefix}-${name}`}
+          aria-live="polite"
+          className="normal-case tracking-normal text-[#e6a2a8]"
+        >
           {errors[name]}
         </span>
       ) : null}
@@ -178,9 +186,13 @@ export function BulkEnquiryForm() {
             onChange={(event) => update("eventType", event.target.value)}
             value={values.eventType}
           >
-            <option className="text-charcoal" value="">Choose event</option>
+            <option className="text-charcoal" value="">
+              Choose event
+            </option>
             {builderOptions.eventTypes.map((option) => (
-              <option key={option} className="text-charcoal" value={option}>{option}</option>
+              <option key={option} className="text-charcoal" value={option}>
+                {option}
+              </option>
             ))}
           </select>,
         )}
@@ -193,9 +205,13 @@ export function BulkEnquiryForm() {
             onChange={(event) => update("quantityRange", event.target.value)}
             value={values.quantityRange}
           >
-            <option className="text-charcoal" value="">Choose range</option>
+            <option className="text-charcoal" value="">
+              Choose range
+            </option>
             {builderOptions.bulkRanges.map((option) => (
-              <option key={option} className="text-charcoal" value={option}>{option}</option>
+              <option key={option} className="text-charcoal" value={option}>
+                {option}
+              </option>
             ))}
           </select>,
         )}
@@ -219,9 +235,13 @@ export function BulkEnquiryForm() {
             onChange={(event) => update("budget", event.target.value)}
             value={values.budget}
           >
-            <option className="text-charcoal" value="">Open to guidance</option>
+            <option className="text-charcoal" value="">
+              Open to guidance
+            </option>
             {builderOptions.budgetRanges.map((option) => (
-              <option key={option} className="text-charcoal" value={option}>{option}</option>
+              <option key={option} className="text-charcoal" value={option}>
+                {option}
+              </option>
             ))}
           </select>,
         )}

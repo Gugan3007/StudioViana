@@ -63,20 +63,19 @@ describe("Phase 5 contact finale", () => {
     expect(
       screen.getByRole("img", { name: /pink gerbera flower card/i }),
     ).toBeVisible();
-    expect(within(contact).getByRole("link", { name: site.email })).toHaveAttribute(
-      "href",
-      `mailto:${site.email}`,
-    );
-    expect(within(contact).getByRole("link", { name: site.instagramHandle })).toHaveAttribute(
-      "href",
-      site.instagramUrl,
-    );
-    expect(within(contact).getByRole("link", { name: site.whatsappDisplay })).toHaveAttribute(
-      "href",
-      expect.stringContaining("wa.me/919488713438"),
-    );
+    expect(
+      within(contact).getByRole("link", { name: site.email }),
+    ).toHaveAttribute("href", `mailto:${site.email}`);
+    expect(
+      within(contact).getByRole("link", { name: site.instagramHandle }),
+    ).toHaveAttribute("href", site.instagramUrl);
+    expect(
+      within(contact).getByRole("link", { name: site.whatsappDisplay }),
+    ).toHaveAttribute("href", expect.stringContaining("wa.me/919488713438"));
     expect(screen.getByText(site.businessHours)).toBeVisible();
-    expect(screen.getByText(new RegExp(site.deliveryRegions.join(".*")))).toBeVisible();
+    expect(
+      screen.getByText(new RegExp(site.deliveryRegions.join(".*"))),
+    ).toBeVisible();
   });
 
   it("copies a contact value and exposes gentle feedback", async () => {

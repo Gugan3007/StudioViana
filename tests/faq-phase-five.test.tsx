@@ -21,9 +21,9 @@ describe("Phase 5 FAQ", () => {
     const first = screen.getByRole("button", { name: faqItems[0].question });
     expect(first).toHaveAttribute("aria-expanded", "true");
     expect(
-      within(screen.getByRole("region", { name: faqItems[0].question })).getByText(
-        faqItems[0].answer,
-      ),
+      within(
+        screen.getByRole("region", { name: faqItems[0].question }),
+      ).getByText(faqItems[0].answer),
     ).toBeVisible();
   });
 

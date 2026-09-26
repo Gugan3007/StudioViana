@@ -9,10 +9,11 @@ import { phaseFiveConfig, site } from "@/lib/data/site";
 
 const footerMocks = vi.hoisted(() => ({
   lenis: null as null | { scrollTo: ReturnType<typeof vi.fn> },
+  reduced: false,
 }));
 
 vi.mock("@/lib/animations/useReducedMotion", () => ({
-  useReducedMotion: () => true,
+  useReducedMotion: () => footerMocks.reduced,
 }));
 vi.mock("@/lib/animations/useLenis", () => ({
   useLenis: () => ({ lenis: footerMocks.lenis }),
@@ -24,7 +25,9 @@ describe("Phase 5 footer", () => {
     const { container } = render(<Footer />);
     const footer = container.querySelector("footer") as HTMLElement;
     expect(footer).toHaveAttribute("data-theme", "dark");
-    expect(within(footer).getAllByText("STUDIO VIANA").length).toBeGreaterThan(0);
+    expect(within(footer).getAllByText("STUDIO VIANA").length).toBeGreaterThan(
+      0,
+    );
     expect(within(footer).getAllByText("Collection").length).toBeGreaterThan(0);
     expect(within(footer).getAllByText("Studio").length).toBeGreaterThan(0);
     expect(within(footer).getAllByText("Order").length).toBeGreaterThan(0);
@@ -35,8 +38,13 @@ describe("Phase 5 footer", () => {
       within(footer).getAllByRole("link", { name: "Download Catalogue" })[0],
     ).toHaveAttribute("href", phaseFiveConfig.cataloguePath);
 
-    await user.type(screen.getByLabelText("Email for Stay in bloom"), "hello@example.com");
-    expect(screen.getByRole("link", { name: "Join Stay in bloom" })).toHaveAttribute(
+    await user.type(
+      screen.getByLabelText("Email for Stay in bloom"),
+      "hello@example.com",
+    );
+    expect(
+      screen.getByRole("link", { name: "Join Stay in bloom" }),
+    ).toHaveAttribute(
       "href",
       expect.stringContaining("subject=Stay%20in%20bloom"),
     );
@@ -63,7 +71,9 @@ describe("Phase 5 footer", () => {
 describe("Phase 5 back to top", () => {
   it("uses Lenis when available and native scrolling otherwise", async () => {
     const user = userEvent.setup();
-    const nativeScroll = vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
+    const nativeScroll = vi
+      .spyOn(window, "scrollTo")
+      .mockImplementation(() => undefined);
     const lenisScroll = vi.fn();
     footerMocks.lenis = { scrollTo: lenisScroll };
     const { rerender } = render(<BackToTop />);
@@ -75,5 +85,17 @@ describe("Phase 5 back to top", () => {
     fireEvent.click(screen.getByRole("button", { name: "Back to top" }));
     expect(nativeScroll).toHaveBeenCalledWith({ behavior: "smooth", top: 0 });
     nativeScroll.mockRestore();
+  });
+
+  it("jumps immediately when reduced motion is requested", async () => {
+    const user = userEvent.setup();
+    const lenisScroll = vi.fn();
+    footerMocks.reduced = true;
+    footerMocks.lenis = { scrollTo: lenisScroll };
+    render(<BackToTop />);
+    await user.click(screen.getByRole("button", { name: "Back to top" }));
+    expect(lenisScroll).toHaveBeenCalledWith(0, { immediate: true });
+    footerMocks.reduced = false;
+    footerMocks.lenis = null;
   });
 });

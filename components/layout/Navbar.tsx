@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { MandalaMark } from "@/components/decor/MandalaMark";
+import { OrderBagButton } from "@/components/layout/OrderBagButton";
 import {
   MobileMenu,
   type NavigationItem,
@@ -23,7 +24,8 @@ const navigationItems = [
   { href: "#craft-closeup", label: "Craft", number: "03" },
   { href: "#gallery", label: "Gallery", number: "04" },
   { href: "#pricing", label: "Pricing", number: "05" },
-  { href: "#contact", label: "Contact", number: "06" },
+  { href: "#order", label: "Order", number: "06" },
+  { href: "#contact", label: "Contact", number: "07" },
 ] as const satisfies readonly NavigationItem[];
 
 const whatsappHref = whatsappLink(
@@ -182,7 +184,7 @@ export function Navbar() {
             })}
           </nav>
 
-          <div className="hidden justify-self-end lg:block">
+          <div className="hidden items-center gap-3 justify-self-end lg:flex">
             <Button
               className={cn(
                 "min-h-11 px-5 text-[0.63rem]",
@@ -195,37 +197,41 @@ export function Navbar() {
             >
               Order on WhatsApp
             </Button>
+            <OrderBagButton />
           </div>
 
-          <button
-            ref={triggerRef}
-            aria-controls="mobile-navigation"
-            aria-expanded={menuOpen}
-            aria-hidden={menuOpen || undefined}
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
-            className={cn(
-              "relative z-[100] flex h-12 w-12 items-center justify-center justify-self-end text-current lg:hidden",
-              menuOpen && "pointer-events-none text-cream",
-            )}
-            onClick={() => setMenuOpen((open) => !open)}
-            tabIndex={menuOpen ? -1 : 0}
-            type="button"
-          >
-            <span
-              aria-hidden="true"
+          <div className="flex items-center gap-1 justify-self-end lg:hidden">
+            <OrderBagButton />
+            <button
+              ref={triggerRef}
+              aria-controls="mobile-navigation"
+              aria-expanded={menuOpen}
+              aria-hidden={menuOpen || undefined}
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
               className={cn(
-                "absolute h-px w-7 bg-current transition-transform duration-500",
-                menuOpen ? "rotate-45" : "-translate-y-1",
+                "relative z-[100] flex h-12 w-12 items-center justify-center text-current",
+                menuOpen && "pointer-events-none text-cream",
               )}
-            />
-            <span
-              aria-hidden="true"
-              className={cn(
-                "absolute h-px w-7 bg-current transition-transform duration-500",
-                menuOpen ? "-rotate-45" : "translate-y-1",
-              )}
-            />
-          </button>
+              onClick={() => setMenuOpen((open) => !open)}
+              tabIndex={menuOpen ? -1 : 0}
+              type="button"
+            >
+              <span
+                aria-hidden="true"
+                className={cn(
+                  "absolute h-px w-7 bg-current transition-transform duration-500",
+                  menuOpen ? "rotate-45" : "-translate-y-1",
+                )}
+              />
+              <span
+                aria-hidden="true"
+                className={cn(
+                  "absolute h-px w-7 bg-current transition-transform duration-500",
+                  menuOpen ? "-rotate-45" : "translate-y-1",
+                )}
+              />
+            </button>
+          </div>
         </div>
       </header>
 

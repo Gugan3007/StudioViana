@@ -13,6 +13,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ProductDetail } from "@/components/product/ProductDetail";
 import { LensMagnifier } from "@/components/product/LensMagnifier";
 import { catalogueProducts, type Product } from "@/lib/data/products";
+import { resetBagStore, useBagStore } from "@/lib/store/bagStore";
 
 const detailMocks = vi.hoisted(() => ({
   finePointer: false,
@@ -92,6 +93,7 @@ function DetailHarness({ initialProduct }: { initialProduct: Product }) {
 
 describe("ProductDetail", () => {
   beforeEach(() => {
+    resetBagStore(false);
     detailMocks.finePointer = false;
     detailMocks.refresh.mockClear();
     detailMocks.start.mockClear();
@@ -235,6 +237,27 @@ describe("ProductDetail", () => {
     const palette = within(dialog).getByRole("radio", { name: "Blush Pink" });
     expect(size.nextElementSibling).toHaveClass("peer-focus-visible:ring-2");
     expect(palette.nextElementSibling).toHaveClass("peer-focus-visible:ring-2");
+  });
+
+  it("adds a configured product to the persistent order bag", async () => {
+    const user = userEvent.setup();
+    render(<DetailHarness initialProduct={catalogueProducts[3]} />);
+    await user.click(screen.getByRole("button", { name: "Original trigger" }));
+    const dialog = screen.getByRole("dialog");
+    await user.click(
+      within(dialog).getByRole("button", { name: "Violet Edit" }),
+    );
+    await user.click(within(dialog).getByRole("radio", { name: "Lilac" }));
+    await user.click(
+      within(dialog).getByRole("button", { name: "Add to order" }),
+    );
+    expect(useBagStore.getState().items[0]).toMatchObject({
+      palette: "Lilac",
+      productSlug: "medium-bouquets",
+      quantity: 1,
+      unitPrice: 550,
+      variant: "Violet Edit",
+    });
   });
 
   it("sizes the pointer lens from the rendered image so it truly magnifies", () => {

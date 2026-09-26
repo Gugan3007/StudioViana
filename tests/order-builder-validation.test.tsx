@@ -37,9 +37,13 @@ describe("Phase 5 order builder validation", () => {
   it("keeps next disabled until required choices exist", async () => {
     const user = userEvent.setup();
     render(<OrderBuilder />);
-    expect(screen.getByRole("button", { name: "Continue to Flowers" })).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: "Continue to Flowers" }),
+    ).toBeDisabled();
     await user.click(screen.getByRole("button", { name: /Medium Bouquets/ }));
-    expect(screen.getByRole("button", { name: "Continue to Flowers" })).toBeEnabled();
+    expect(
+      screen.getByRole("button", { name: "Continue to Flowers" }),
+    ).toBeEnabled();
   });
 
   it("announces kind customer and delivery errors", async () => {
@@ -59,8 +63,12 @@ describe("Phase 5 order builder validation", () => {
       target: { value: minimumOrderDate() },
     });
     await user.click(screen.getByRole("button", { name: "Review your order" }));
-    expect(screen.getByText("Please tell us the name we should use.")).toBeVisible();
-    expect(screen.getByText("Please enter a valid Indian phone number.")).toBeVisible();
+    expect(
+      screen.getByText("Please tell us the name we should use."),
+    ).toBeVisible();
+    expect(
+      screen.getByText("Please enter a valid Indian phone number."),
+    ).toBeVisible();
     expect(
       screen.getByText("Please tell us where you would like this delivered."),
     ).toBeVisible();

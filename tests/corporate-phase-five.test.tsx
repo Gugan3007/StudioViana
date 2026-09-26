@@ -61,7 +61,9 @@ describe("Phase 5 corporate enquiries", () => {
         logos={[{ name: "Studio client", src: "/brand/client.svg" }]}
       />,
     );
-    expect(screen.getByText("Trusted for celebrations across Tamil Nadu")).toBeVisible();
+    expect(
+      screen.getByText("Trusted for celebrations across Tamil Nadu"),
+    ).toBeVisible();
   });
 
   it("validates gently, opens a formatted quote and shows success", async () => {
@@ -69,28 +71,42 @@ describe("Phase 5 corporate enquiries", () => {
     const open = vi.spyOn(window, "open").mockImplementation(() => null);
     render(<BulkEnquiryForm />);
 
-    await user.click(screen.getByRole("button", { name: "Request a quote on WhatsApp" }));
+    await user.click(
+      screen.getByRole("button", { name: "Request a quote on WhatsApp" }),
+    );
     expect(screen.getByText("Please tell us your name.")).toBeVisible();
-    expect(screen.getByText("Please enter a valid Indian phone number.")).toBeVisible();
+    expect(
+      screen.getByText("Please enter a valid Indian phone number."),
+    ).toBeVisible();
 
     await user.type(screen.getByLabelText("Name"), "Meera Rao");
-    await user.type(screen.getByLabelText("Organisation (optional)"), "Rao Family");
+    await user.type(
+      screen.getByLabelText("Organisation (optional)"),
+      "Rao Family",
+    );
     await user.type(screen.getByLabelText("Phone"), "9876543210");
     await user.selectOptions(screen.getByLabelText("Event type"), "Wedding");
     await user.selectOptions(screen.getByLabelText("Quantity"), "50–100");
     await user.type(screen.getByLabelText("Event date"), "2026-12-01");
-    await user.selectOptions(screen.getByLabelText("Budget per piece (optional)"), "₹250–₹500");
+    await user.selectOptions(
+      screen.getByLabelText("Budget per piece (optional)"),
+      "₹250–₹500",
+    );
     await user.type(
       screen.getByLabelText("Tell us about the occasion"),
       "Blush flower-card favours for our guests.",
     );
-    await user.click(screen.getByRole("button", { name: "Request a quote on WhatsApp" }));
+    await user.click(
+      screen.getByRole("button", { name: "Request a quote on WhatsApp" }),
+    );
 
     expect(open).toHaveBeenCalledOnce();
     const href = open.mock.calls[0][0] as string;
     expect(decodeURIComponent(href)).toContain("Quantity: 50–100");
     expect(screen.getByRole("heading", { name: "Thank you!" })).toBeVisible();
-    await user.click(screen.getByRole("button", { name: "Start another enquiry" }));
+    await user.click(
+      screen.getByRole("button", { name: "Start another enquiry" }),
+    );
     expect(screen.getByLabelText("Name")).toBeVisible();
     open.mockRestore();
   });
