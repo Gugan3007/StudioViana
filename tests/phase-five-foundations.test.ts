@@ -49,7 +49,7 @@ describe("Phase 5 configuration", () => {
   it("keeps every editable conversion option in data", () => {
     expect(ORDER_MODE).toMatch(/^(builder|whatsapp-direct)$/);
     expect(phaseFiveConfig).toMatchObject({
-      cataloguePath: "/catalogue/studio-viana-catalogue.pdf",
+      cataloguePath: null,
       leadTimeDays: 3,
     });
     expect(site.businessHours).toContain("Mon–Sat");
