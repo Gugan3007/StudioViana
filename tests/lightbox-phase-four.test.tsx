@@ -4,6 +4,7 @@ import type { ImgHTMLAttributes } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { GallerySection } from "@/components/sections/gallery/GallerySection";
+import { OverlayProvider } from "@/lib/context/OverlayContext";
 
 const lightboxMocks = vi.hoisted(() => ({
   reduceMotion: false,
@@ -72,7 +73,11 @@ describe("Phase 4 gallery lightbox", () => {
 
   it("traps focus, navigates, closes and restores the trigger", async () => {
     const user = userEvent.setup();
-    render(<GallerySection />);
+    render(
+      <OverlayProvider>
+        <GallerySection />
+      </OverlayProvider>,
+    );
     const trigger = screen.getAllByRole("button", {
       name: /Open .* in gallery/,
     })[0];
@@ -106,7 +111,11 @@ describe("Phase 4 gallery lightbox", () => {
       dispatchedSlug = (event as CustomEvent<{ slug: string }>).detail.slug;
     };
     window.addEventListener("studio-viana:open-product", onProduct);
-    render(<GallerySection />);
+    render(
+      <OverlayProvider>
+        <GallerySection />
+      </OverlayProvider>,
+    );
 
     await user.click(
       screen.getAllByRole("button", { name: /Open .* in gallery/ })[0],

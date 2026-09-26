@@ -254,7 +254,6 @@ export function Navbar() {
       <div id="mobile-navigation">
         <MobileMenu
           items={navigationItems}
-          lenis={lenis}
           onClose={closeMenu}
           onNavigate={navigate}
           open={menuOpen}

@@ -1,13 +1,13 @@
 "use client";
 
-import type Lenis from "lenis";
 import type { RefObject } from "react";
 import { useEffect, useRef } from "react";
 
 import { MandalaMark } from "@/components/decor/MandalaMark";
 import { gsap } from "@/lib/animations/gsap";
+import { motionTokens } from "@/lib/animations/tokens";
 import { useReducedMotion } from "@/lib/animations/useReducedMotion";
-import { useScrollLock } from "@/lib/animations/useScrollLock";
+import { useManagedOverlay } from "@/lib/context/OverlayContext";
 import { site } from "@/lib/data/site";
 
 export interface NavigationItem {
@@ -18,7 +18,6 @@ export interface NavigationItem {
 
 interface MobileMenuProps {
   items: readonly NavigationItem[];
-  lenis: Lenis | null;
   onClose: () => void;
   onNavigate: (
     event: React.MouseEvent<HTMLAnchorElement>,
@@ -28,12 +27,8 @@ interface MobileMenuProps {
   triggerRef: RefObject<HTMLButtonElement | null>;
 }
 
-const focusableSelector =
-  'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
-
 export function MobileMenu({
   items,
-  lenis,
   onClose,
   onNavigate,
   open,
@@ -42,68 +37,14 @@ export function MobileMenu({
   const root = useRef<HTMLDivElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
   const shouldReduceMotion = useReducedMotion();
-  useScrollLock(lenis, open);
-
-  useEffect(() => {
-    window.dispatchEvent(
-      new CustomEvent("studio-viana:overlay-change", {
-        detail: { open, source: "mobile-menu" },
-      }),
-    );
-    return () => {
-      if (open) {
-        window.dispatchEvent(
-          new CustomEvent("studio-viana:overlay-change", {
-            detail: { open: false, source: "mobile-menu" },
-          }),
-        );
-      }
-    };
-  }, [open]);
-
-  useEffect(() => {
-    if (!open || !root.current) return;
-    const menu = root.current;
-    const previousFocus = document.activeElement as HTMLElement | null;
-    const trigger = triggerRef.current;
-    if (shouldReduceMotion) closeButton.current?.focus();
-    else menu.focus();
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        onClose();
-        return;
-      }
-      const focusable = Array.from(
-        menu.querySelectorAll<HTMLElement>(focusableSelector),
-      );
-      if (event.key !== "Tab" || focusable.length === 0) return;
-
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      const activeInside = menu.contains(document.activeElement);
-      if (
-        event.shiftKey &&
-        (!activeInside || document.activeElement === first)
-      ) {
-        event.preventDefault();
-        last.focus();
-      } else if (
-        !event.shiftKey &&
-        (!activeInside || document.activeElement === last)
-      ) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      (trigger ?? previousFocus)?.focus();
-    };
-  }, [onClose, open, shouldReduceMotion, triggerRef]);
+  useManagedOverlay({
+    id: "mobile-menu",
+    initialFocusRef: closeButton,
+    onClose,
+    open,
+    returnFocusRef: triggerRef,
+    rootRef: root,
+  });
 
   useEffect(() => {
     if (!open || !root.current || shouldReduceMotion) return;
@@ -117,7 +58,7 @@ export function MobileMenu({
           { clipPath: "circle(0% at calc(100% - 48px) 42px)" },
           {
             clipPath: "circle(150% at calc(100% - 48px) 42px)",
-            duration: 0.75,
+            duration: motionTokens.overlay.enter,
             ease: "power3.inOut",
           },
         )
@@ -126,9 +67,9 @@ export function MobileMenu({
           { autoAlpha: 0, yPercent: 110 },
           {
             autoAlpha: 1,
-            duration: 0.65,
+            duration: motionTokens.overlay.panelEnter,
             onComplete: () => closeButton.current?.focus(),
-            stagger: 0.08,
+            stagger: motionTokens.overlay.stagger,
             yPercent: 0,
           },
           "-=0.25",

@@ -5,19 +5,15 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
-import { useLenis } from "@/lib/animations/useLenis";
+import { motionTokens } from "@/lib/animations/tokens";
 import { useReducedMotion } from "@/lib/animations/useReducedMotion";
-import { useScrollLock } from "@/lib/animations/useScrollLock";
-import { useOverlay } from "@/lib/context/OverlayContext";
+import { useManagedOverlay } from "@/lib/context/OverlayContext";
 import { getProductBySlug, type Product } from "@/lib/data/products";
 import { site } from "@/lib/data/site";
 import { hydrateBagStore, useBagStore } from "@/lib/store/bagStore";
 import { useOrderStore } from "@/lib/store/orderStore";
 import { formatINR } from "@/lib/utils/formatINR";
 import { buildBagMessage } from "@/lib/utils/whatsapp";
-
-const focusableSelector =
-  'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 export function OrderBagDrawer() {
   const [open, setOpen] = useState(false);
@@ -29,10 +25,15 @@ export function OrderBagDrawer() {
   const removeItem = useBagStore((state) => state.removeItem);
   const total = useBagStore((state) => state.estimatedTotal());
   const prefillFromBag = useOrderStore((state) => state.prefillFromBag);
-  const { lenis } = useLenis();
   const shouldReduceMotion = useReducedMotion();
-  const { setOverlay } = useOverlay();
-  useScrollLock(lenis, open);
+  useManagedOverlay({
+    id: "order-bag",
+    initialFocusRef: closeButton,
+    onClose: () => setOpen(false),
+    open,
+    returnFocusRef: returnFocus,
+    rootRef: root,
+  });
 
   useEffect(() => {
     hydrateBagStore();
@@ -43,39 +44,6 @@ export function OrderBagDrawer() {
     window.addEventListener("studio-viana:open-bag", reveal);
     return () => window.removeEventListener("studio-viana:open-bag", reveal);
   }, []);
-
-  useEffect(() => {
-    setOverlay("order-bag", open);
-    if (!open) return;
-    closeButton.current?.focus();
-    const keydown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        setOpen(false);
-        return;
-      }
-      if (event.key !== "Tab" || !root.current) return;
-      const focusable = Array.from(
-        root.current.querySelectorAll<HTMLElement>(focusableSelector),
-      );
-      const first = focusable[0];
-      const last = focusable.at(-1);
-      if (!first || !last) return;
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-    document.addEventListener("keydown", keydown);
-    return () => {
-      document.removeEventListener("keydown", keydown);
-      returnFocus.current?.focus();
-      setOverlay("order-bag", false);
-    };
-  }, [open, setOverlay]);
 
   const continueToDetails = () => {
     // The bag remains intact while its serializable items seed step four.
@@ -92,12 +60,19 @@ export function OrderBagDrawer() {
         <motion.div
           animate={{ opacity: 1 }}
           className="fixed inset-0 z-[150] bg-charcoal/65"
-          exit={{ opacity: 0 }}
+          exit={{
+            opacity: 0,
+            transition: {
+              duration: shouldReduceMotion ? 0 : motionTokens.overlay.exit,
+            },
+          }}
           initial={{ opacity: shouldReduceMotion ? 1 : 0 }}
           onMouseDown={(event) => {
             if (event.target === event.currentTarget) setOpen(false);
           }}
-          transition={{ duration: shouldReduceMotion ? 0 : 0.3 }}
+          transition={{
+            duration: shouldReduceMotion ? 0 : motionTokens.overlay.enter,
+          }}
         >
           <motion.div
             ref={root}
@@ -110,8 +85,10 @@ export function OrderBagDrawer() {
             initial={{ x: shouldReduceMotion ? 0 : "100%" }}
             role="dialog"
             transition={{
-              duration: shouldReduceMotion ? 0 : 0.48,
-              ease: [0.22, 1, 0.36, 1],
+              duration: shouldReduceMotion
+                ? 0
+                : motionTokens.overlay.panelEnter,
+              ease: motionTokens.ease.framerExpo,
             }}
           >
             <div className="flex items-center justify-between border-b border-gold/30 px-6 py-5">
@@ -150,7 +127,9 @@ export function OrderBagDrawer() {
                           y: shouldReduceMotion ? 0 : 12,
                         }}
                         transition={{
-                          delay: shouldReduceMotion ? 0 : index * 0.06,
+                          delay: shouldReduceMotion
+                            ? 0
+                            : index * motionTokens.overlay.stagger,
                         }}
                       >
                         <div className="relative aspect-square overflow-hidden bg-cream-soft">

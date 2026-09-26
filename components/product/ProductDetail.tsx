@@ -9,8 +9,9 @@ import { ProductOptions } from "@/components/product/ProductOptions";
 import { RelatedProducts } from "@/components/product/RelatedProducts";
 import { PillTag } from "@/components/ui/PillTag";
 import { refreshScrollTrigger } from "@/lib/animations/gsap";
-import { useLenis } from "@/lib/animations/useLenis";
-import { useScrollLock } from "@/lib/animations/useScrollLock";
+import { motionTokens } from "@/lib/animations/tokens";
+import { useReducedMotion } from "@/lib/animations/useReducedMotion";
+import { useManagedOverlay } from "@/lib/context/OverlayContext";
 import type { Product } from "@/lib/data/products";
 import type { OrderConfiguration } from "@/lib/utils/whatsapp";
 
@@ -27,9 +28,6 @@ const initialConfiguration = (product: Product): OrderConfiguration => ({
   size: product.sizes?.[0]?.label,
 });
 
-const focusableSelector =
-  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
-
 export function ProductDetail({
   onClose,
   onSelectProduct,
@@ -38,10 +36,19 @@ export function ProductDetail({
 }: ProductDetailProps) {
   const root = useRef<HTMLDivElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
-  const onCloseRef = useRef(onClose);
-  const returnFocusRef = useRef(returnFocusTo);
-  const { lenis } = useLenis();
-  useScrollLock(lenis);
+  const returnFocusRef = useRef<HTMLElement | null>(returnFocusTo ?? null);
+  const shouldReduceMotion = useReducedMotion();
+  useManagedOverlay({
+    id: "product-detail",
+    initialFocusRef: closeButton,
+    onClose,
+    open: true,
+    returnFocusRef,
+    rootRef: root,
+  });
+  useEffect(() => {
+    returnFocusRef.current = returnFocusTo ?? null;
+  }, [returnFocusTo]);
   const [configurationState, setConfigurationState] = useState(() => ({
     configuration: initialConfiguration(product),
     slug: product.slug,
@@ -57,73 +64,10 @@ export function ProductDetail({
   );
 
   useEffect(() => {
-    window.dispatchEvent(
-      new CustomEvent("studio-viana:overlay-change", {
-        detail: { open: true, source: "product-detail" },
-      }),
-    );
-    return () => {
-      window.dispatchEvent(
-        new CustomEvent("studio-viana:overlay-change", {
-          detail: { open: false, source: "product-detail" },
-        }),
-      );
-    };
-  }, []);
-
-  useEffect(() => {
-    onCloseRef.current = onClose;
-  }, [onClose]);
-
-  useEffect(() => {
     if (root.current) root.current.scrollTop = 0;
   }, [product.slug]);
 
-  useEffect(() => {
-    const dialog = root.current;
-    if (!dialog) return;
-    const previousFocus = document.activeElement as HTMLElement | null;
-    const returnFocusTarget = returnFocusRef.current;
-    closeButton.current?.focus();
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        onCloseRef.current();
-        return;
-      }
-      if (event.key !== "Tab") return;
-      const focusable = Array.from(
-        dialog.querySelectorAll<HTMLElement>(focusableSelector),
-      );
-      if (focusable.length === 0) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      const activeInside = dialog.contains(document.activeElement);
-      if (
-        event.shiftKey &&
-        (!activeInside || document.activeElement === first)
-      ) {
-        event.preventDefault();
-        last.focus();
-      } else if (
-        !event.shiftKey &&
-        (!activeInside || document.activeElement === last)
-      ) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      const focusTarget = returnFocusTarget?.isConnected
-        ? returnFocusTarget
-        : previousFocus;
-      focusTarget?.focus();
-      refreshScrollTrigger();
-    };
-  }, []);
+  useEffect(() => refreshScrollTrigger, []);
 
   return (
     <motion.div
@@ -134,13 +78,21 @@ export function ProductDetail({
       className="fixed inset-0 z-[120] overflow-y-auto overscroll-contain bg-charcoal/70 p-0 text-charcoal lg:p-5"
       data-lenis-prevent
       data-product-detail
-      exit={{ opacity: 0 }}
-      initial={{ opacity: 0 }}
+      exit={{
+        opacity: 0,
+        transition: {
+          duration: shouldReduceMotion ? 0 : motionTokens.overlay.exit,
+        },
+      }}
+      initial={{ opacity: shouldReduceMotion ? 1 : 0 }}
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
       role="dialog"
-      transition={{ duration: 0.35 }}
+      transition={{
+        duration: shouldReduceMotion ? 0 : motionTokens.overlay.enter,
+        ease: motionTokens.ease.framerExpo,
+      }}
     >
       <button
         ref={closeButton}
@@ -152,7 +104,19 @@ export function ProductDetail({
         ×
       </button>
 
-      <div className="min-h-full bg-cream lg:grid lg:min-h-[calc(100svh-2.5rem)] lg:grid-cols-[55%_45%]">
+      <motion.div
+        animate={{ opacity: 1, y: 0 }}
+        className="min-h-full bg-cream lg:grid lg:min-h-[calc(100svh-2.5rem)] lg:grid-cols-[55%_45%]"
+        exit={{ opacity: 0, y: shouldReduceMotion ? 0 : 18 }}
+        initial={{
+          opacity: shouldReduceMotion ? 1 : 0,
+          y: shouldReduceMotion ? 0 : 18,
+        }}
+        transition={{
+          duration: shouldReduceMotion ? 0 : motionTokens.overlay.panelEnter,
+          ease: motionTokens.ease.framerExpo,
+        }}
+      >
         <ProductImageGallery
           onSelectVariant={(variant) =>
             setConfiguration({
@@ -211,7 +175,7 @@ export function ProductDetail({
             product={product}
           />
         </div>
-      </div>
+      </motion.div>
     </motion.div>
   );
 }

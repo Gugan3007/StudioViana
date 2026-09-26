@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { Navbar } from "@/components/layout/Navbar";
 import { IntroProvider } from "@/lib/context/IntroContext";
+import { OverlayProvider } from "@/lib/context/OverlayContext";
 
 const navigationMocks = vi.hoisted(() => ({
   kill: vi.fn(),
@@ -65,18 +66,20 @@ function renderNavigation() {
   document.documentElement.dataset.introComplete = "true";
   return render(
     <IntroProvider>
-      <Navbar />
-      <main>
-        <section id="home" />
-        <section id="about" />
-        <section id="craft" />
-        <section id="craft-closeup" />
-        <section id="collection" />
-        <section id="gallery" />
-        <section id="pricing" />
-        <section id="order" />
-        <section id="contact" />
-      </main>
+      <OverlayProvider>
+        <Navbar />
+        <main>
+          <section id="home" />
+          <section id="about" />
+          <section id="craft" />
+          <section id="craft-closeup" />
+          <section id="collection" />
+          <section id="gallery" />
+          <section id="pricing" />
+          <section id="order" />
+          <section id="contact" />
+        </main>
+      </OverlayProvider>
     </IntroProvider>,
   );
 }

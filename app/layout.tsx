@@ -9,7 +9,7 @@ import { SkipLink } from "@/components/a11y/SkipLink";
 import { CustomCursor } from "@/components/cursor/CustomCursor";
 import { IntroProvider } from "@/lib/context/IntroContext";
 import { MotionProvider } from "@/lib/context/MotionContext";
-import { OverlayProvider } from "@/lib/context/OverlayContext";
+import { OverlayManager } from "@/components/overlay/OverlayManager";
 
 import "./globals.css";
 
@@ -54,12 +54,12 @@ export default function RootLayout({
         <MotionProvider>
           <SmoothScrollProvider>
             <IntroProvider>
-              <OverlayProvider>
+              <OverlayManager>
                 <Navbar />
                 {children}
                 <GlobalOrderTouchpoints />
                 <CustomCursor />
-              </OverlayProvider>
+              </OverlayManager>
             </IntroProvider>
           </SmoothScrollProvider>
         </MotionProvider>

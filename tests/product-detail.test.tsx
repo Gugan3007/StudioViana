@@ -12,6 +12,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ProductDetail } from "@/components/product/ProductDetail";
 import { LensMagnifier } from "@/components/product/LensMagnifier";
+import { OverlayProvider } from "@/lib/context/OverlayContext";
 import { catalogueProducts, type Product } from "@/lib/data/products";
 import { resetBagStore, useBagStore } from "@/lib/store/bagStore";
 
@@ -76,7 +77,7 @@ vi.mock("next/image", () => ({
 function DetailHarness({ initialProduct }: { initialProduct: Product }) {
   const [product, setProduct] = useState<Product | null>(null);
   return (
-    <>
+    <OverlayProvider>
       <button onClick={() => setProduct(initialProduct)} type="button">
         Original trigger
       </button>
@@ -87,7 +88,7 @@ function DetailHarness({ initialProduct }: { initialProduct: Product }) {
           product={product}
         />
       ) : null}
-    </>
+    </OverlayProvider>
   );
 }
 

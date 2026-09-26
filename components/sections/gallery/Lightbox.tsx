@@ -5,8 +5,9 @@ import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/Button";
-import { useLenis } from "@/lib/animations/useLenis";
-import { useScrollLock } from "@/lib/animations/useScrollLock";
+import { motionTokens } from "@/lib/animations/tokens";
+import { useReducedMotion } from "@/lib/animations/useReducedMotion";
+import { useManagedOverlay } from "@/lib/context/OverlayContext";
 import type { GalleryItemData } from "@/lib/data/gallery";
 import { whatsappLink } from "@/lib/utils";
 
@@ -17,8 +18,6 @@ interface LightboxProps {
   origin: HTMLElement;
 }
 
-const focusableSelector =
-  'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 const SWIPE_THRESHOLD = 48;
 const slideVariants = {
   center: { opacity: 1, x: 0 },
@@ -42,8 +41,8 @@ export function Lightbox({
   const closeButton = useRef<HTMLButtonElement>(null);
   const pointerStart = useRef<number | null>(null);
   const restoreOrigin = useRef(true);
-  const { lenis } = useLenis();
-  useScrollLock(lenis);
+  const returnFocusRef = useRef<HTMLElement | null>(origin);
+  const shouldReduceMotion = useReducedMotion();
   const initialIndex = Math.max(
     0,
     items.findIndex((item) => item.id === initialItemId),
@@ -54,21 +53,6 @@ export function Lightbox({
   });
   const [zoomed, setZoomed] = useState(false);
   const current = items[navigation.index] ?? items[0];
-
-  useEffect(() => {
-    window.dispatchEvent(
-      new CustomEvent("studio-viana:overlay-change", {
-        detail: { open: true, source: "lightbox" },
-      }),
-    );
-    return () => {
-      window.dispatchEvent(
-        new CustomEvent("studio-viana:overlay-change", {
-          detail: { open: false, source: "lightbox" },
-        }),
-      );
-    };
-  }, []);
 
   const navigate = useCallback(
     (direction: -1 | 1) => {
@@ -89,17 +73,22 @@ export function Lightbox({
     [onClose],
   );
 
-  useEffect(() => {
-    const dialog = root.current;
-    if (!dialog) return;
-    closeButton.current?.focus();
+  useManagedOverlay({
+    id: "gallery-lightbox",
+    initialFocusRef: closeButton,
+    onClose: requestClose,
+    open: true,
+    restoreFocus: () => restoreOrigin.current,
+    returnFocusRef,
+    rootRef: root,
+  });
 
+  useEffect(() => {
+    returnFocusRef.current = origin;
+  }, [origin]);
+
+  useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        requestClose();
-        return;
-      }
       if (event.key === "ArrowLeft") {
         event.preventDefault();
         navigate(-1);
@@ -108,38 +97,12 @@ export function Lightbox({
       if (event.key === "ArrowRight") {
         event.preventDefault();
         navigate(1);
-        return;
-      }
-      if (event.key !== "Tab") return;
-
-      const focusable = Array.from(
-        dialog.querySelectorAll<HTMLElement>(focusableSelector),
-      );
-      if (focusable.length === 0) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      const activeInside = dialog.contains(document.activeElement);
-      if (
-        event.shiftKey &&
-        (!activeInside || document.activeElement === first)
-      ) {
-        event.preventDefault();
-        last.focus();
-      } else if (
-        !event.shiftKey &&
-        (!activeInside || document.activeElement === last)
-      ) {
-        event.preventDefault();
-        first.focus();
       }
     };
 
     document.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.removeEventListener("keydown", onKeyDown);
-      if (restoreOrigin.current) origin.focus();
-    };
-  }, [navigate, origin, requestClose]);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [navigate]);
 
   useEffect(() => {
     if (!items.length) return;
@@ -179,13 +142,21 @@ export function Lightbox({
       className="fixed inset-0 z-[140] grid min-h-[100svh] place-items-start overflow-y-auto overflow-x-hidden bg-forest-deep/[0.97] px-4 pb-8 pt-20 text-cream md:place-items-center md:overflow-hidden md:px-16 md:py-12"
       data-lenis-prevent
       data-lightbox
-      exit={{ opacity: 0 }}
-      initial={{ opacity: 0 }}
+      exit={{
+        opacity: 0,
+        transition: {
+          duration: shouldReduceMotion ? 0 : motionTokens.overlay.exit,
+        },
+      }}
+      initial={{ opacity: shouldReduceMotion ? 1 : 0 }}
       onPointerDown={(event) => {
         if (event.target === event.currentTarget) requestClose();
       }}
       role="dialog"
-      transition={{ duration: 0.28 }}
+      transition={{
+        duration: shouldReduceMotion ? 0 : motionTokens.overlay.enter,
+        ease: motionTokens.ease.framerExpo,
+      }}
     >
       <div
         aria-hidden="true"
@@ -245,7 +216,12 @@ export function Lightbox({
               custom={navigation.direction}
               exit="exit"
               initial="enter"
-              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              transition={{
+                duration: shouldReduceMotion
+                  ? 0
+                  : motionTokens.overlay.panelEnter,
+                ease: motionTokens.ease.framerExpo,
+              }}
               variants={slideVariants}
             >
               <motion.button
@@ -263,7 +239,10 @@ export function Lightbox({
                   }
                 }}
                 onDoubleClick={() => setZoomed((value) => !value)}
-                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                transition={{
+                  duration: shouldReduceMotion ? 0 : motionTokens.duration.fast,
+                  ease: motionTokens.ease.framerExpo,
+                }}
                 type="button"
               >
                 {/* Matching layoutIds let Framer Motion carry the selected
