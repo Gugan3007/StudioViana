@@ -36,6 +36,7 @@ export function ContactRow({ copyLabel, href, label, value }: ContactRowProps) {
         </p>
         <a
           className="mt-2 inline-flex max-w-full items-center break-words font-display text-[clamp(0.95rem,1.25vw,1.25rem)] leading-tight text-cream [overflow-wrap:anywhere]"
+          data-cursor="link"
           href={href}
           rel={href.startsWith("http") ? "noreferrer" : undefined}
           target={href.startsWith("http") ? "_blank" : undefined}
@@ -52,6 +53,7 @@ export function ContactRow({ copyLabel, href, label, value }: ContactRowProps) {
       <button
         aria-label={copyLabel}
         className="relative z-10 grid h-11 w-11 shrink-0 place-items-center rounded-full border border-gold/40 text-gold-light"
+        data-cursor="link"
         onClick={copy}
         type="button"
       >

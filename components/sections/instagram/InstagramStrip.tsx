@@ -58,6 +58,7 @@ function InstagramTile({
       <a
         aria-hidden="true"
         className="group relative block aspect-square w-[min(68vw,19rem)] shrink-0 overflow-hidden sm:w-64 lg:w-[22vw]"
+        data-cursor="link"
         data-instagram-duplicate
         href={instagramProfileUrl}
         rel="noreferrer"
@@ -73,6 +74,7 @@ function InstagramTile({
     <a
       aria-label={`View ${item.alt} on Instagram`}
       className="group relative block aspect-square w-[min(68vw,19rem)] shrink-0 overflow-hidden transition-transform duration-500 hover:-translate-y-2 focus-visible:-translate-y-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold sm:w-64 lg:w-[22vw]"
+      data-cursor="view"
       href={instagramProfileUrl}
       rel="noreferrer"
       target="_blank"

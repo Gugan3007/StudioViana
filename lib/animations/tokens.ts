@@ -6,6 +6,7 @@ export const motionTokens = {
     ui: "power3.out",
     expo: "expo.out",
     entrance: "power3.out",
+    framerExpo: [0.16, 1, 0.3, 1],
     transition: "power2.inOut",
     signature: "cubic-bezier(0.22, 1, 0.36, 1)",
   },

@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import type { HTMLMotionProps } from "framer-motion";
 import type { ReactNode } from "react";
 
+import { Magnetic } from "@/components/interaction/Magnetic";
+import { RollText } from "@/components/interaction/RollText";
 import { useReducedMotion } from "@/lib/animations/useReducedMotion";
 import { cn } from "@/lib/utils";
 
@@ -42,7 +44,12 @@ const baseClasses =
 
 export function Button(props: ButtonProps) {
   const shouldReduceMotion = useReducedMotion();
-  const { children, className, magnetic, variant = "outline-gold" } = props;
+  const {
+    children,
+    className,
+    magnetic = true,
+    variant = "outline-gold",
+  } = props;
   const motionProps = shouldReduceMotion ? {} : { whileTap: { scale: 0.98 } };
   const classes = cn(baseClasses, variantClasses[variant], className);
 
@@ -53,9 +60,10 @@ export function Button(props: ButtonProps) {
     delete anchorProps.variant;
     delete anchorProps.className;
 
-    return (
+    const element = (
       <motion.a
         className={classes}
+        data-cursor="link"
         data-magnetic={magnetic || undefined}
         href={href}
         onClick={onClick}
@@ -64,9 +72,10 @@ export function Button(props: ButtonProps) {
         {...motionProps}
         {...anchorProps}
       >
-        {children}
+        <RollText>{children}</RollText>
       </motion.a>
     );
+    return <Magnetic disabled={!magnetic}>{element}</Magnetic>;
   }
 
   const native = props as NativeButtonProps;
@@ -75,16 +84,18 @@ export function Button(props: ButtonProps) {
   delete buttonProps.variant;
   delete buttonProps.className;
 
-  return (
+  const element = (
     <motion.button
       className={classes}
+      data-cursor="link"
       data-magnetic={magnetic || undefined}
       onClick={onClick}
       type={type}
       {...motionProps}
       {...buttonProps}
     >
-      {children}
+      <RollText>{children}</RollText>
     </motion.button>
   );
+  return <Magnetic disabled={!magnetic}>{element}</Magnetic>;
 }

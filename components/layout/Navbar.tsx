@@ -1,8 +1,10 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { MandalaMark } from "@/components/decor/MandalaMark";
+import { Magnetic } from "@/components/interaction/Magnetic";
 import { OrderBagButton } from "@/components/layout/OrderBagButton";
 import {
   MobileMenu,
@@ -12,6 +14,7 @@ import { useNavTheme } from "@/components/layout/useNavTheme";
 import { useScrollDirection } from "@/components/layout/useScrollDirection";
 import { Button } from "@/components/ui/Button";
 import { ScrollTrigger } from "@/lib/animations/gsap";
+import { motionTokens } from "@/lib/animations/tokens";
 import { useLenis } from "@/lib/animations/useLenis";
 import { useReducedMotion } from "@/lib/animations/useReducedMotion";
 import { useIntro } from "@/lib/context/IntroContext";
@@ -146,14 +149,17 @@ export function Navbar() {
         onFocusCapture={() => setFocusWithin(true)}
       >
         <div className="mx-auto grid h-full max-w-content grid-cols-[1fr_auto] items-center px-gutter lg:grid-cols-[1fr_auto_1fr]">
-          <a
-            className="inline-flex w-fit items-center gap-2.5 font-display text-lg tracking-[-0.02em] lg:text-xl"
-            href="#home"
-            onClick={(event) => navigate(event, "#home")}
-          >
-            <MandalaMark className="h-6 w-6 text-gold" />
-            <span>Studio Viana</span>
-          </a>
+          <Magnetic strength={0.2}>
+            <a
+              className="inline-flex w-fit items-center gap-2.5 font-display text-lg tracking-[-0.02em] lg:text-xl"
+              data-cursor="link"
+              href="#home"
+              onClick={(event) => navigate(event, "#home")}
+            >
+              <MandalaMark className="h-6 w-6 text-gold" />
+              <span>Studio Viana</span>
+            </a>
+          </Magnetic>
 
           <nav
             aria-label="Primary navigation"
@@ -162,24 +168,33 @@ export function Navbar() {
             {navigationItems.map((item) => {
               const active = activeSection === item.href.slice(1);
               return (
-                <a
-                  key={item.href}
-                  aria-current={active ? "page" : undefined}
-                  className="group relative py-3 font-body text-[0.68rem] font-normal uppercase tracking-[0.17em]"
-                  href={item.href}
-                  onClick={(event) => navigate(event, item.href)}
-                >
-                  {item.label}
-                  <span
-                    aria-hidden="true"
-                    className={cn(
-                      "absolute inset-x-0 bottom-1 h-px origin-left bg-gold transition-transform duration-500",
-                      active
-                        ? "scale-x-100"
-                        : "scale-x-0 group-hover:scale-x-100",
+                <Magnetic key={item.href} strength={0.18}>
+                  <a
+                    aria-current={active ? "page" : undefined}
+                    className="group relative py-3 font-body text-[0.68rem] font-normal uppercase tracking-[0.17em]"
+                    data-cursor="link"
+                    href={item.href}
+                    onClick={(event) => navigate(event, item.href)}
+                  >
+                    {item.label}
+                    {active ? (
+                      <motion.span
+                        layoutId="primary-navigation-underline"
+                        aria-hidden="true"
+                        className="absolute inset-x-0 bottom-1 h-px bg-gold"
+                        transition={{
+                          duration: motionTokens.duration.fast,
+                          ease: motionTokens.ease.framerExpo,
+                        }}
+                      />
+                    ) : (
+                      <span
+                        aria-hidden="true"
+                        className="absolute inset-x-0 bottom-1 h-px origin-left scale-x-0 bg-gold transition-transform duration-500 group-hover:scale-x-100"
+                      />
                     )}
-                  />
-                </a>
+                  </a>
+                </Magnetic>
               );
             })}
           </nav>
@@ -212,6 +227,7 @@ export function Navbar() {
                 "relative z-[100] flex h-12 w-12 items-center justify-center text-current",
                 menuOpen && "pointer-events-none text-cream",
               )}
+              data-cursor="link"
               onClick={() => setMenuOpen((open) => !open)}
               tabIndex={menuOpen ? -1 : 0}
               type="button"

@@ -2,7 +2,8 @@
 
 import { useSyncExternalStore } from "react";
 
-export type CursorState = "default" | "drag" | "view" | "zoom";
+export type CursorState =
+  "default" | "drag" | "hidden" | "link" | "text" | "view" | "zoom";
 
 let cursorState: CursorState = "default";
 const listeners = new Set<() => void>();

@@ -12,6 +12,7 @@ export function OrderBagButton({ className }: { className?: string }) {
         "border-current/35 relative grid h-11 w-11 place-items-center rounded-full border text-current transition-colors hover:border-gold hover:text-gold",
         className,
       )}
+      data-cursor="link"
       onClick={() =>
         window.dispatchEvent(new CustomEvent("studio-viana:open-bag"))
       }

@@ -43,6 +43,49 @@ body {
   min-height: 100%;
 }
 
+@media (hover: hover) and (pointer: fine) {
+  body[data-custom-cursor="true"],
+  body[data-custom-cursor="true"] a,
+  body[data-custom-cursor="true"] button,
+  body[data-custom-cursor="true"] summary {
+    cursor: none;
+  }
+
+  body[data-custom-cursor="true"] input,
+  body[data-custom-cursor="true"] textarea,
+  body[data-custom-cursor="true"] select,
+  body[data-custom-cursor="true"] [contenteditable="true"] {
+    cursor: text;
+  }
+}
+
+[data-custom-cursor][data-tone="dark"] {
+  color: var(--cream);
+}
+
+a:not([class*="no-underline"]):where(p a, li a) {
+  background-image: linear-gradient(var(--gold), var(--gold));
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0 1px;
+  transition: background-size 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+a:not([class*="no-underline"]):where(p a, li a):hover,
+a:not([class*="no-underline"]):where(p a, li a):focus-visible {
+  background-size: 100% 1px;
+}
+
+[aria-pressed="true"] {
+  animation: micro-select 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes micro-select {
+  50% {
+    transform: scale(1.045);
+  }
+}
+
 [data-instagram-rail] {
   overflow-x: auto;
 }

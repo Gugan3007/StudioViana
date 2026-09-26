@@ -6,6 +6,7 @@ import { GlobalOrderTouchpoints } from "@/components/layout/GlobalOrderTouchpoin
 import { Navbar } from "@/components/layout/Navbar";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
 import { SkipLink } from "@/components/a11y/SkipLink";
+import { CustomCursor } from "@/components/cursor/CustomCursor";
 import { IntroProvider } from "@/lib/context/IntroContext";
 import { MotionProvider } from "@/lib/context/MotionContext";
 import { OverlayProvider } from "@/lib/context/OverlayContext";
@@ -57,6 +58,7 @@ export default function RootLayout({
                 <Navbar />
                 {children}
                 <GlobalOrderTouchpoints />
+                <CustomCursor />
               </OverlayProvider>
             </IntroProvider>
           </SmoothScrollProvider>
