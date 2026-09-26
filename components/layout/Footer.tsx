@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { MotionPreferenceToggle } from "@/components/a11y/MotionPreferenceToggle";
 import { MandalaMark } from "@/components/decor/MandalaMark";
 import { BackToTop } from "@/components/layout/BackToTop";
 import { BigWordmark } from "@/components/layout/BigWordmark";
@@ -48,7 +49,7 @@ function ProductLinks() {
         <li key={product.slug}>
           <button
             aria-label={`View ${product.name}`}
-            className="text-left text-sm font-light text-cream/65 transition-colors hover:text-gold-light"
+            className="inline-flex min-h-11 items-center text-left text-sm font-light text-cream/65 transition-colors hover:text-gold-light"
             onClick={(event) =>
               openProductDetail(product.slug, event.currentTarget)
             }
@@ -72,7 +73,7 @@ function LinkList({
       {links.map(([label, href]) => (
         <li key={label}>
           <a
-            className="text-sm font-light text-cream/65 transition-colors hover:text-gold-light"
+            className="inline-flex min-h-11 items-center text-sm font-light text-cream/65 transition-colors hover:text-gold-light"
             href={href}
             rel={href.startsWith("http") ? "noreferrer" : undefined}
             target={href.startsWith("http") ? "_blank" : undefined}
@@ -152,8 +153,10 @@ export function Footer() {
             <span className="flex border-b border-gold/55">
               <input
                 aria-label="Email for Stay in bloom"
+                autoComplete="email"
                 className="min-h-12 flex-1 bg-transparent text-sm normal-case tracking-normal text-cream placeholder:text-cream/45"
                 onChange={(event) => setEmail(event.target.value)}
+                name="email"
                 placeholder="Your email address"
                 type="email"
                 value={email}
@@ -182,6 +185,7 @@ export function Footer() {
           <p className="text-[0.58rem] leading-5 tracking-[0.08em] text-cream/50">
             © 2026 Studio Viana · Handcrafted chenille florals · {site.location}
           </p>
+          <MotionPreferenceToggle />
           <BackToTop />
         </div>
       </div>

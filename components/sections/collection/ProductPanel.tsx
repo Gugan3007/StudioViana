@@ -126,7 +126,7 @@ export function ProductPanel({ onOpenDetail, product }: ProductPanelProps) {
                 className={cn(
                   "rounded-full border px-3 py-1.5 text-[0.55rem] uppercase tracking-[0.12em] transition-colors",
                   flower === selectedFlower
-                    ? "border-gold bg-gold text-cream"
+                    ? "border-gold bg-gold text-forest"
                     : "border-gold/35 text-muted",
                 )}
                 onClick={() => setSelectedFlower(flower)}

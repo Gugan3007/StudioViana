@@ -1,10 +1,12 @@
 "use client";
 
-import { useMotionPreferences } from "@/lib/context/MotionContext";
+import { useOptionalMotionPreferences } from "@/lib/context/MotionContext";
 import { cn } from "@/lib/utils";
 
 export function MotionPreferenceToggle({ className }: { className?: string }) {
-  const { setPreference, shouldReduceMotion } = useMotionPreferences();
+  const motion = useOptionalMotionPreferences();
+  if (!motion) return null;
+  const { setPreference, shouldReduceMotion } = motion;
   const label = `Reduce motion: ${shouldReduceMotion ? "on" : "off"}`;
 
   return (

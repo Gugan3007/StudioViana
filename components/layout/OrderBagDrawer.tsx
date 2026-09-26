@@ -156,7 +156,7 @@ export function OrderBagDrawer() {
                           <div className="mt-3 flex items-center">
                             <button
                               aria-label={`Decrease ${product.name} quantity`}
-                              className="grid h-9 w-9 place-items-center border border-gold/35"
+                              className="grid h-11 w-11 place-items-center border border-gold/35"
                               onClick={() =>
                                 updateQuantity(item.id, item.quantity - 1)
                               }
@@ -169,7 +169,7 @@ export function OrderBagDrawer() {
                             </output>
                             <button
                               aria-label={`Increase ${product.name} quantity`}
-                              className="grid h-9 w-9 place-items-center border border-gold/35"
+                              className="grid h-11 w-11 place-items-center border border-gold/35"
                               onClick={() =>
                                 updateQuantity(item.id, item.quantity + 1)
                               }
@@ -181,7 +181,7 @@ export function OrderBagDrawer() {
                         </div>
                         <button
                           aria-label={`Remove ${product.name}`}
-                          className="grid h-10 w-10 place-items-center text-muted hover:text-charcoal"
+                          className="grid h-11 w-11 place-items-center text-muted hover:text-charcoal"
                           onClick={() => removeItem(item.id)}
                           type="button"
                         >

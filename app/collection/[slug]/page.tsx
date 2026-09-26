@@ -76,7 +76,7 @@ export default async function ProductPage({ params }: ProductRouteProps) {
             />
           </div>
           <article className="flex flex-col justify-center px-gutter py-14 lg:px-[clamp(3rem,6vw,6rem)] lg:py-20">
-            <p className="text-[0.6rem] uppercase tracking-[0.24em] text-gold">
+            <p className="text-[0.6rem] uppercase tracking-[0.24em] text-[#765b34]">
               Collection {product.number}
             </p>
             <h1 className="mt-4 text-balance font-display text-[clamp(3.5rem,7vw,7rem)] leading-[0.9] tracking-[-0.05em]">

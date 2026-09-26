@@ -72,7 +72,7 @@ export function TestimonialSlide({
             <p className="font-body text-[0.68rem] font-medium uppercase tracking-[0.2em] text-charcoal">
               {testimonial.name}
             </p>
-            <p className="mt-1 font-body text-[0.54rem] uppercase tracking-[0.16em] text-gold">
+            <p className="mt-1 font-body text-[0.54rem] uppercase tracking-[0.16em] text-[#765b34]">
               {testimonial.occasion} · {testimonial.product}
             </p>
           </div>

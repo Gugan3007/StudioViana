@@ -9,7 +9,7 @@ export function SectionLabel({
   return (
     <p
       className={cn(
-        "font-body text-label font-medium uppercase tracking-label text-gold",
+        "section-label font-body text-label font-medium uppercase tracking-label",
         className,
       )}
       {...props}

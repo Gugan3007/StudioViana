@@ -1,6 +1,6 @@
 # Studio Viana — Editorial floral experience
 
-Studio Viana is a Next.js App Router experience for handcrafted chenille florals. Phase 0 established the strict TypeScript foundation and design system; Phase 1 added the reversible cinematic flower dive; Phase 2 delivered the responsive Home, About and Craft story; Phase 3 added an eight-product editorial Collection and shareable product detail; Phase 4 now completes the tactile craft story, process timeline, filterable gallery/lightbox, testimonials and social finale.
+Studio Viana is a Next.js App Router experience for handcrafted chenille florals. Phases 0–5 established the editorial design, cinematic intro, catalogue, craft story, gallery and conversion flow. Phase 6 production-hardens that approved experience with shared motion and overlay systems, crawlable product routes, accessibility controls, metadata and performance tooling.
 
 ## Run locally
 
@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). The first visit uses the 1.8-second cinematic loader; subsequent reloads in the same browser tab use the 0.8-second session loader.
+Open [http://localhost:3000](http://localhost:3000). The first visit has a short 450 ms minimum loader while real asset progress is reported; repeat visits have no artificial minimum delay.
 
 Quality commands:
 
@@ -17,29 +17,45 @@ Quality commands:
 npm run test
 npm run test:browser
 npm run test:performance
+npm run images:optimize -- --dry-run
+npm run analyze
 npm run check
 PLAYWRIGHT_PRODUCTION=true npx playwright test
 ```
 
-Phase 2's six-image story inventory and checklist are documented in [`docs/phase-2-home-story.md`](docs/phase-2-home-story.md). Phase 3's catalogue contract and product runtime live in [`docs/phase-3-collection.md`](docs/phase-3-collection.md). Phase 4's complete 35-image inventory, motion values, five process-photo prompts and verification checklist live in [`docs/phase-4-craft-gallery.md`](docs/phase-4-craft-gallery.md). Preserve every documented filename when replacing development photography.
+Phase 2's story inventory is documented in [`docs/phase-2-home-story.md`](docs/phase-2-home-story.md), Phase 3's catalogue contract in [`docs/phase-3-collection.md`](docs/phase-3-collection.md), Phase 4's image inventory in [`docs/phase-4-craft-gallery.md`](docs/phase-4-craft-gallery.md), and the final production system in [`docs/phase-6-final-polish.md`](docs/phase-6-final-polish.md). Preserve documented filenames when replacing commissioned photography.
+
+## Architecture and content maintenance
+
+- `app/page.tsx` retains the approved one-page experience. `app/collection/[slug]` provides eight statically generated, crawlable product routes; `app/privacy` and `app/terms` are draft legal routes.
+- `lib/data/products.ts`, `lib/data/site.ts`, `lib/data/gallery.ts` and `lib/data/faq.ts` are the content sources of truth. Update data there rather than duplicating copy inside views.
+- `MotionProvider` resolves system, saved visitor and low-power preferences. `OverlayManager` owns the ordered modal stack, focus, Escape and scroll lock.
+- `ORDER_MODE` in `lib/data/site.ts` switches product-order entry points between the five-step builder and direct WhatsApp without changing call sites.
+- `INTRO_MODE` in `components/intro/intro.config.ts` switches the layered intro and optional numbered WebP sequence.
+- `npm run images:optimize -- --input public/images --dry-run` plans capped AVIF/WebP derivatives. Originals are never overwritten unless `--overwrite` is explicit.
+- `npm run analyze` creates bundle reports in `.next/analyze`. The production domain, legal copy, catalogue PDF, analytics provider and optional licensed audio remain owner inputs.
+
+## Motion contract
+
+Shared timing lives in `lib/animations/tokens.ts`: fast UI feedback is 0.4 s, base reveals 0.8 s, slow sequences 1.2 s, cinematic moments 1.8 s, item stagger 0.08 s, and overlay enter/exit are 0.5/0.35 s. Scroll-scrubbed timelines intentionally use linear easing because scroll position owns their progress. Reduced motion makes overlays instant, disables the custom cursor, magnetic movement, grain, loops and intro pinning, and remains user-selectable from the footer.
 
 ## Intro configuration
 
 All creative tuning lives in `components/intro/intro.config.ts`.
 
-| Setting                 |                         Default | Effect                                                                                             |
-| ----------------------- | ------------------------------: | -------------------------------------------------------------------------------------------------- |
-| `INTRO_MODE`            |                      `"layers"` | Selects layered `next/image` art or the WebP canvas sequence.                                      |
-| `focalPoint`            |              `{ x: 50, y: 48 }` | Flower center in percentage coordinates for `object-position`, transforms, and canvas cover crops. |
-| `scrub`                 |                           `1.2` | ScrollTrigger catch-up time; lower is more immediate, higher is more liquid.                       |
-| `preload.firstVisitMs`  |                          `1800` | Minimum first-session loader duration.                                                             |
-| `preload.repeatVisitMs` |                           `800` | Minimum loader duration once `studio-viana:intro-seen` exists in session storage.                  |
-| `preload.maximumMs`     |                          `6000` | Hard release deadline when an asset stalls or fails.                                               |
-| `sequence.frameCount`   |                           `150` | Total numbered WebP frames expected in `/public/sequence`.                                         |
-| Desktop                 | `400vh`, scale `6`, 9 particles | Full experience at widths of 1024px and above.                                                     |
-| Tablet                  | `300vh`, scale `4`, 6 particles | Medium experience from 768px through 1023px.                                                       |
-| Mobile                  | `220vh`, scale `3`, 4 particles | Portrait image, one petal layer, and no blurred middle duplicate below 768px.                      |
-| `poem`                  |                     Three lines | Dive copy and order: “Shaped stem by stem…”, “petal by petal…”, “made to last forever.”            |
+| Setting                 |                            Default | Effect                                                                                             |
+| ----------------------- | ---------------------------------: | -------------------------------------------------------------------------------------------------- |
+| `INTRO_MODE`            |                         `"layers"` | Selects layered `next/image` art or the WebP canvas sequence.                                      |
+| `focalPoint`            |                 `{ x: 50, y: 48 }` | Flower center in percentage coordinates for `object-position`, transforms, and canvas cover crops. |
+| `scrub`                 |                             `0.35` | ScrollTrigger catch-up time; lower is more immediate, higher is more liquid.                       |
+| `preload.firstVisitMs`  |                              `450` | Minimum first-session loader duration.                                                             |
+| `preload.repeatVisitMs` |                                `0` | Repeat sessions wait only for required asset progress.                                             |
+| `preload.maximumMs`     |                             `2500` | Hard release deadline when an asset stalls or fails.                                               |
+| `sequence.frameCount`   |                              `150` | Total numbered WebP frames expected in `/public/sequence`.                                         |
+| Desktop                 |    `260vh`, scale `2`, 9 particles | Full experience at widths of 1024px and above.                                                     |
+| Tablet                  | `220vh`, scale `1.85`, 6 particles | Medium experience from 768px through 1023px.                                                       |
+| Mobile                  |  `180vh`, scale `1.7`, 4 particles | Portrait image, one petal layer, and no blurred middle duplicate below 768px.                      |
+| `poem`                  |                        Three lines | Dive copy and order: “Shaped stem by stem…”, “petal by petal…”, “made to last forever.”            |
 
 To enable frame-sequence rendering, change this one line:
 
@@ -124,11 +140,11 @@ Create a second transparent depth layer for a luxury chenille-flower fly-through
 
 ## Verification checklist
 
-- [ ] Desktop at 1440px: first loader lasts at least 1.8 seconds, reports real progress, becomes the gold frame, and releases scrolling.
-- [ ] Repeat visit in the same tab: loader lasts at least 0.8 seconds and still reports asset progress.
-- [ ] Desktop: 400vh pin, all depth layers, poem timing, scale-6 dive, light bloom, and seamless cream release.
-- [ ] Tablet at 768–1023px: 300vh pin, reduced particle field, scale-4 dive, and no clipped corner copy.
-- [ ] Mobile at 320px: 220vh pin, `100svh`, portrait artwork, one petal layer, scale-3 dive, safe-area skip position, and no horizontal overflow.
+- [ ] Desktop at 1440px: first loader lasts at least 450 ms, reports real progress, becomes the gold frame, and releases scrolling.
+- [ ] Repeat visit in the same tab: loader adds no artificial delay and still reports asset progress.
+- [ ] Desktop: 260vh pin, all depth layers, poem timing, scale-2 dive, light bloom, and seamless cream release.
+- [ ] Tablet at 768–1023px: 220vh pin, reduced particle field, scale-1.85 dive, and no clipped corner copy.
+- [ ] Mobile at 320px: 180vh pin, `100svh`, portrait artwork, one petal layer, scale-1.7 dive, safe-area skip position, and no horizontal overflow.
 - [ ] Scroll from start to finish and back: every master-timeline state reverses without a jump or stale layer.
 - [ ] Activate “Skip intro” by pointer and keyboard: Lenis reaches `#home` in 1.6 seconds and focus remains visible.
 - [ ] Reload at a mid-intro and post-intro position: the browser-restored position remains intact after preload and ScrollTrigger refresh.

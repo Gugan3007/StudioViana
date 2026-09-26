@@ -74,9 +74,9 @@ export function ProductOptions({
                 key={flower}
                 aria-pressed={configuration.flower === flower}
                 className={cn(
-                  "rounded-full border px-3 py-2 text-[0.58rem] uppercase tracking-[0.12em]",
+                  "min-h-11 rounded-full border px-3 py-2 text-[0.58rem] uppercase tracking-[0.12em]",
                   configuration.flower === flower
-                    ? "border-gold bg-gold text-cream"
+                    ? "border-gold bg-gold text-forest"
                     : "border-gold/35 text-muted",
                 )}
                 onClick={() => update({ flower })}
@@ -92,7 +92,7 @@ export function ProductOptions({
             </span>
             <button
               aria-label="Decrease quantity"
-              className="grid h-10 w-10 place-items-center border border-gold/40"
+              className="grid h-11 w-11 place-items-center border border-gold/40"
               disabled={quantity <= 1}
               onClick={() => update({ quantity: Math.max(1, quantity - 1) })}
               type="button"
@@ -107,7 +107,7 @@ export function ProductOptions({
             </output>
             <button
               aria-label="Increase quantity"
-              className="grid h-10 w-10 place-items-center border border-gold/40"
+              className="grid h-11 w-11 place-items-center border border-gold/40"
               onClick={() => update({ quantity: Math.min(25, quantity + 1) })}
               type="button"
             >
@@ -135,7 +135,7 @@ export function ProductOptions({
                 />
                 <span
                   className={cn(
-                    "block border px-4 py-3 peer-focus-visible:ring-2 peer-focus-visible:ring-gold peer-focus-visible:ring-offset-4 peer-focus-visible:ring-offset-cream",
+                    "block border px-4 py-3 peer-focus-visible:ring-2 peer-focus-visible:ring-[#765b34] peer-focus-visible:ring-offset-4 peer-focus-visible:ring-offset-cream",
                     configuration.size === size.label
                       ? "border-gold text-charcoal"
                       : "border-gold/25 text-muted",
@@ -165,7 +165,7 @@ export function ProductOptions({
               />
               <span
                 aria-hidden="true"
-                className="mx-auto block h-9 w-9 rounded-full border border-charcoal/10 ring-gold ring-offset-2 ring-offset-cream peer-checked:ring-2 peer-focus-visible:ring-2 peer-focus-visible:ring-gold peer-focus-visible:ring-offset-4 peer-focus-visible:ring-offset-cream"
+                className="mx-auto block h-9 w-9 rounded-full border border-charcoal/10 ring-[#765b34] ring-offset-2 ring-offset-cream peer-checked:ring-2 peer-focus-visible:ring-2 peer-focus-visible:ring-offset-4 peer-focus-visible:ring-offset-cream"
                 style={{ background: palette.color }}
               />
               <span className="mt-2 block max-w-16 text-[0.48rem] uppercase leading-3 tracking-[0.1em] text-muted">

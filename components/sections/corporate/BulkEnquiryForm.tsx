@@ -111,6 +111,7 @@ export function BulkEnquiryForm() {
           id={`${prefix}-${name}`}
           aria-live="polite"
           className="normal-case tracking-normal text-[#e6a2a8]"
+          role="alert"
         >
           {errors[name]}
         </span>
@@ -133,6 +134,7 @@ export function BulkEnquiryForm() {
           "Name",
           <input
             aria-describedby={errors.name ? `${prefix}-name` : undefined}
+            aria-invalid={Boolean(errors.name)}
             aria-label="Name"
             autoComplete="name"
             className={inputClass}
@@ -156,6 +158,7 @@ export function BulkEnquiryForm() {
           "Phone",
           <input
             aria-describedby={errors.phone ? `${prefix}-phone` : undefined}
+            aria-invalid={Boolean(errors.phone)}
             aria-label="Phone"
             autoComplete="tel"
             className={inputClass}
@@ -181,6 +184,7 @@ export function BulkEnquiryForm() {
           "eventType",
           "Event type",
           <select
+            aria-invalid={Boolean(errors.eventType)}
             aria-label="Event type"
             className={inputClass}
             onChange={(event) => update("eventType", event.target.value)}
@@ -200,6 +204,7 @@ export function BulkEnquiryForm() {
           "quantityRange",
           "Quantity",
           <select
+            aria-invalid={Boolean(errors.quantityRange)}
             aria-label="Quantity"
             className={inputClass}
             onChange={(event) => update("quantityRange", event.target.value)}
@@ -219,6 +224,7 @@ export function BulkEnquiryForm() {
           "eventDate",
           "Event date",
           <input
+            aria-invalid={Boolean(errors.eventDate)}
             aria-label="Event date"
             className={inputClass}
             onChange={(event) => update("eventDate", event.target.value)}
@@ -250,6 +256,7 @@ export function BulkEnquiryForm() {
             "message",
             "Tell us about the occasion",
             <textarea
+              aria-invalid={Boolean(errors.message)}
               aria-label="Tell us about the occasion"
               className="min-h-24 resize-y border-b border-gold/55 bg-transparent p-2 text-sm normal-case tracking-normal text-cream placeholder:text-cream/45"
               onChange={(event) => update("message", event.target.value)}

@@ -32,9 +32,9 @@ export type ButtonProps = AnchorButtonProps | NativeButtonProps;
 
 const variantClasses: Record<ButtonVariant, string> = {
   "outline-gold":
-    "border border-gold text-charcoal before:bg-gold hover:text-cream",
+    "border border-gold text-charcoal before:bg-gold hover:text-forest",
   "solid-forest":
-    "border border-forest bg-forest text-cream before:bg-gold hover:border-gold",
+    "border border-forest bg-forest text-cream before:bg-gold hover:border-gold hover:text-forest",
   "text-link":
     "min-h-0 border-b border-gold/60 px-0 py-1 text-charcoal before:hidden hover:border-gold",
 };

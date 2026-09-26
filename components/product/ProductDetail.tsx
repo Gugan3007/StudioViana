@@ -132,7 +132,7 @@ export function ProductDetail({
           <p className="text-[0.55rem] uppercase tracking-[0.2em] text-muted">
             Collection <span className="px-2 text-gold">/</span> {product.name}
           </p>
-          <p className="mt-9 text-[0.62rem] uppercase tracking-[0.24em] text-gold">
+          <p className="mt-9 text-[0.62rem] uppercase tracking-[0.24em] text-[#765b34]">
             Category {product.number}
           </p>
           <h2 className="mt-4 text-balance font-display text-[clamp(3.4rem,6vw,6.5rem)] leading-[0.92] tracking-[-0.05em]">

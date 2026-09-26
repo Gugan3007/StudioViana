@@ -64,7 +64,7 @@ export function MobileProductCard({
       </button>
 
       <div className="pt-8">
-        <p className="text-[0.58rem] uppercase tracking-[0.22em] text-gold">
+        <p className="text-[0.58rem] uppercase tracking-[0.22em] text-[#765b34]">
           Category {product.number}
         </p>
         <h3 className="mt-3 font-display text-[clamp(2.5rem,12vw,4rem)] leading-[0.98] tracking-[-0.04em] text-charcoal">

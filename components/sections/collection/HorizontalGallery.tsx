@@ -312,7 +312,7 @@ export const HorizontalGallery = forwardRef<
         data-gallery-mode="vertical"
       >
         <div className="sticky top-[72px] z-40 flex items-center justify-between border-y border-gold/25 bg-cream/95 px-gutter py-3 backdrop-blur-lg md:top-[84px]">
-          <span className="text-[0.58rem] tracking-[0.2em] text-gold">
+          <span className="text-[0.58rem] tracking-[0.2em] text-[#765b34]">
             {catalogueProducts[activeIndex].number}
           </span>
           <span className="font-display text-sm text-charcoal">

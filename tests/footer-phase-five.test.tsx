@@ -6,6 +6,7 @@ import { BackToTop } from "@/components/layout/BackToTop";
 import { Footer } from "@/components/layout/Footer";
 import { catalogueProducts } from "@/lib/data/products";
 import { phaseFiveConfig, site } from "@/lib/data/site";
+import { MotionProvider } from "@/lib/context/MotionContext";
 
 const footerMocks = vi.hoisted(() => ({
   lenis: null as null | { scrollTo: ReturnType<typeof vi.fn> },
@@ -22,7 +23,11 @@ vi.mock("@/lib/animations/useLenis", () => ({
 describe("Phase 5 footer", () => {
   it("renders the closing wordmark, grouped links, thank-you and newsletter mailto", async () => {
     const user = userEvent.setup();
-    const { container } = render(<Footer />);
+    const { container } = render(
+      <MotionProvider>
+        <Footer />
+      </MotionProvider>,
+    );
     const footer = container.querySelector("footer") as HTMLElement;
     expect(footer).toHaveAttribute("data-theme", "dark");
     expect(within(footer).getAllByText("STUDIO VIANA").length).toBeGreaterThan(
@@ -54,7 +59,11 @@ describe("Phase 5 footer", () => {
     const user = userEvent.setup();
     const listener = vi.fn();
     window.addEventListener("studio-viana:open-product", listener);
-    render(<Footer />);
+    render(
+      <MotionProvider>
+        <Footer />
+      </MotionProvider>,
+    );
     const productLinks = screen.getAllByRole("button", {
       name: `View ${catalogueProducts[0].name}`,
     });

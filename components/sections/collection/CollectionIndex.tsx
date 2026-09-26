@@ -107,7 +107,7 @@ export function CollectionIndex({
               }}
               type="button"
             >
-              <span className="text-[0.65rem] tracking-[0.24em] text-gold">
+              <span className="text-[0.65rem] tracking-[0.24em] text-[#765b34]">
                 {product.number}
               </span>
               <span className="relative aspect-[4/5] overflow-hidden bg-cream-soft md:hidden">

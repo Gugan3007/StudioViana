@@ -27,7 +27,7 @@ export function GalleryFilters({
               key={filter}
               aria-pressed={active}
               className={cn(
-                "min-h-10 rounded-full border px-4 font-body text-[0.62rem] font-medium uppercase tracking-[0.15em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold",
+                "min-h-11 rounded-full border px-4 font-body text-[0.62rem] font-medium uppercase tracking-[0.15em] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold",
                 active
                   ? "border-forest bg-forest text-cream"
                   : "border-gold/55 text-charcoal hover:border-gold hover:bg-gold/10",

@@ -27,7 +27,12 @@ interface StepDetailsProps {
 
 function FieldError({ id, message }: { id: string; message?: string }) {
   return message ? (
-    <span id={id} aria-live="polite" className="text-xs text-[#a64f59]">
+    <span
+      id={id}
+      aria-live="polite"
+      className="text-xs text-[#a64f59]"
+      role="alert"
+    >
       {message}
     </span>
   ) : null;
@@ -103,6 +108,7 @@ export function StepDetails({ errors }: StepDetailsProps) {
           Needed by date
           <input
             aria-describedby={describedBy("neededBy")}
+            aria-invalid={Boolean(errors.neededBy)}
             aria-label="Needed by date"
             className={inputClass}
             min={minimumOrderDate()}
@@ -146,7 +152,9 @@ export function StepDetails({ errors }: StepDetailsProps) {
           City or area
           <input
             aria-describedby={describedBy("deliveryArea")}
+            aria-invalid={Boolean(errors.deliveryArea)}
             aria-label="City or area"
+            autoComplete="address-level2"
             className={inputClass}
             onChange={(event) =>
               order.update({ deliveryArea: event.target.value })
@@ -166,6 +174,7 @@ export function StepDetails({ errors }: StepDetailsProps) {
           Your name
           <input
             aria-describedby={describedBy("customerName")}
+            aria-invalid={Boolean(errors.customerName)}
             aria-label="Your name"
             autoComplete="name"
             className={inputClass}
@@ -183,6 +192,7 @@ export function StepDetails({ errors }: StepDetailsProps) {
           Phone number
           <input
             aria-describedby={describedBy("phone")}
+            aria-invalid={Boolean(errors.phone)}
             aria-label="Phone number"
             autoComplete="tel"
             className={inputClass}
@@ -197,6 +207,7 @@ export function StepDetails({ errors }: StepDetailsProps) {
           Email address (optional)
           <input
             aria-describedby={describedBy("email")}
+            aria-invalid={Boolean(errors.email)}
             aria-label="Email address (optional)"
             autoComplete="email"
             className={inputClass}
