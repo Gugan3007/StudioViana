@@ -3,10 +3,12 @@
 import { useState } from "react";
 
 import { useIsomorphicLayoutEffect } from "@/lib/animations/useIsomorphicLayoutEffect";
+import { useOptionalMotionPreferences } from "@/lib/context/MotionContext";
 
 const reducedMotionQuery = "(prefers-reduced-motion: reduce)";
 
 export function useReducedMotion() {
+  const context = useOptionalMotionPreferences();
   const [shouldReduceMotion, setShouldReduceMotion] = useState(() => false);
 
   useIsomorphicLayoutEffect(() => {
@@ -20,5 +22,5 @@ export function useReducedMotion() {
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
 
-  return shouldReduceMotion;
+  return context?.shouldReduceMotion ?? shouldReduceMotion;
 }

@@ -18,7 +18,7 @@ import { createStructuredData } from "@/lib/seo/schema";
 export default function Home() {
   const structuredData = createStructuredData(catalogueProducts, faqItems);
   return (
-    <main className="overflow-clip">
+    <main id="main-content" className="overflow-clip" tabIndex={-1}>
       {structuredData.map((entry, index) => (
         <script
           key={`${String(entry["@type"])}-${index}`}

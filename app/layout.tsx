@@ -5,7 +5,9 @@ import type { ReactNode } from "react";
 import { GlobalOrderTouchpoints } from "@/components/layout/GlobalOrderTouchpoints";
 import { Navbar } from "@/components/layout/Navbar";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
+import { SkipLink } from "@/components/a11y/SkipLink";
 import { IntroProvider } from "@/lib/context/IntroContext";
+import { MotionProvider } from "@/lib/context/MotionContext";
 import { OverlayProvider } from "@/lib/context/OverlayContext";
 
 import "./globals.css";
@@ -38,7 +40,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en-IN" suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -47,15 +49,18 @@ export default function RootLayout({
         />
       </head>
       <body className={`${lora.variable} ${poppins.variable}`}>
-        <SmoothScrollProvider>
-          <IntroProvider>
-            <OverlayProvider>
-              <Navbar />
-              {children}
-              <GlobalOrderTouchpoints />
-            </OverlayProvider>
-          </IntroProvider>
-        </SmoothScrollProvider>
+        <SkipLink />
+        <MotionProvider>
+          <SmoothScrollProvider>
+            <IntroProvider>
+              <OverlayProvider>
+                <Navbar />
+                {children}
+                <GlobalOrderTouchpoints />
+              </OverlayProvider>
+            </IntroProvider>
+          </SmoothScrollProvider>
+        </MotionProvider>
       </body>
     </html>
   );

@@ -4,6 +4,7 @@ import Lenis from "lenis";
 import { type ReactNode, useEffect, useMemo, useState } from "react";
 
 import { gsap, ScrollTrigger } from "@/lib/animations/gsap";
+import { motionTokens } from "@/lib/animations/tokens";
 import { LenisContext } from "@/lib/animations/useLenis";
 import { useReducedMotion } from "@/lib/animations/useReducedMotion";
 
@@ -28,12 +29,7 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
   useEffect(() => {
     if (shouldReduceMotion || !hasFinePointer) return;
 
-    const instance = new Lenis({
-      lerp: 0.14,
-      smoothWheel: true,
-      wheelMultiplier: 1,
-      syncTouch: false,
-    });
+    const instance = new Lenis({ ...motionTokens.lenis });
     const unsubscribe = instance.on("scroll", ScrollTrigger.update);
     const update = (time: number) => instance.raf(time * 1000);
 
